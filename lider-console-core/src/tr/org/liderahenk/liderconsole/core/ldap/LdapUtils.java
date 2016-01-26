@@ -37,7 +37,8 @@ import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
 
 public class LdapUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(LdapUtils.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(LdapUtils.class);
 
 	/**
 	 * 
@@ -86,22 +87,26 @@ public class LdapUtils {
 	 *            LDAP connection.
 	 * @return the naming enumeration or null if an exception occurs.
 	 */
-	public StudioNamingEnumeration search(String baseDn, String filter, String[] returningAttributes, int searchScope,
-			long countLimit, Connection conn, StudioProgressMonitor monitor) {
+	public StudioNamingEnumeration search(String baseDn, String filter,
+			String[] returningAttributes, int searchScope, long countLimit,
+			Connection conn, StudioProgressMonitor monitor) {
 
 		// TODO handle pagedSearch
 		if (conn != null) {
-			logger.debug("Searching for attributes: {0} on DN: {1} using filter: {2}",
-					new Object[] { returningAttributes.toString(), baseDn, filter });
+			logger.debug(
+					"Searching for attributes: {0} on DN: {1} using filter: {2}",
+					new Object[] { returningAttributes.toString(), baseDn,
+							filter });
 
 			SearchControls searchControls = new SearchControls();
 			searchControls.setCountLimit(countLimit);
 			searchControls.setReturningAttributes(returningAttributes);
 			searchControls.setSearchScope(searchScope);
 
-			StudioNamingEnumeration enumeration = conn.getConnectionWrapper().search(
-					baseDn == null ? findBaseDn(conn) : baseDn, filter, searchControls, AliasDereferencingMethod.NEVER,
-					ReferralHandlingMethod.IGNORE, null, monitor, null);
+			StudioNamingEnumeration enumeration = conn.getConnectionWrapper()
+					.search(baseDn == null ? findBaseDn(conn) : baseDn, filter,
+							searchControls, AliasDereferencingMethod.NEVER,
+							ReferralHandlingMethod.IGNORE, null, monitor, null);
 
 			return enumeration;
 		}
@@ -119,10 +124,11 @@ public class LdapUtils {
 	 * @param conn
 	 * @return
 	 */
-	public List<SearchResult> searchAndReturnList(String baseDn, String filter, String[] returningAttributes,
-			int searchScope, long countLimit, Connection conn, StudioProgressMonitor monitor) {
-		StudioNamingEnumeration enumeration = search(baseDn, filter, returningAttributes, searchScope, countLimit, conn,
-				monitor);
+	public List<SearchResult> searchAndReturnList(String baseDn, String filter,
+			String[] returningAttributes, int searchScope, long countLimit,
+			Connection conn, StudioProgressMonitor monitor) {
+		StudioNamingEnumeration enumeration = search(baseDn, filter,
+				returningAttributes, searchScope, countLimit, conn, monitor);
 		return enumeration == null ? null : convertToList(enumeration);
 	}
 
@@ -162,12 +168,14 @@ public class LdapUtils {
 	 * @return
 	 */
 	public String findBaseDn(Connection conn) {
-		return conn.getConnectionParameter().getExtendedProperty("ldapbrowser.baseDn");
+		return conn.getConnectionParameter().getExtendedProperty(
+				"ldapbrowser.baseDn");
 	}
 
 	private static Map<String, String> uidMap = null;
 
-	public synchronized Map<String, String> getUidMap(Connection conn, StudioProgressMonitor monitor) {
+	public synchronized Map<String, String> getUidMap(Connection conn,
+			StudioProgressMonitor monitor) {
 		if (uidMap == null) {
 			uidMap = buildUidMap(conn, monitor);
 		}
@@ -180,24 +188,31 @@ public class LdapUtils {
 	 * 
 	 *         key: uid value: dn
 	 */
-	private Map<String, String> buildUidMap(Connection conn, StudioProgressMonitor monitor) {
+	private Map<String, String> buildUidMap(Connection conn,
+			StudioProgressMonitor monitor) {
 
 		TreeMap<String, String> retVal = new TreeMap<String, String>();
 
-		String filter = "(|(objectClass=" + LiderConstants.LdapAttributes.PardusAhenkObjectClass + ")(objectClass="
+		String filter = "(|(objectClass="
+				+ LiderConstants.LdapAttributes.PardusAhenkObjectClass
+				+ ")(objectClass="
 				+ LiderConstants.LdapAttributes.PardusUserObjectClass + "))";
-		StudioNamingEnumeration enumeration = search(null, filter,
-				new String[] { LiderConstants.LdapAttributes.UserIdentityAttribute }, SearchControls.SUBTREE_SCOPE, 0,
-				conn, monitor);
+		StudioNamingEnumeration enumeration = search(
+				null,
+				filter,
+				new String[] { LiderConstants.LdapAttributes.UserIdentityAttribute },
+				SearchControls.SUBTREE_SCOPE, 0, conn, monitor);
 
 		try {
 			while (enumeration.hasMore()) {
 				SearchResult item = enumeration.next();
-				Attribute attr = item.getAttributes().get(LiderConstants.LdapAttributes.UserIdentityAttribute);
+				Attribute attr = item.getAttributes().get(
+						LiderConstants.LdapAttributes.UserIdentityAttribute);
 				if (attr != null) {
 					Object val = attr.get();
 					// store as <UID, DN> pairs
-					retVal.put(((String) val).toLowerCase(Locale.ENGLISH), item.getName());
+					retVal.put(((String) val).toLowerCase(Locale.ENGLISH),
+							item.getName());
 				}
 			}
 		} catch (NamingException e) {
@@ -217,9 +232,10 @@ public class LdapUtils {
 	 * @param conn
 	 * @return
 	 */
-	public String findDnByAttribute(String baseDn, String attrName, String attrValue, Connection conn,
-			StudioProgressMonitor monitor) {
-		StudioNamingEnumeration enumeration = search(baseDn, createFilter(attrName, attrValue), new String[] {},
+	public String findDnByAttribute(String baseDn, String attrName,
+			String attrValue, Connection conn, StudioProgressMonitor monitor) {
+		StudioNamingEnumeration enumeration = search(baseDn,
+				createFilter(attrName, attrValue), new String[] {},
 				SearchControls.SUBTREE_SCOPE, 1, conn, monitor);
 		String dn = null;
 		try {
@@ -243,13 +259,15 @@ public class LdapUtils {
 	 * @param conn
 	 * @return
 	 */
-	public String findDnByAttribute(String attrName, String attrValue, Connection conn, StudioProgressMonitor monitor) {
+	public String findDnByAttribute(String attrName, String attrValue,
+			Connection conn, StudioProgressMonitor monitor) {
 		return findDnByAttribute(null, attrName, attrValue, conn, monitor);
 	}
 
 	private String createFilter(String attrName, String attrValue) {
 		StringBuilder filterExpr = new StringBuilder();
-		filterExpr.append("(").append(attrName).append("=").append(attrValue).append(")");
+		filterExpr.append("(").append(attrName).append("=").append(attrValue)
+				.append(")");
 		return filterExpr.toString();
 	}
 
@@ -259,8 +277,11 @@ public class LdapUtils {
 	 * @param conn
 	 * @return
 	 */
-	public String findDnByUid(String uid, Connection conn, StudioProgressMonitor monitor) {
-		return findDnByAttribute(LiderConstants.LdapAttributes.UserIdentityAttribute, uid, conn, monitor);
+	public String findDnByUid(String uid, Connection conn,
+			StudioProgressMonitor monitor) {
+		return findDnByAttribute(
+				LiderConstants.LdapAttributes.UserIdentityAttribute, uid, conn,
+				monitor);
 	}
 
 	/**
@@ -271,15 +292,18 @@ public class LdapUtils {
 	 * @param conn
 	 * @return
 	 */
-	public Attribute findAttributeByDn(String dn, String attrName, Connection conn, StudioProgressMonitor monitor) {
-		StudioNamingEnumeration enumeration = this.search(dn, OBJECT_CLASS_FILTER, new String[] { attrName },
+	public Attribute findAttributeByDn(String dn, String attrName,
+			Connection conn, StudioProgressMonitor monitor) {
+		StudioNamingEnumeration enumeration = this.search(dn,
+				OBJECT_CLASS_FILTER, new String[] { attrName },
 				SearchControls.OBJECT_SCOPE, 1, conn, monitor);
 		Attribute attr = null;
 		try {
 			if (enumeration != null) {
 				while (enumeration.hasMore()) {
 					SearchResult item = enumeration.next();
-					if (item.getAttributes() != null && item.getAttributes().get(attrName) != null) {
+					if (item.getAttributes() != null
+							&& item.getAttributes().get(attrName) != null) {
 						return item.getAttributes().get(attrName);
 					}
 				}
@@ -301,8 +325,10 @@ public class LdapUtils {
 	 * @param conn
 	 * @return
 	 */
-	public String findAttributeValueByDn(String dn, String attrName, Connection conn, StudioProgressMonitor monitor) {
-		Attribute attribute = this.findAttributeByDn(dn, attrName, conn, monitor);
+	public String findAttributeValueByDn(String dn, String attrName,
+			Connection conn, StudioProgressMonitor monitor) {
+		Attribute attribute = this.findAttributeByDn(dn, attrName, conn,
+				monitor);
 		return findAttributeValue(attribute);
 	}
 
@@ -336,9 +362,10 @@ public class LdapUtils {
 	 * @param conn
 	 * @return
 	 */
-	public List<String> findAttributeValuesByDn(String dn, String attrName, Connection conn,
-			StudioProgressMonitor monitor) {
-		Attribute attribute = this.findAttributeByDn(dn, attrName, conn, monitor);
+	public List<String> findAttributeValuesByDn(String dn, String attrName,
+			Connection conn, StudioProgressMonitor monitor) {
+		Attribute attribute = this.findAttributeByDn(dn, attrName, conn,
+				monitor);
 		return findAttributeValues(attribute);
 	}
 
@@ -349,7 +376,8 @@ public class LdapUtils {
 				for (int i = 0; i < attribute.size(); i++) {
 					Object obj = attribute.get(i);
 					if (obj instanceof byte[]) {
-						attrValues.add(new String((byte[]) obj, StandardCharsets.UTF_8));
+						attrValues.add(new String((byte[]) obj,
+								StandardCharsets.UTF_8));
 					} else {
 						attrValues.add(obj.toString());
 					}
@@ -368,13 +396,16 @@ public class LdapUtils {
 	 *         objectClass attribute with 'pardusAhenk' value, it is an Ahenk
 	 *         entry.
 	 */
-	public boolean isAgent(String dn, Connection conn, StudioProgressMonitor monitor) {
+	public boolean isAgent(String dn, Connection conn,
+			StudioProgressMonitor monitor) {
 		Attribute attribute = findAttributeByDn(dn, OBJECT_CLASS, conn, monitor);
-		return attributeHasValue(attribute, LiderConstants.LdapAttributes.PardusAhenkObjectClass);
+		return attributeHasValue(attribute,
+				LiderConstants.LdapAttributes.PardusAhenkObjectClass);
 	}
-	
+
 	public boolean isAgent(String dn) {
-		return isAgent(dn, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
+		return isAgent(dn, LdapConnectionListener.getConnection(),
+				LdapConnectionListener.getMonitor());
 	}
 
 	/**
@@ -383,13 +414,16 @@ public class LdapUtils {
 	 * @return true if provided dn is user node. if a node has objectClass
 	 *         attribute with pardus user value, it is an user node.
 	 */
-	public boolean isUser(String dn, Connection conn, StudioProgressMonitor monitor) {
+	public boolean isUser(String dn, Connection conn,
+			StudioProgressMonitor monitor) {
 		Attribute attribute = findAttributeByDn(dn, OBJECT_CLASS, conn, monitor);
-		return attributeHasValue(attribute, LiderConstants.LdapAttributes.PardusUserObjectClass);
+		return attributeHasValue(attribute,
+				LiderConstants.LdapAttributes.PardusUserObjectClass);
 	}
-	
+
 	public boolean isUser(String dn) {
-		return isUser(dn, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
+		return isUser(dn, LdapConnectionListener.getConnection(),
+				LdapConnectionListener.getMonitor());
 	}
 
 	/**
@@ -398,13 +432,16 @@ public class LdapUtils {
 	 * @param dn
 	 * @return list of user DNs
 	 */
-	public List<String> findUsers(String dn, Connection conn, StudioProgressMonitor monitor) {
+	public List<String> findUsers(String dn, Connection conn,
+			StudioProgressMonitor monitor) {
 
-		String filter = "(objectClass=" + LiderConstants.LdapAttributes.PardusUserObjectClass + ")";
+		String filter = "(objectClass="
+				+ LiderConstants.LdapAttributes.PardusUserObjectClass + ")";
 		List<String> dnList = new ArrayList<String>();
 
-		StudioNamingEnumeration enumeration = search(dn, filter, new String[] { OBJECT_CLASS },
-				SearchControls.SUBTREE_SCOPE, 0, conn, monitor);
+		StudioNamingEnumeration enumeration = search(dn, filter,
+				new String[] { OBJECT_CLASS }, SearchControls.SUBTREE_SCOPE, 0,
+				conn, monitor);
 		if (enumeration != null) {
 			try {
 				while (enumeration.hasMore()) {
@@ -419,19 +456,27 @@ public class LdapUtils {
 		return dnList;
 	}
 
+	public List<String> findUsers(String dn) {
+		return findUsers(dn, LdapConnectionListener.getConnection(),
+				LdapConnectionListener.getMonitor());
+	}
+
 	/**
 	 * Tries to find agent DNs under the provided DN
 	 * 
 	 * @param dn
 	 * @return list of agent DNs
 	 */
-	public List<String> findAgents(String dn, Connection conn, StudioProgressMonitor monitor) {
+	public List<String> findAgents(String dn, Connection conn,
+			StudioProgressMonitor monitor) {
 
-		String filter = "(objectClass=" + LiderConstants.LdapAttributes.PardusAhenkObjectClass + ")";
+		String filter = "(objectClass="
+				+ LiderConstants.LdapAttributes.PardusAhenkObjectClass + ")";
 		List<String> dnList = new ArrayList<String>();
 
-		StudioNamingEnumeration enumeration = search(dn, filter, new String[] { OBJECT_CLASS },
-				SearchControls.SUBTREE_SCOPE, 0, conn, monitor);
+		StudioNamingEnumeration enumeration = search(dn, filter,
+				new String[] { OBJECT_CLASS }, SearchControls.SUBTREE_SCOPE, 0,
+				conn, monitor);
 		if (enumeration != null) {
 			try {
 				while (enumeration.hasMore()) {
@@ -444,6 +489,11 @@ public class LdapUtils {
 		}
 
 		return dnList;
+	}
+
+	public List<String> findAgents(String dn) {
+		return findAgents(dn, LdapConnectionListener.getConnection(),
+				LdapConnectionListener.getMonitor());
 	}
 
 	/**
@@ -459,7 +509,8 @@ public class LdapUtils {
 					continuation.resolve();
 				}
 			}
-			new StudioBrowserJob(new SearchRunnable(new ISearch[] { searchinfo })).execute();
+			new StudioBrowserJob(new SearchRunnable(
+					new ISearch[] { searchinfo })).execute();
 		}
 	}
 
@@ -491,7 +542,9 @@ public class LdapUtils {
 	 * @param privileges
 	 * @param liderPrivilege
 	 */
-	private static void calculatePrivilege(Map<String, Map<String, Boolean>> privileges, final String liderPrivilege) {
+	private static void calculatePrivilege(
+			Map<String, Map<String, Boolean>> privileges,
+			final String liderPrivilege) {
 		String[] splitPirivilegeInfo = liderPrivilege.split(":");
 		String pdn = splitPirivilegeInfo[0].substring(1);
 		Map<String, Boolean> dnprivileges;
@@ -503,8 +556,11 @@ public class LdapUtils {
 		}
 		String[] keys = splitPirivilegeInfo[1].split(",");
 		for (String key : keys) {
-			dnprivileges.put(key,
-					splitPirivilegeInfo[2].substring(0, splitPirivilegeInfo[2].length() - 1).equals("true"));
+			dnprivileges
+					.put(key,
+							splitPirivilegeInfo[2].substring(0,
+									splitPirivilegeInfo[2].length() - 1)
+									.equals("true"));
 		}
 	}
 
@@ -515,20 +571,25 @@ public class LdapUtils {
 	 * @param conn
 	 * @param monitor
 	 */
-	private void calculatePrivilegesFromGroups(Map<String, Map<String, Boolean>> privileges, String dn, Connection conn,
-			StudioProgressMonitor monitor) {
+	private void calculatePrivilegesFromGroups(
+			Map<String, Map<String, Boolean>> privileges, String dn,
+			Connection conn, StudioProgressMonitor monitor) {
 		SearchControls searchControls = new SearchControls();
-		searchControls.setReturningAttributes(new String[] { LiderConstants.LdapAttributes.liderPrivilegeAttribute });
+		searchControls
+				.setReturningAttributes(new String[] { LiderConstants.LdapAttributes.liderPrivilegeAttribute });
 		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-		StudioNamingEnumeration sr = conn.getConnectionWrapper().search(findBaseDn(conn),
-				"(&(objectClass=pardusLider)(member=" + dn + "))", searchControls, AliasDereferencingMethod.NEVER,
+		StudioNamingEnumeration sr = conn.getConnectionWrapper().search(
+				findBaseDn(conn),
+				"(&(objectClass=pardusLider)(member=" + dn + "))",
+				searchControls, AliasDereferencingMethod.NEVER,
 				ReferralHandlingMethod.IGNORE, null, monitor, null);
 		try {
 			while (sr.hasMore()) {
 				SearchResult item = sr.next();
 				Attributes attrs = item.getAttributes();
-				Attribute attr = attrs.get(LiderConstants.LdapAttributes.liderPrivilegeAttribute);
+				Attribute attr = attrs
+						.get(LiderConstants.LdapAttributes.liderPrivilegeAttribute);
 				if (attr != null) {
 					for (int i = 0; i < attr.size(); i++) {
 						Object val = attr.get(i);
@@ -547,23 +608,29 @@ public class LdapUtils {
 	 * @param monitor
 	 * @return
 	 */
-	public Map<String, Map<String, Boolean>> findPrivileges(Connection conn, StudioProgressMonitor monitor) {
+	public Map<String, Map<String, Boolean>> findPrivileges(Connection conn,
+			StudioProgressMonitor monitor) {
 
 		Map<String, Map<String, Boolean>> retVal = new HashMap<String, Map<String, Boolean>>();
 		SearchControls searchControls = new SearchControls();
 		searchControls.setCountLimit(1);
-		searchControls.setReturningAttributes(new String[] { LiderConstants.LdapAttributes.liderPrivilegeAttribute });
+		searchControls
+				.setReturningAttributes(new String[] { LiderConstants.LdapAttributes.liderPrivilegeAttribute });
 		searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);
 
-		calculatePrivilegesFromGroups(retVal, UserSettings.USER_DN, conn, monitor);
+		calculatePrivilegesFromGroups(retVal, UserSettings.USER_DN, conn,
+				monitor);
 
-		StudioNamingEnumeration sr = conn.getConnectionWrapper().search(UserSettings.USER_DN, OBJECT_CLASS_FILTER,
-				searchControls, AliasDereferencingMethod.NEVER, ReferralHandlingMethod.IGNORE, null, monitor, null);
+		StudioNamingEnumeration sr = conn.getConnectionWrapper().search(
+				UserSettings.USER_DN, OBJECT_CLASS_FILTER, searchControls,
+				AliasDereferencingMethod.NEVER, ReferralHandlingMethod.IGNORE,
+				null, monitor, null);
 		try {
 			while (sr.hasMore()) {
 				SearchResult item = sr.next();
 				Attributes attrs = item.getAttributes();
-				Attribute attr = attrs.get(LiderConstants.LdapAttributes.liderPrivilegeAttribute);
+				Attribute attr = attrs
+						.get(LiderConstants.LdapAttributes.liderPrivilegeAttribute);
 				if (attr != null) {
 					for (int i = 0; i < attr.size(); i++) {
 						Object val = attr.get(i);
@@ -584,7 +651,8 @@ public class LdapUtils {
 	 * @param dn
 	 * @param attrs
 	 */
-	public void removeAttribute(String dn, Map<String, Object> attrs, Connection conn, StudioProgressMonitor monitor) {
+	public void removeAttribute(String dn, Map<String, Object> attrs,
+			Connection conn, StudioProgressMonitor monitor) {
 		int counter = 0;
 		ModificationItem[] mods = new ModificationItem[attrs.size()];
 		for (Entry<String, Object> attr : attrs.entrySet()) {
@@ -601,7 +669,8 @@ public class LdapUtils {
 	 * @param dn
 	 * @param attrs
 	 */
-	public void modifyAttribute(String dn, Map<String, Object> attrs, Connection conn, StudioProgressMonitor monitor) {
+	public void modifyAttribute(String dn, Map<String, Object> attrs,
+			Connection conn, StudioProgressMonitor monitor) {
 		int counter = 0;
 		ModificationItem[] mods = new ModificationItem[attrs.size()];
 		for (Entry<String, Object> attr : attrs.entrySet()) {
