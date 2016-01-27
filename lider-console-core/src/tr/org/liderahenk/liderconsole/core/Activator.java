@@ -1,9 +1,15 @@
 package tr.org.liderahenk.liderconsole.core;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -11,6 +17,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +40,17 @@ public class Activator extends AbstractUIPlugin {
 	/** The JNDI loggers. */
 	private List<ILogger> loggers;
 
+	/**
+	 * Add frequently used images with their names here.
+	 * Any plugin can reach them using ImageRegistry.
+	 */
+	public static final String[] IMAGES = { 
+		"success", 
+		"warning", 
+		"information", 
+		"error" 
+		};
+	
 	public List<ILogger> getLoggers() {
 //		if (loggers == null) {
 //			loggers = new ArrayList<ILogger>();
@@ -145,5 +163,20 @@ public class Activator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
-
+	
+	@Override
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		
+		Bundle bundle = Platform.getBundle(PLUGIN_ID);
+		
+		for (String s : IMAGES) {
+			IPath path = new Path("icons/" + s);
+			
+			URL url = FileLocator.find(bundle, path, null);
+			
+			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+			
+			reg.put(s, desc);
+		}
+	}
 }

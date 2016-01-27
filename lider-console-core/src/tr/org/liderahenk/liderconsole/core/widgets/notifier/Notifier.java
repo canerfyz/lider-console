@@ -10,6 +10,7 @@
  *******************************************************************************/
 package tr.org.liderahenk.liderconsole.core.widgets.notifier;
 
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -25,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import tr.org.liderahenk.liderconsole.core.Activator;
 import tr.org.liderahenk.liderconsole.core.utils.SWTGraphicUtil;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.notifier.NotifierColorsFactory.NotifierTheme;
@@ -43,20 +45,26 @@ public class Notifier {
 
 	private static final int STEP = 5;
 	
+	private static final ImageRegistry IMAGE_REGISTRY = new ImageRegistry();
+	
 	public static void error(final String title, final String text) {
-		notify(SWTResourceManager.getImage("icons/error.png"), title, text, NotifierTheme.ERROR_THEME);
+//		notify(SWTResourceManager.getImage("icons/error.png"), title, text, NotifierTheme.ERROR_THEME);
+		notify(IMAGE_REGISTRY.get("error"), title, text, NotifierTheme.ERROR_THEME);
 	}
 	
 	public static void warning(final String title, final String text) {
-		notify(SWTResourceManager.getImage("icons/warning.png"), title, text, NotifierTheme.WARNING_THEME);
+//		notify(SWTResourceManager.getImage("icons/warning.png"), title, text, NotifierTheme.WARNING_THEME);
+		notify(IMAGE_REGISTRY.get("warning"), title, text, NotifierTheme.WARNING_THEME);
 	}
 	
 	public static void info(final String title, final String text) {
-		notify(SWTResourceManager.getImage("icons/info.png"), title, text, NotifierTheme.INFO_THEME);
+//		notify(SWTResourceManager.getImage("icons/information.png"), title, text, NotifierTheme.INFO_THEME);
+		notify(IMAGE_REGISTRY.get("information"), title, text, NotifierTheme.INFO_THEME);
 	}
 	
 	public static void success(final String title, final String text) {
-		notify(SWTResourceManager.getImage("icons/success.png"), title, text, NotifierTheme.SUCCESS_THEME);
+//		notify(SWTResourceManager.getImage("icons/success.png"), title, text, NotifierTheme.SUCCESS_THEME);
+		notify(IMAGE_REGISTRY.get("success"), title, text, NotifierTheme.SUCCESS_THEME);
 	}
 
 	/**
