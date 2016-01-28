@@ -9,7 +9,6 @@
    </extension>
    <extension-point id="tr.org.liderahenk.liderconsole.core.logger" name="%extension.point.logger" schema="schema/tr.org.liderahenk.liderconsole.core.logger.exsd"/>
    <extension-point id="tr.org.liderahenk.liderconsole.core.profilemenu" name="%extension.point.profile.menu" schema="schema/tr.org.liderahenk.liderconsole.core.profilemenu.exsd"/>
-   <extension-point id="tr.org.liderahenk.liderconsole.core.actionmenu" name="%extension.point.action.menu" schema="schema/tr.org.liderahenk.liderconsole.core.actionmenu.exsd"/>
    <extension
          point="org.eclipse.help.toc">
       <toc
@@ -122,15 +121,6 @@
       <view
             allowMultiple="false"
             category="tr.org.liderahenk.liderconsole.core.category"
-            class="tr.org.liderahenk.liderconsole.core.views.ActionMenuView"
-            icon="icons/folder-open.png"
-            id="tr.org.liderahenk.liderconsole.core.views.ActionMenuView"
-            name="%view.action.menu"
-            restorable="true">
-      </view>
-      <view
-            allowMultiple="false"
-            category="tr.org.liderahenk.liderconsole.core.category"
             class="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
             icon="icons/task-play.png"
             id="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
@@ -208,21 +198,11 @@
           targetID="tr.org.liderahenk.liderconsole.core.perspectives.MainPerspective">
        <view
              closeable="false"
-             id="tr.org.liderahenk.liderconsole.core.views.ActionMenuView"
+             id="tr.org.liderahenk.liderconsole.core.views.ProfileMenuView"
              minimized="false"
              ratio="0.25"
              relationship="left"
              relative="org.eclipse.ui.editorss"
-             showTitle="true"
-             visible="true">
-       </view>
-       <view
-             closeable="false"
-             id="tr.org.liderahenk.liderconsole.core.views.ProfileMenuView"
-             minimized="false"
-             ratio="0.25"
-             relationship="stack"
-             relative="tr.org.liderahenk.liderconsole.core.views.ActionMenuView"
              showTitle="true"
              visible="true">
        </view>

@@ -93,7 +93,7 @@ public class ProfileMenuView extends ViewPart {
 					GridData data = new GridData();
 				    float fontHeight = parent.getShell().getFont().getFontData()[0].height;
 				    data.heightHint = img.getImageData().height + (int)fontHeight + 20;
-				    data.widthHint = 100;
+				    data.widthHint = 110;
 				    
 					final Label pluginImage = ImageButton(pluginComp, img, null);
 					pluginImage.setLayoutData(data);
@@ -106,7 +106,6 @@ public class ProfileMenuView extends ViewPart {
 					
 					GridData d = new GridData(SWT.FILL);
 					d.grabExcessHorizontalSpace = true;
-					d.widthHint = 49;
 					
 					Composite buttonsComp = new Composite(pluginComp, SWT.NONE);
 					buttonsComp.setLayout(btnLayout);
