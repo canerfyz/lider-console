@@ -10,7 +10,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -24,6 +26,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
@@ -66,49 +69,54 @@ public class ProfileMenuView extends ViewPart {
 			for (IConfigurationElement e : config) {
 				try {
 					final String commandId = e.getAttribute("commandId");
+					final String executionId = e.getAttribute("executionId");
+					
 					final String icon = e.getAttribute("icon");
 
-					final Command command = commandService
-							.getCommand(commandId);
-					if (command != null) {
-						// Add new button and its listener for the menu
-						// contribution!
-						final Button btn = new Button(composite, SWT.PUSH);
-						btn.setToolTipText(command.getName());
-						String pluginId = e.getContributor().getName();
-						AbstractUIPlugin.imageDescriptorFromPlugin(pluginId, icon).createImage();
+					final Command command = commandService.getCommand(commandId);
+					final Command execution = commandService.getCommand(executionId);
+					
+					final String profileDefinition = e.getAttribute("hasProfileDefinition");
+					final String profileExecution = e.getAttribute("hasProfileExecution");
+					
+					String pluginId = e.getContributor().getName();
+					final Image img = AbstractUIPlugin.imageDescriptorFromPlugin(pluginId, icon).createImage();
+					
+					GridLayout pluginLayout = new GridLayout(1, true);
+					pluginLayout.verticalSpacing = 0;
+					pluginLayout.horizontalSpacing = 0;
+					pluginLayout.marginWidth = 0;
+					
+					Composite pluginComp = new Composite(composite, SWT.NONE);
+					pluginComp.setLayout(pluginLayout);
+					
+					GridData data = new GridData();
+				    float fontHeight = parent.getShell().getFont().getFontData()[0].height;
+				    data.heightHint = img.getImageData().height + (int)fontHeight + 20;
+				    data.widthHint = 110;
+				    
+					final Label pluginImage = ImageButton(pluginComp, img, null);
+					pluginImage.setLayoutData(data);
+					pluginImage.setToolTipText(command.getName());
+					
+					GridLayout btnLayout = new GridLayout(2, true);
+					btnLayout.horizontalSpacing = 0;
+					btnLayout.marginHeight = 0;
+					btnLayout.marginWidth = 0;
+					
+					GridData d = new GridData(SWT.FILL);
+					d.grabExcessHorizontalSpace = true;
+					
+					Composite buttonsComp = new Composite(pluginComp, SWT.NONE);
+					buttonsComp.setLayout(btnLayout);
+					
+					if ("true".equals(profileDefinition) 
+							&& commandId != null) {
+						final Button profile = new Button(buttonsComp, SWT.PUSH);
+						profile.setText("Profile");
+						profile.setLayoutData(d);
 						
-						final Image img = AbstractUIPlugin.imageDescriptorFromPlugin(pluginId, icon).createImage();
-						final String text =command.getName();
-						
-						GridData data = new GridData();
-					    float fontHeight = parent.getShell().getFont().getFontData()[0].height;
-					    data.heightHint = img.getImageData().height + (int)fontHeight + 20;
-					    data.widthHint = 100;
-						
-					    btn.setLayoutData(data);
-						btn.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-						
-						FontData[] fD = btn.getFont().getFontData();
-						fD[0].setHeight(7);
-						btn.setFont( new Font(parent.getDisplay(),fD[0]));
-						
-						btn.addListener(SWT.Paint, new Listener() {
-
-					        @Override
-					        public void handleEvent(Event event) {
-					            GC gc = event.gc;
-
-					            int width = ((GridData)btn.getLayoutData()).widthHint;
-					            int height = ((GridData)btn.getLayoutData()).heightHint;
-					            Point textSize = gc.textExtent(text);
-
-					            gc.drawText(text, width / 2 - textSize.x / 2, img.getImageData().height + textSize.y/2, true);
-					            gc.drawImage(img, width / 2 - img.getImageData().width / 2, height / 2 - img.getImageData().height / 2 - textSize.y / 2);
-					        }
-					    });
-						
-						btn.addSelectionListener(new SelectionAdapter() {
+						profile.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
 								try {
@@ -125,6 +133,33 @@ public class ProfileMenuView extends ViewPart {
 							}
 						});
 					}
+					
+					if ("true".equals(profileExecution) 
+							&& executionId != null) {
+						
+						final Button action = new Button(buttonsComp, SWT.PUSH);
+						action.setText("Action");
+						action.setLayoutData(d);
+						
+						action.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								try {
+									ExecutionEvent event = new ExecutionEvent();
+									execution.executeWithChecks(event);
+								} catch (ExecutionException e1) {
+									e1.printStackTrace();
+								} catch (NotDefinedException e1) {
+									e1.printStackTrace();
+								} catch (NotEnabledException e1) {
+									e1.printStackTrace();
+								} catch (NotHandledException e1) {
+									e1.printStackTrace();
+								}
+							}
+						});
+						
+					}
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -132,6 +167,34 @@ public class ProfileMenuView extends ViewPart {
 		}
 	}
 
+	/**
+	 * @author Caner Feyzullahoğlu <caner.feyzullahoglu@agem.com.tr>
+	 * @param parent 
+	 * @param image
+	 * @param mouseListener
+	 * @return Creates a label with a custom image (ImageButton) 
+	 * which works like a SWT.PUSH button and changes its display when mouse over. 
+	 * <strong><i>mouseOverImage</i></strong> and
+	 * <strong>mouseListener</strong> parameters can be passed as <strong>null</strong>
+	 * if handling such event is not needed.
+	 */
+	public static Label ImageButton(Composite parent, final Image image, MouseListener mouseListener) {
+		
+		final Label imageButton = new Label(parent, SWT.BORDER);
+		
+		if (imageButton != null) {
+			imageButton.setImage(image);
+			imageButton.setAlignment(SWT.CENTER);
+		}
+		
+		if (mouseListener != null) {
+			imageButton.addMouseListener(mouseListener);
+		}
+		
+		return imageButton;
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 

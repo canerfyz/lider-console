@@ -39,33 +39,33 @@ public class NotifierColorsFactory {
 		final NotifierColors colors = new NotifierColors();
 		switch (theme) {
 		case ERROR_THEME:
-			colors.textColor = new Color(Display.getDefault(), 4, 64, 140);
-			colors.titleColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+			colors.textColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
+			colors.titleColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
 			colors.borderColor = new Color(Display.getDefault(), 153, 188, 232);
-			colors.leftColor = new Color(Display.getDefault(), 210, 225, 244);
-			colors.rightColor = new Color(Display.getDefault(), 182, 207, 238);
+			colors.leftColor = new Color(Display.getDefault(), 255, 69, 0);
+			colors.rightColor = new Color(Display.getDefault(), 255, 127, 80);
 			break;
 		case WARNING_THEME:
 			colors.textColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-			colors.titleColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
+			colors.titleColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 			colors.borderColor = new Color(Display.getDefault(), 208, 208, 208);
-			colors.leftColor = new Color(Display.getDefault(), 255, 255, 255);
-			colors.rightColor = new Color(Display.getDefault(), 208, 208, 208);
+			colors.leftColor = new Color(Display.getDefault(), 255, 165, 0);
+			colors.rightColor = new Color(Display.getDefault(), 255, 255, 153);
 			break;
 		case SUCCESS_THEME:
 			colors.textColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-			colors.titleColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
+			colors.titleColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 			colors.borderColor = new Color(Display.getDefault(), 208, 208, 208);
-			colors.leftColor = new Color(Display.getDefault(), 255, 255, 255);
-			colors.rightColor = new Color(Display.getDefault(), 208, 208, 208);
+			colors.leftColor = new Color(Display.getDefault(), 50, 205, 50);
+			colors.rightColor = new Color(Display.getDefault(), 144, 238, 144);
 			break;
 		case INFO_THEME:
 		default:
 			colors.textColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 			colors.titleColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 			colors.borderColor = new Color(Display.getDefault(), 218, 178, 85);
-			colors.leftColor = new Color(Display.getDefault(), 220, 220, 160);
-			colors.rightColor = new Color(Display.getDefault(), 255, 255, 191);
+			colors.leftColor = new Color(Display.getDefault(), 30, 144, 255);
+			colors.rightColor = new Color(Display.getDefault(), 135, 206, 250);
 			break;
 		}
 		return colors;
