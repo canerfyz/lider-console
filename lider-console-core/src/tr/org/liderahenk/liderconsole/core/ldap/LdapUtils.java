@@ -35,6 +35,12 @@ import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
 
+/**
+ * LdapUtils provides utility methods for querying and updating LDAP entries.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class LdapUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(LdapUtils.class);
@@ -372,7 +378,7 @@ public class LdapUtils {
 		Attribute attribute = findAttributeByDn(dn, OBJECT_CLASS, conn, monitor);
 		return attributeHasValue(attribute, LiderConstants.LdapAttributes.PardusAhenkObjectClass);
 	}
-	
+
 	public boolean isAgent(String dn) {
 		return isAgent(dn, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
 	}
@@ -387,7 +393,7 @@ public class LdapUtils {
 		Attribute attribute = findAttributeByDn(dn, OBJECT_CLASS, conn, monitor);
 		return attributeHasValue(attribute, LiderConstants.LdapAttributes.PardusUserObjectClass);
 	}
-	
+
 	public boolean isUser(String dn) {
 		return isUser(dn, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
 	}

@@ -87,7 +87,7 @@ public class LdapConnectionListener implements IConnectionListener {
 
 		XMPPClient.getInstance().disconnect();
 
-		RestSettings.setServerRestUrl(null);
+		RestSettings.setServerUrl(null);
 		UserSettings.setCurrentUserDn(null);
 		UserSettings.setCurrentUserPassword(null);
 		UserSettings.setCurrentUserPrivileges(null);
@@ -99,12 +99,12 @@ public class LdapConnectionListener implements IConnectionListener {
 			monitor.done();
 			monitor = null;
 		}
-		
+
 	}
 
 	@Override
 	public void connectionOpened(Connection conn, StudioProgressMonitor mon) {
-		
+
 		// Open LDAP Search by default editor on startup
 		openLdapSearchEditor();
 
@@ -149,41 +149,55 @@ public class LdapConnectionListener implements IConnectionListener {
 
 			Map<String, Map<String, Boolean>> privileges = LdapUtils.getInstance().findPrivileges(conn, monitor);
 			UserSettings.setCurrentUserPrivileges(privileges);
-			
-			StudioNamingEnumeration enumeration = LdapUtils.getInstance().search(restFulConfigDN, LdapUtils.OBJECT_CLASS_FILTER, new String[]{  }, SearchControls.OBJECT_SCOPE, 1, conn, monitor);
+
+			StudioNamingEnumeration enumeration = LdapUtils.getInstance().search(restFulConfigDN,
+					LdapUtils.OBJECT_CLASS_FILTER, new String[] {}, SearchControls.OBJECT_SCOPE, 1, conn, monitor);
 			try {
 				if (enumeration != null && enumeration.hasMore()) {
 					SearchResult item = enumeration.next();
-					
+
 					// REST Address
-					Attribute attribute = item.getAttributes().get(LiderConstants.LdapAttributes.configRestFulAddressAttribute);
+					Attribute attribute = item.getAttributes()
+							.get(LiderConstants.LdapAttributes.configRestFulAddressAttribute);
 					String restFulAddress = LdapUtils.getInstance().findAttributeValue(attribute);
-					
-					// TODO read these attributes from a properties file. (Same as LiderConstants.LdapAttributes)
-//					attribute = item.getAttributes().get(LiderConstants.LdapAttributes.configDeviceObjectClassAttribute);
-//					String tmp = LdapUtils.getInstance().findAttributeValue(attribute);
-//					if (tmp != null && !"".equals(tmp)) {
-//						LiderConstants.LdapAttributes.PardusAhenkObjectClass = tmp;
-//					}
-//					
-//					attribute = item.getAttributes().get(LiderConstants.LdapAttributes.configUserObjectClassAttribute);
-//					tmp = LdapUtils.getInstance().findAttributeValue(attribute);
-//					if (tmp != null && !"".equals(tmp)) {
-//						LiderConstants.LdapAttributes.PardusUserObjectClass = tmp;
-//					}
-//					
-//					attribute = item.getAttributes().get(LiderConstants.LdapAttributes.configUserIdentityAttribute);
-//					tmp = LdapUtils.getInstance().findAttributeValue(attribute);
-//					if (tmp != null && !"".equals(tmp)) {
-//						LiderConstants.LdapAttributes.UserIdentityAttribute = tmp;
-//					}
-//					
-//					attribute = item.getAttributes().get(LiderConstants.LdapAttributes.configOwnerAttribute);
-//					tmp = LdapUtils.getInstance().findAttributeValue(attribute);
-//					if (tmp != null && !"".equals(tmp)) {
-//						LiderConstants.LdapAttributes.AhenkUserAttribute = tmp;
-//					}
-					
+
+					// TODO read these attributes from a properties file. (Same
+					// as LiderConstants.LdapAttributes)
+					// attribute =
+					// item.getAttributes().get(LiderConstants.LdapAttributes.configDeviceObjectClassAttribute);
+					// String tmp =
+					// LdapUtils.getInstance().findAttributeValue(attribute);
+					// if (tmp != null && !"".equals(tmp)) {
+					// LiderConstants.LdapAttributes.PardusAhenkObjectClass =
+					// tmp;
+					// }
+					//
+					// attribute =
+					// item.getAttributes().get(LiderConstants.LdapAttributes.configUserObjectClassAttribute);
+					// tmp =
+					// LdapUtils.getInstance().findAttributeValue(attribute);
+					// if (tmp != null && !"".equals(tmp)) {
+					// LiderConstants.LdapAttributes.PardusUserObjectClass =
+					// tmp;
+					// }
+					//
+					// attribute =
+					// item.getAttributes().get(LiderConstants.LdapAttributes.configUserIdentityAttribute);
+					// tmp =
+					// LdapUtils.getInstance().findAttributeValue(attribute);
+					// if (tmp != null && !"".equals(tmp)) {
+					// LiderConstants.LdapAttributes.UserIdentityAttribute =
+					// tmp;
+					// }
+					//
+					// attribute =
+					// item.getAttributes().get(LiderConstants.LdapAttributes.configOwnerAttribute);
+					// tmp =
+					// LdapUtils.getInstance().findAttributeValue(attribute);
+					// if (tmp != null && !"".equals(tmp)) {
+					// LiderConstants.LdapAttributes.AhenkUserAttribute = tmp;
+					// }
+
 					if ("".equals(UserSettings.USER_DN)) {
 						// TODO messages_tr/en
 						Notifier.notify("WARNING",
@@ -192,18 +206,20 @@ public class LdapConnectionListener implements IConnectionListener {
 										LiderConstants.LdapAttributes.UserIdentityAttribute));
 					} else {
 						if (!"".equals(restFulAddress)) {
-							RestSettings.setServerRestUrl(restFulAddress);
-
-							Map<String, Object> XmppInfo = new RestClient().getXmppAddress();
-							if (XmppInfo != null) {
-								// Initialise UID map before connecting to XMPP server.
-								LdapUtils.getInstance().getUidMap(conn, monitor);
-								XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
-										XmppInfo.get("xmppDomain").toString(), XmppInfo.get("xmppIp").toString(), 5222);
-							} else {
-								// TODO messages_tr/en
-								Notifier.notify("WARNING", "XMPP Baglanti Bilgilerine Erisilemiyor.");
-							}
+							// TODO
+//							RestSettings.setServerRestUrl(restFulAddress);
+//
+//							Map<String, Object> XmppInfo = new RestClient().getXmppAddress();
+//							if (XmppInfo != null) {
+//								// Initialise UID map before connecting to XMPP
+//								// server.
+//								LdapUtils.getInstance().getUidMap(conn, monitor);
+//								XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
+//										XmppInfo.get("xmppDomain").toString(), XmppInfo.get("xmppIp").toString(), 5222);
+//							} else {
+//								// TODO messages_tr/en
+//								Notifier.notify("WARNING", "XMPP Baglanti Bilgilerine Erisilemiyor.");
+//							}
 						} else {
 							// TODO messages_tr/en
 							Notifier.notify("WARNING",

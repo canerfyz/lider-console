@@ -46,7 +46,7 @@ import org.eclipse.ui.part.EditorPart;
 import tr.org.liderahenk.liderconsole.task.i18n.Messages;
 //import tr.org.liderahenk.liderconsole.core.MysProgressMonitorDialog;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
-import tr.org.liderahenk.liderconsole.core.schedule.ScheduleRequest;
+//import tr.org.liderahenk.liderconsole.core.schedule.ScheduleRequest;
 import tr.org.liderahenk.liderconsole.core.task.Scheduler;
 import tr.org.liderahenk.liderconsole.core.utils.ColumnViewerSorter;
 
@@ -130,30 +130,30 @@ public class ScheduledTaskEditor extends EditorPart {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
-				RestClient rest = new RestClient();
-				ScheduleRequest scheduleRequest = new ScheduleRequest();
-				scheduleRequest.setActive(false);
-				
-				if (getCurrentTask().size() == 1) {
-					scheduleRequest.setOperation(tr.org.liderahenk.liderconsole.core.schedule.ScheduleOperation.UPDATE);
-					scheduleRequest.setScheduleId(getCurrentTask().get(0).getId());
-					scheduleRequest.setCronString(getCurrentTask().get(0).getCronFormat());
-
-					rest.getDirectServerResult(getCurrentTask().get(0).getSystemRequest(), new HashMap<String, Object>(), scheduleRequest);
-					btnActivateTask.setEnabled(false);
-					btnStopTask.setEnabled(false);
-				}
-				else
-				{
-					for (Scheduler scheduler : getCurrentTask()) {
-						scheduleRequest.setOperation(tr.org.liderahenk.liderconsole.core.schedule.ScheduleOperation.UPDATE);
-						scheduleRequest.setScheduleId(scheduler.getId());
-						scheduleRequest.setCronString(scheduler.getCronFormat());
-
-						rest.getDirectServerResult(scheduler.getSystemRequest(), new HashMap<String, Object>(), scheduleRequest);						
-					}
-				}
+				// TODO
+//				RestClient rest = new RestClient();
+//				ScheduleRequest scheduleRequest = new ScheduleRequest();
+//				scheduleRequest.setActive(false);
+//				
+//				if (getCurrentTask().size() == 1) {
+//					scheduleRequest.setOperation(tr.org.liderahenk.liderconsole.core.schedule.ScheduleOperation.UPDATE);
+//					scheduleRequest.setScheduleId(getCurrentTask().get(0).getId());
+//					scheduleRequest.setCronString(getCurrentTask().get(0).getCronFormat());
+//
+//					rest.getDirectServerResult(getCurrentTask().get(0).getSystemRequest(), new HashMap<String, Object>(), scheduleRequest);
+//					btnActivateTask.setEnabled(false);
+//					btnStopTask.setEnabled(false);
+//				}
+//				else
+//				{
+//					for (Scheduler scheduler : getCurrentTask()) {
+//						scheduleRequest.setOperation(tr.org.liderahenk.liderconsole.core.schedule.ScheduleOperation.UPDATE);
+//						scheduleRequest.setScheduleId(scheduler.getId());
+//						scheduleRequest.setCronString(scheduler.getCronFormat());
+//
+//						rest.getDirectServerResult(scheduler.getSystemRequest(), new HashMap<String, Object>(), scheduleRequest);						
+//					}
+//				}
 				
 				tblVwrTasks.setInput( getLogsFromServer(new HashMap<String, Object>(), "scheduler") ); //$NON-NLS-1$
 				tblVwrTasks.refresh();
@@ -191,30 +191,30 @@ public class ScheduledTaskEditor extends EditorPart {
 //				tblVwrTasks.refresh();
 //				btnActivateTask.setEnabled(false);
 //				btnStopTask.setEnabled(false);
-				
-				RestClient rest = new RestClient();
-				ScheduleRequest scheduleRequest = new ScheduleRequest();
-				scheduleRequest.setActive(true);
-				
-				if (getCurrentTask().size() == 1) {
-					scheduleRequest.setOperation(tr.org.liderahenk.liderconsole.core.schedule.ScheduleOperation.UPDATE);
-					scheduleRequest.setScheduleId(getCurrentTask().get(0).getId());
-					scheduleRequest.setCronString(getCurrentTask().get(0).getCronFormat());
-
-					rest.getDirectServerResult(getCurrentTask().get(0).getSystemRequest(), new HashMap<String, Object>(), scheduleRequest);
-					btnActivateTask.setEnabled(false);
-					btnStopTask.setEnabled(false);
-				}
-				else
-				{
-					for (Scheduler scheduler : getCurrentTask()) {
-						scheduleRequest.setOperation(tr.org.liderahenk.liderconsole.core.schedule.ScheduleOperation.UPDATE);
-						scheduleRequest.setScheduleId(scheduler.getId());
-						scheduleRequest.setCronString(scheduler.getCronFormat());
-
-						rest.getDirectServerResult(scheduler.getSystemRequest(), new HashMap<String, Object>(), scheduleRequest);						
-					}
-				}
+	// TODO			
+//				RestClient rest = new RestClient();
+//				ScheduleRequest scheduleRequest = new ScheduleRequest();
+//				scheduleRequest.setActive(true);
+//				
+//				if (getCurrentTask().size() == 1) {
+//					scheduleRequest.setOperation(tr.org.liderahenk.liderconsole.core.schedule.ScheduleOperation.UPDATE);
+//					scheduleRequest.setScheduleId(getCurrentTask().get(0).getId());
+//					scheduleRequest.setCronString(getCurrentTask().get(0).getCronFormat());
+//
+//					rest.getDirectServerResult(getCurrentTask().get(0).getSystemRequest(), new HashMap<String, Object>(), scheduleRequest);
+//					btnActivateTask.setEnabled(false);
+//					btnStopTask.setEnabled(false);
+//				}
+//				else
+//				{
+//					for (Scheduler scheduler : getCurrentTask()) {
+//						scheduleRequest.setOperation(tr.org.liderahenk.liderconsole.core.schedule.ScheduleOperation.UPDATE);
+//						scheduleRequest.setScheduleId(scheduler.getId());
+//						scheduleRequest.setCronString(scheduler.getCronFormat());
+//
+//						rest.getDirectServerResult(scheduler.getSystemRequest(), new HashMap<String, Object>(), scheduleRequest);						
+//					}
+//				}
 				
 				tblVwrTasks.setInput( getLogsFromServer(new HashMap<String, Object>(), "scheduler") ); //$NON-NLS-1$
 				tblVwrTasks.refresh();
@@ -455,18 +455,20 @@ public class ScheduledTaskEditor extends EditorPart {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Scheduler[] getLogsFromServer(Map<String, Object> params, String rest) {		
-		String serverResult = null;
-		serverResult = new RestClient().getServerResult("/rest/" + rest, params); //$NON-NLS-1$
-		
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		List<Scheduler> itemList = new ArrayList<Scheduler>();
-		if (null != serverResult) {
-			Gson gson = gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss").serializeNulls().create(); //$NON-NLS-1$
-			itemList = (List<Scheduler>) gson.fromJson( serverResult, new TypeToken<List<Scheduler>>() {}.getType());			
-		}		
-		Scheduler[] arr = new Scheduler[itemList.size()];
- 		return  itemList.toArray(arr);
+	public Scheduler[] getLogsFromServer(Map<String, Object> params, String rest) {	
+		// TODO 
+//		String serverResult = null;
+//		serverResult = new RestClient().getServerResult("/rest/" + rest, params); //$NON-NLS-1$
+//		
+//		GsonBuilder gsonBuilder = new GsonBuilder();
+//		List<Scheduler> itemList = new ArrayList<Scheduler>();
+//		if (null != serverResult) {
+//			Gson gson = gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss").serializeNulls().create(); //$NON-NLS-1$
+//			itemList = (List<Scheduler>) gson.fromJson( serverResult, new TypeToken<List<Scheduler>>() {}.getType());			
+//		}		
+//		Scheduler[] arr = new Scheduler[itemList.size()];
+// 		return  itemList.toArray(arr);
+		return null;
 	}
 	
 	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {

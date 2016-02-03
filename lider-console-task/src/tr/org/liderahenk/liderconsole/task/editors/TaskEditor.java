@@ -1250,8 +1250,9 @@ public class TaskEditor extends EditorPart {
 			filterParams.put(OFFSET, 0);
 		}
 		
+		// TODO
 		if (!filterParams.isEmpty()) {			
-			serverResult = new RestClient().getServerResult("/rest/" + rest, filterParams); //$NON-NLS-1$			
+//			serverResult = new RestClient().getServerResult("/rest/" + rest, filterParams); //$NON-NLS-1$			
 		}
 		
 		GsonBuilder gsonBuilder = new GsonBuilder();
@@ -1274,8 +1275,9 @@ public class TaskEditor extends EditorPart {
 	
 	public Long getTaskCountFromServer(Map<String, Object> params, String rest) {		
 		String serverResult = null;
+		// TODO
 		if (!filterParams.isEmpty()) {
-			serverResult = new RestClient().getServerResult( "/rest/" + rest, filterParams ); //$NON-NLS-1$
+//			serverResult = new RestClient().getServerResult( "/rest/" + rest, filterParams ); //$NON-NLS-1$
 		}
 		
 		GsonBuilder gsonBuilder = new GsonBuilder();
@@ -1289,7 +1291,8 @@ public class TaskEditor extends EditorPart {
 	
 	public List<String> getPluginNamesFromServer() {		
 		String serverResult = null;
-		serverResult = new RestClient().getServerResult("/rest/agent/liderplugins", new HashMap<String, Object>()); //$NON-NLS-1$
+		// TODO
+//		serverResult = new RestClient().getServerResult("/rest/agent/liderplugins", new HashMap<String, Object>()); //$NON-NLS-1$
 		
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		List<String> pluginNames = new ArrayList<String>();

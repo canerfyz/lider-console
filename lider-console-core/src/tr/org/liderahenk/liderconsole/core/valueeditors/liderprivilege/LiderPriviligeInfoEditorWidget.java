@@ -33,7 +33,6 @@ import com.google.gson.reflect.TypeToken;
 import tr.org.liderahenk.liderconsole.core.dialogs.LiderMessageDialog;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
-import tr.org.liderahenk.liderconsole.core.rest.ServerResult;
 import tr.org.liderahenk.liderconsole.core.utils.BaseWidgetUtils;
 
 
@@ -133,20 +132,20 @@ public class LiderPriviligeInfoEditorWidget extends TitleAreaDialog {
         setDnText(selectedDn);
 
         BaseWidgetUtils.createLabel(composite, " ", 1);
-        
-        ServerResult serverResult = new RestClient().getServerResult(new HashMap<String, Object>(), "GET", "NA", "LIST", "PLUGIN", "NA", "Ldap", "NA", false, null); 
-        if(serverResult == null)
-        {
-        	LiderMessageDialog.openError(shell, "Lider sunucu REST servisi", "Lider sunucu REST servisi cevap vermemektedir. Lütfen tekrar deneyiniz.");
-        }
+        // TODO yeni auth ve rest yapisina gore duzenle!!! - emre
+//        ServerResult serverResult = new RestClient().getServerResult(new HashMap<String, Object>(), "GET", "NA", "LIST", "PLUGIN", "NA", "Ldap", "NA", false, null); 
+//        if(serverResult == null)
+//        {
+//        	LiderMessageDialog.openError(shell, "Lider sunucu REST servisi", "Lider sunucu REST servisi cevap vermemektedir. Lütfen tekrar deneyiniz.");
+//        }
         GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
         ArrayList<Privilege> itemList = new ArrayList<Privilege>();
         PrivilegeObject itemMap = new PrivilegeObject();
-        if (null != serverResult) {
-        
-			Gson gson = gsonBuilder.create(); //$NON-NLS-1$
-			itemMap = (PrivilegeObject) gson.fromJson( serverResult.getResponseBody().getResultMapString(), new TypeToken<PrivilegeObject>() {}.getType());			
-        }		
+//        if (null != serverResult) {
+//        
+//			Gson gson = gsonBuilder.create(); //$NON-NLS-1$
+//			itemMap = (PrivilegeObject) gson.fromJson( serverResult.getResponseBody().getResultMapString(), new TypeToken<PrivilegeObject>() {}.getType());			
+//        }		
         
         itemList = (ArrayList<Privilege>) itemMap.getPluginList(); //$NON-NLS-1$
         ArrayList<Privilege> arr = itemList;

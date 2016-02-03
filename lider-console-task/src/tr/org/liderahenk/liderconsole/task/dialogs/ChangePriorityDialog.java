@@ -132,12 +132,13 @@ public class ChangePriorityDialog extends Dialog {
 		super.okPressed();
 	}
 
+	// TODO
 	private void savePriorityToServer() {		
-		String result = new RestClient().getServerResult("/rest/task/" + task.getId() + "/priority/" + txtPriority.getText()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		if ("200".equals(result)) {
+//		String result = new RestClient().getServerResult("/rest/task/" + task.getId() + "/priority/" + txtPriority.getText()); //$NON-NLS-1$ //$NON-NLS-2$
+//		
+//		if ("200".equals(result)) {
 //			MysMessageDialog.open(MessageDialog.INFORMATION, Display.getDefault().getActiveShell(), "Information", Messages.getString("TaskHistoryDialog.PRIORITY_CHANGED"), SWT.NONE);
-		}
+//		}
 	}
 	
 	/* 

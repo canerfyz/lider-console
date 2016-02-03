@@ -102,7 +102,7 @@ public class TreePaintListener implements Listener {
 		});
 		eventBroker.subscribe("check_lider_status", new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
-				if (!RestSettings.isAVAILABLE()) {
+				if (!RestSettings.isAvailable()) {
 					globalState = false;
 					onlineInfo.clear();
 				}

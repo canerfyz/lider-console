@@ -64,8 +64,7 @@ public class Main extends AbstractSourceProvider {
 	private String selectedItem = "";
 	private String selectedUser = "";
 
-	private final IEventBroker eventBroker = (IEventBroker) PlatformUI
-			.getWorkbench().getService(IEventBroker.class);
+	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 
 	private final INullSelectionListener browserSelectionListener = new INullSelectionListener() {
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -98,18 +97,14 @@ public class Main extends AbstractSourceProvider {
 
 					// Calculate the privileges for selected entry (BaseDNEntrys
 					// are also valid dn's for privileges)
-					getSelf().privilegesForSelectedItem = UserSettings
-							.getPrivilegesFor(_selectedItem);
-					changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM,
-							getSelf().privilegesForSelectedItem);
-					getSelf().fireSourceChanged(ISources.WORKBENCH,
-							PRIVILEGES_FOR_SELECTED_ITEM,
+					getSelf().privilegesForSelectedItem = UserSettings.getPrivilegesFor(_selectedItem);
+					changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM, getSelf().privilegesForSelectedItem);
+					getSelf().fireSourceChanged(ISources.WORKBENCH, PRIVILEGES_FOR_SELECTED_ITEM,
 							getSelf().privilegesForSelectedItem);
 
 					if (!(selectedItem instanceof BaseDNEntry)) {
 						isEntry = true;
-						Collection<ObjectClass> classes = entry
-								.getObjectClassDescriptions();
+						Collection<ObjectClass> classes = entry.getObjectClassDescriptions();
 						for (ObjectClass c : classes) {
 							String cname = c.getName();
 							if (cname.equals(LiderConstants.LdapAttributes.PardusAhenkObjectClass)) {
@@ -127,8 +122,7 @@ public class Main extends AbstractSourceProvider {
 
 					List<String> privs = new ArrayList<String>();
 					for (ISearchResult iSearchResult : srs) {
-						Object selected = ((SearchResult) iSearchResult)
-								.getEntry();
+						Object selected = ((SearchResult) iSearchResult).getEntry();
 						IEntry selectedEntry = (IEntry) selected;
 						String DN = selectedEntry.getDn().getName();
 						privs.addAll(UserSettings.getPrivilegesFor(DN));
@@ -140,56 +134,42 @@ public class Main extends AbstractSourceProvider {
 				} else {
 					_selectedItem = "";
 					getSelf().privilegesForSelectedItem = getSelf().emptyPrivilegeList;
-					getSelf().fireSourceChanged(ISources.WORKBENCH,
-							PRIVILEGES_FOR_SELECTED_ITEM,
+					getSelf().fireSourceChanged(ISources.WORKBENCH, PRIVILEGES_FOR_SELECTED_ITEM,
 							getSelf().privilegesForSelectedItem);
-					changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM,
-							getSelf().privilegesForSelectedItem);
+					changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM, getSelf().privilegesForSelectedItem);
 				}
 			}
 
 			getSelf().isSelectedEntryAVAILABLE = isEntry;
-			getSelf().fireSourceChanged(ISources.WORKBENCH,
-					SELECTED_ENTRY_AVAILABLE_STATE,
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_ENTRY_AVAILABLE_STATE,
 					getSelf().isSelectedEntryAVAILABLE);
-			changedItems.put(SELECTED_ENTRY_AVAILABLE_STATE,
-					getSelf().isSelectedEntryAVAILABLE);
+			changedItems.put(SELECTED_ENTRY_AVAILABLE_STATE, getSelf().isSelectedEntryAVAILABLE);
 
 			getSelf().isSelectedSearchAVAILABLE = isSearch;
-			getSelf().fireSourceChanged(ISources.WORKBENCH,
-					SELECTED_SEARCH_AVAILABLE_STATE,
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_SEARCH_AVAILABLE_STATE,
 					getSelf().isSelectedSearchAVAILABLE);
-			changedItems.put(SELECTED_SEARCH_AVAILABLE_STATE,
-					getSelf().isSelectedSearchAVAILABLE);
+			changedItems.put(SELECTED_SEARCH_AVAILABLE_STATE, getSelf().isSelectedSearchAVAILABLE);
 
 			getSelf().isSelectedAhenkAVAILABLE = isAhenk;
-			getSelf().fireSourceChanged(ISources.WORKBENCH,
-					SELECTED_AHENK_AVAILABLE_STATE,
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_AHENK_AVAILABLE_STATE,
 					getSelf().isSelectedAhenkAVAILABLE);
-			changedItems.put(SELECTED_AHENK_AVAILABLE_STATE,
-					getSelf().isSelectedAhenkAVAILABLE);
+			changedItems.put(SELECTED_AHENK_AVAILABLE_STATE, getSelf().isSelectedAhenkAVAILABLE);
 
 			getSelf().isSelectedLdapUserAVAILABLE = isLdapUser;
-			getSelf().fireSourceChanged(ISources.WORKBENCH,
-					SELECTED_LDAP_USER_AVAILABLE_STATE,
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_LDAP_USER_AVAILABLE_STATE,
 					getSelf().isSelectedLdapUserAVAILABLE);
-			changedItems.put(SELECTED_LDAP_USER_AVAILABLE_STATE,
-					getSelf().isSelectedLdapUserAVAILABLE);
+			changedItems.put(SELECTED_LDAP_USER_AVAILABLE_STATE, getSelf().isSelectedLdapUserAVAILABLE);
 
 			getSelf().selectedItem = _selectedItem;
-			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_ITEM,
-					getSelf().selectedItem);
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_ITEM, getSelf().selectedItem);
 			changedItems.put(SELECTED_ITEM, getSelf().selectedItem);
 
 			getSelf().isSelectedUserAVAILABLE = isUser;
-			getSelf().fireSourceChanged(ISources.WORKBENCH, IS_SELECTED_USER,
-					getSelf().isSelectedUserAVAILABLE);
-			changedItems.put(IS_SELECTED_USER,
-					getSelf().isSelectedUserAVAILABLE);
+			getSelf().fireSourceChanged(ISources.WORKBENCH, IS_SELECTED_USER, getSelf().isSelectedUserAVAILABLE);
+			changedItems.put(IS_SELECTED_USER, getSelf().isSelectedUserAVAILABLE);
 
 			getSelf().selectedUser = _selectedUser;
-			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_USER,
-					getSelf().selectedUser);
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_USER, getSelf().selectedUser);
 			changedItems.put(SELECTED_USER, getSelf().selectedUser);
 
 			if (!changedItems.isEmpty()) {
@@ -222,18 +202,14 @@ public class Main extends AbstractSourceProvider {
 				}
 			}
 
-			changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM,
-					getSelf().privilegesForSelectedItem);
+			changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM, getSelf().privilegesForSelectedItem);
 
 			getSelf().isSelectedUserAVAILABLE = isUser;
-			getSelf().fireSourceChanged(ISources.WORKBENCH, IS_SELECTED_USER,
-					getSelf().isSelectedUserAVAILABLE);
-			changedItems.put(IS_SELECTED_USER,
-					getSelf().isSelectedUserAVAILABLE);
+			getSelf().fireSourceChanged(ISources.WORKBENCH, IS_SELECTED_USER, getSelf().isSelectedUserAVAILABLE);
+			changedItems.put(IS_SELECTED_USER, getSelf().isSelectedUserAVAILABLE);
 
 			getSelf().selectedUser = _selectedUser;
-			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_USER,
-					getSelf().selectedUser);
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_USER, getSelf().selectedUser);
 			changedItems.put(SELECTED_USER, getSelf().selectedUser);
 
 			getSelf().fireSourceChanged(ISources.WORKBENCH, changedItems);
@@ -263,62 +239,49 @@ public class Main extends AbstractSourceProvider {
 
 				// Calculate the privileges for selected entry (BaseDNEntrys
 				// are also valid dn's for privileges)
-				getSelf().privilegesForSelectedItem = UserSettings
-						.getPrivilegesFor(_selectedItem);
-				changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM,
-						getSelf().privilegesForSelectedItem);
-				getSelf().fireSourceChanged(ISources.WORKBENCH,
-						PRIVILEGES_FOR_SELECTED_ITEM,
+				getSelf().privilegesForSelectedItem = UserSettings.getPrivilegesFor(_selectedItem);
+				changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM, getSelf().privilegesForSelectedItem);
+				getSelf().fireSourceChanged(ISources.WORKBENCH, PRIVILEGES_FOR_SELECTED_ITEM,
 						getSelf().privilegesForSelectedItem);
 
 				isEntry = true;
-				isAhenk = LdapUtils.getInstance().isAgent(_selectedItem, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
-				isLdapUser = LdapUtils.getInstance().isUser(_selectedItem, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
+				isAhenk = LdapUtils.getInstance().isAgent(_selectedItem, LdapConnectionListener.getConnection(),
+						LdapConnectionListener.getMonitor());
+				isLdapUser = LdapUtils.getInstance().isUser(_selectedItem, LdapConnectionListener.getConnection(),
+						LdapConnectionListener.getMonitor());
 			} else {
 				_selectedItem = "";
 				getSelf().privilegesForSelectedItem = getSelf().emptyPrivilegeList;
-				getSelf().fireSourceChanged(ISources.WORKBENCH,
-						PRIVILEGES_FOR_SELECTED_ITEM,
+				getSelf().fireSourceChanged(ISources.WORKBENCH, PRIVILEGES_FOR_SELECTED_ITEM,
 						getSelf().privilegesForSelectedItem);
-				changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM,
-						getSelf().privilegesForSelectedItem);
+				changedItems.put(PRIVILEGES_FOR_SELECTED_ITEM, getSelf().privilegesForSelectedItem);
 			}
 
 			getSelf().isSelectedEntryAVAILABLE = isEntry;
-			getSelf().fireSourceChanged(ISources.WORKBENCH,
-					SELECTED_ENTRY_AVAILABLE_STATE,
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_ENTRY_AVAILABLE_STATE,
 					getSelf().isSelectedEntryAVAILABLE);
-			changedItems.put(SELECTED_ENTRY_AVAILABLE_STATE,
-					getSelf().isSelectedEntryAVAILABLE);
+			changedItems.put(SELECTED_ENTRY_AVAILABLE_STATE, getSelf().isSelectedEntryAVAILABLE);
 
 			getSelf().isSelectedAhenkAVAILABLE = isAhenk;
-			getSelf().fireSourceChanged(ISources.WORKBENCH,
-					SELECTED_AHENK_AVAILABLE_STATE,
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_AHENK_AVAILABLE_STATE,
 					getSelf().isSelectedAhenkAVAILABLE);
-			changedItems.put(SELECTED_AHENK_AVAILABLE_STATE,
-					getSelf().isSelectedAhenkAVAILABLE);
+			changedItems.put(SELECTED_AHENK_AVAILABLE_STATE, getSelf().isSelectedAhenkAVAILABLE);
 
 			getSelf().isSelectedLdapUserAVAILABLE = isLdapUser;
-			getSelf().fireSourceChanged(ISources.WORKBENCH,
-					SELECTED_LDAP_USER_AVAILABLE_STATE,
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_LDAP_USER_AVAILABLE_STATE,
 					getSelf().isSelectedLdapUserAVAILABLE);
-			changedItems.put(SELECTED_LDAP_USER_AVAILABLE_STATE,
-					getSelf().isSelectedLdapUserAVAILABLE);
+			changedItems.put(SELECTED_LDAP_USER_AVAILABLE_STATE, getSelf().isSelectedLdapUserAVAILABLE);
 
 			getSelf().selectedItem = _selectedItem;
-			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_ITEM,
-					getSelf().selectedItem);
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_ITEM, getSelf().selectedItem);
 			changedItems.put(SELECTED_ITEM, getSelf().selectedItem);
 
 			// /
 			getSelf().isSelectedUserAVAILABLE = isUser;
-			getSelf().fireSourceChanged(ISources.WORKBENCH, IS_SELECTED_USER,
-					getSelf().isSelectedUserAVAILABLE);
-			changedItems.put(IS_SELECTED_USER,
-					getSelf().isSelectedUserAVAILABLE);
+			getSelf().fireSourceChanged(ISources.WORKBENCH, IS_SELECTED_USER, getSelf().isSelectedUserAVAILABLE);
+			changedItems.put(IS_SELECTED_USER, getSelf().isSelectedUserAVAILABLE);
 			getSelf().selectedUser = _selectedUser;
-			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_USER,
-					getSelf().selectedUser);
+			getSelf().fireSourceChanged(ISources.WORKBENCH, SELECTED_USER, getSelf().selectedUser);
 			changedItems.put(SELECTED_USER, getSelf().selectedUser);
 			// /
 
@@ -331,24 +294,20 @@ public class Main extends AbstractSourceProvider {
 	private final EventHandler stateChange = new EventHandler() {
 		public void handleEvent(Event event) {
 
-			getSelf().fireSourceChanged(ISources.WORKBENCH,
-					LIDER_AVAILABLE_STATE, RestSettings.isAVAILABLE());
+			getSelf().fireSourceChanged(ISources.WORKBENCH, LIDER_AVAILABLE_STATE, RestSettings.isAvailable());
 
-			if (RestSettings.isAVAILABLE()) {
+			if (RestSettings.isAvailable()) {
 
 				IWorkbench workbench = PlatformUI.getWorkbench();
 				IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 
 				if (windows != null && windows.length > 0) {
 					IWorkbenchWindow window = windows[0];
-					window.getSelectionService()
-							.addPostSelectionListener(
-									"org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView",
-									browserSelectionListener);
-					window.getSelectionService()
-							.addSelectionListener(
-									"tr.org.liderahenk.liderconsole.core.views.SubBrowserView",
-									userBrowserSelectionListener);
+					window.getSelectionService().addPostSelectionListener(
+							"org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView",
+							browserSelectionListener);
+					window.getSelectionService().addSelectionListener(
+							"tr.org.liderahenk.liderconsole.core.views.SubBrowserView", userBrowserSelectionListener);
 				}
 			} else {
 				IWorkbench workbench = PlatformUI.getWorkbench();
@@ -356,10 +315,8 @@ public class Main extends AbstractSourceProvider {
 
 				if (windows != null && windows.length > 0) {
 					IWorkbenchWindow window = windows[0];
-					window.getSelectionService().removePostSelectionListener(
-							browserSelectionListener);
-					window.getSelectionService().removeSelectionListener(
-							userBrowserSelectionListener);
+					window.getSelectionService().removePostSelectionListener(browserSelectionListener);
+					window.getSelectionService().removeSelectionListener(userBrowserSelectionListener);
 				}
 			}
 
@@ -380,20 +337,16 @@ public class Main extends AbstractSourceProvider {
 
 	@Override
 	public String[] getProvidedSourceNames() {
-		return new String[] { LIDER_AVAILABLE_STATE,
-				SELECTED_ENTRY_AVAILABLE_STATE,
-				SELECTED_SEARCH_AVAILABLE_STATE,
-				SELECTED_AHENK_AVAILABLE_STATE,
-				SELECTED_LDAP_USER_AVAILABLE_STATE,
-				PRIVILEGES_FOR_SELECTED_ITEM, SELECTED_ITEM, IS_SELECTED_USER,
-				SELECTED_USER };
+		return new String[] { LIDER_AVAILABLE_STATE, SELECTED_ENTRY_AVAILABLE_STATE, SELECTED_SEARCH_AVAILABLE_STATE,
+				SELECTED_AHENK_AVAILABLE_STATE, SELECTED_LDAP_USER_AVAILABLE_STATE, PRIVILEGES_FOR_SELECTED_ITEM,
+				SELECTED_ITEM, IS_SELECTED_USER, SELECTED_USER };
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Map getCurrentState() {
 		HashMap<String, Object> map = new HashMap<String, Object>(1);
-		map.put(LIDER_AVAILABLE_STATE, RestSettings.isAVAILABLE());
+		map.put(LIDER_AVAILABLE_STATE, RestSettings.isAvailable());
 		map.put(SELECTED_ENTRY_AVAILABLE_STATE, isSelectedEntryAVAILABLE);
 		map.put(SELECTED_SEARCH_AVAILABLE_STATE, isSelectedSearchAVAILABLE);
 		map.put(SELECTED_AHENK_AVAILABLE_STATE, isSelectedAhenkAVAILABLE);

@@ -1,25 +1,27 @@
 package tr.org.liderahenk.liderconsole.core.current;
 
-
 /**
  * @author Sezgin BOZU <sbozu@innova.com.tr>
  *
- * Application wide configuration for rest services.
+ *         Application wide configuration for rest services.
  */
 public class RestSettings {
-	
+
 	private RestSettings() {
-		// Auto-generated constructor stub
 	}
-	
-	public static String SERVER_REST_URL = null;
-	
-	public static void setServerRestUrl(String restUrl)
-	{
-		SERVER_REST_URL = restUrl;
+
+	private static String SERVER_URL = "http://192.168.56.101"; // TODO
+
+	public static String getServerUrl() {
+		return SERVER_URL;
 	}
-	
-	public static Boolean isAVAILABLE(){
-		return SERVER_REST_URL!=null;
+
+	public static void setServerUrl(String url) {
+		SERVER_URL = url;
 	}
+
+	public static boolean isAvailable() {
+		return SERVER_URL != null;
+	}
+
 }
