@@ -1,6 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.rest;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,9 +20,9 @@ public class RestResponse implements Serializable {
 	private RestResponseStatus status;
 
 	/**
-	 * ID of the plugin which REST request/response belongs to
+	 * Name of the plugin which REST request/response belongs to
 	 */
-	private String pluginId;
+	private String pluginName;
 
 	/**
 	 * Plugin version number is used to distinguish plugins with multiple
@@ -29,6 +30,10 @@ public class RestResponse implements Serializable {
 	 */
 	private String pluginVersion;
 
+	private List<String> messages;
+	
+	private RestResponseBody responseBody;
+	
 	/**
 	 * Contains result parameters which can be used by the plugin (e.g.
 	 * displaying results)
@@ -41,14 +46,6 @@ public class RestResponse implements Serializable {
 
 	public void setStatus(RestResponseStatus status) {
 		this.status = status;
-	}
-
-	public String getPluginId() {
-		return pluginId;
-	}
-
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
 	}
 
 	public String getPluginVersion() {
@@ -65,6 +62,30 @@ public class RestResponse implements Serializable {
 
 	public void setResultMap(Map<String, Object> resultMap) {
 		this.resultMap = resultMap;
+	}
+
+	public String getPluginName() {
+		return pluginName;
+	}
+
+	public void setPluginName(String pluginName) {
+		this.pluginName = pluginName;
+	}
+
+	public List<String> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(List<String> messages) {
+		this.messages = messages;
+	}
+
+	public RestResponseBody getResponseBody() {
+		return responseBody;
+	}
+
+	public void setResponseBody(RestResponseBody responseBody) {
+		this.responseBody = responseBody;
 	}
 
 }
