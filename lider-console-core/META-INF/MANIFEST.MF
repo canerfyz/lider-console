@@ -34,7 +34,8 @@ Require-Bundle: org.eclipse.osgi,
  org.igniterealtime.smack.sasl-javax,
  org.igniterealtime.smack.tcp,
  javax.inject,
- org.slf4j.api
+ org.slf4j.api,
+ org.apache.commons.logging
 Bundle-ClassPath: conf/,
  .
 Export-Package: tr.org.liderahenk.liderconsole.core.constants,

@@ -10,7 +10,7 @@ public class RestSettings {
 	private RestSettings() {
 	}
 
-	private static String SERVER_URL = "http://192.168.56.101"; // TODO
+	private static String SERVER_URL = "http://localhost:8181"; // TODO
 
 	public static String getServerUrl() {
 		return SERVER_URL;

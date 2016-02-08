@@ -75,6 +75,7 @@ public class RestClient {
 	public static synchronized RestClient getInstance() {
 		if (instance == null) {
 			instance = new RestClient();
+			instance.httpClient = HttpClientBuilder.create().build();
 		}
 		return instance;
 	}
@@ -94,8 +95,6 @@ public class RestClient {
 		httpPost.setHeader(CONTENT_TYPE_HEADER, MIME_TYPE);
 		httpPost.setHeader(ACCEPT_HEADER, MIME_TYPE);
 
-		httpClient = HttpClientBuilder.create().build();
-
 		StringEntity entity;
 		RestResponse response = null;
 
@@ -106,8 +105,8 @@ public class RestClient {
 			entity = new StringEntity(URLEncoder.encode(gson.toJson(request), "UTF-8"), StandardCharsets.UTF_8);
 			httpPost.setEntity(entity);
 
-			httpPost.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
-			httpPost.setHeader(PASSWORD_HEADER, UserSettings.USER_PASSWORD);
+			httpPost.setHeader(USERNAME_HEADER, "lider"/*UserSettings.USER_ID*/);
+			httpPost.setHeader(PASSWORD_HEADER, "12345"/*UserSettings.USER_PASSWORD*/);
 
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			if (httpResponse.getStatusLine().getStatusCode() != 200) {
