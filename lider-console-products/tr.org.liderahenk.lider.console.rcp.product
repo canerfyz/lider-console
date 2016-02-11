@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="tr.org.liderahenk.liderconsole.rcp" uid="Lider Console Core" id="tr.org.liderahenk.liderconsole.rcp.product" application="tr.org.liderahenk.liderconsole.rcp.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="tr.org.liderahenk.liderconsole.rcp" uid="Lider Console Core" application="tr.org.liderahenk.liderconsole.rcp.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="../lider-console-rcp/icons/about.png"/>
@@ -45,7 +45,6 @@ Apache Software Foundation http://apache.org/
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -943,6 +942,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.w3c.dom.smil"/>
       <plugin id="org.w3c.dom.svg"/>
       <plugin id="tr.org.liderahenk.liderconsole.core"/>
+      <plugin id="tr.org.liderahenk.liderconsole.networkinventory"/>
       <plugin id="tr.org.liderahenk.liderconsole.rcp"/>
    </plugins>
 
@@ -953,12 +953,5 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="0" />
    </configurations>
-
-   <preferencesInfo>
-      <targetfile overwrite="false"/>
-   </preferencesInfo>
-
-   <cssInfo>
-   </cssInfo>
 
 </product>

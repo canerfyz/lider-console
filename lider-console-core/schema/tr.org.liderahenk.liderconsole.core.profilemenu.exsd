@@ -89,12 +89,7 @@
       <documentation>
          &lt;extension
 		point=&quot;tr.org.liderahenk.liderconsole.core.profilemenu&quot;&gt;
-	&lt;menuItem
-		commandId=&quot;tr.org.liderahenk.liderconsole.commands.BrowserProfileEditor&quot;
-		icon=&quot;icons/browser.png&quot;
-		id=&quot;tr.org.liderahenk.liderconsole.commands.BrowserProfileEditor&quot;&gt;
-	&lt;/menuItem&gt;
-&lt;/extension&gt;
+		&lt;/extension&gt;
       </documentation>
    </annotation>
 

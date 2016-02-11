@@ -33,6 +33,7 @@
             id="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"            
             name="%editor.ldap.search">
       </command>  
+      
    </extension>
    
    <extension
@@ -54,7 +55,7 @@
             <command
                   commandId="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
                   id="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
-                  icon="icons/browser.png"
+                  icon="icons/search.png"
                   tooltip="%command.tooltip">
 			
             </command>
@@ -247,6 +248,18 @@
        name="%editor.ldap.search">
 	</editor>
 </extension>
+
+<extension
+	point="org.eclipse.ui.editors">
+	<editor
+       class="tr.org.liderahenk.liderconsole.networkinventory.editors.NetworkInventoryEditor"
+       default="true"
+       icon="icons/sample.gif"
+       id="tr.org.liderahenk.liderconsole.networkinventory.editors.NetworkInventoryEditor"
+       name="%editor.ldap.search">
+	</editor>
+</extension>
+
  <extension
        point="org.eclipse.ui.perspectives">
     <perspective
