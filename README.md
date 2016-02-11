@@ -55,15 +55,16 @@ While, fortunately, many dependencies can be found as OSGI bundles in [Orbit](ht
 
 1. Install [Eclipse](https://eclipse.org/downloads/) version >=4.4 (Luna or Mars).
 2. [Orbit](http://www.eclipse.org/orbit/) repository is needed to handle OSGI dependencies.
-2.1. First, we need to find the correct Orbit repository belonging to installed Eclipse version from [Orbit downloads site](http://download.eclipse.org/tools/orbit/downloads/).
-2.2. Then we need to add this URL to Eclipse via 'Help --> Install New Software --> Add'.
-2.3. Finally, required bundles can be installed. (At the moment, only *gson* and *apache httpcomponents* are required but you can always install all bundles just in case.)
+	2.1. First, we need to find the correct Orbit repository belonging to installed Eclipse version from [Orbit downloads site](http://download.eclipse.org/tools/orbit/downloads/).
+	2.2. Then we need to add this URL to Eclipse via 'Help --> Install New Software --> Add'.
+	2.3. Finally, required bundles can be installed. (At the moment, only *gson* and *apache httpcomponents* are required but you can always install all bundles just in case.)
 2.4. Restart Eclipse after successfull installation.
-3. Clone lider-console project by running `git clone git@git.agem.com.tr:lider-ahenk/lider-console.git`.
-4. Change directory to *lider-console-dependencies/* and run `mvn clean p2:site` to generate third party dependencies. This command will generate OSGI bundles under *lider-console-dependencies/target/repository/* directory.
-5. Import the project into Eclipse as 'Existing Maven Projects'.
-6. As the final step, go to 'Help --> Install New Software --> Add' and add generated third party dependencies (Step 4) by adding *lider-console-dependencies/target/repository/* directory as local repository.
-7. Restart Eclipse and run the application as Eclipse RCP Application.
+3. http://directory.apache.org/studio/update add this URL to Eclipse via 'Help --> Install New Software --> Add'.
+4. Clone lider-console project by running `git clone git@git.agem.com.tr:lider-ahenk/lider-console.git`.
+5. Change directory to *lider-console-dependencies/* and run `mvn clean p2:site` to generate third party dependencies. This command will generate OSGI bundles under *lider-console-dependencies/target/repository/* directory.
+6. Import the project into Eclipse as 'Existing Maven Projects'.
+7. As the final step, go to 'Help --> Install New Software --> Add' and add generated third party dependencies (Step 4) by adding *lider-console-dependencies/target/repository/* directory as local repository.
+8. Restart Eclipse and run the application as Eclipse RCP Application.
 
 > **Warning:** When the project is run for the first time, Eclipse might throw an exception. If this error occurs, go to 'Run --> Debug Configurations...' and on the 'Plugins' tab click 'Add Required Libraries' to allow Eclipse to use all required bundles.
 
