@@ -8,7 +8,7 @@ import java.util.List;
  * @author Sezgin BOZU <sbozu@innova.com.tr>
  *
  */
-public class Task implements Serializable {
+public class Task implements Serializable,ITask {
 
 	private static final long serialVersionUID = -4609836023281640447L;
 
@@ -74,12 +74,12 @@ public class Task implements Serializable {
 		return active;
 	}
 
-	public Date getCreationDate() {
-		return new Date(creationDate);
+	public String getCreationDate() {
+		return new Date(creationDate).toString();
 	}
 
-	public Date getChangedDate() {
-		return new Date(changedDate);
+	public String getChangedDate() {
+		return new Date(changedDate).toString();
 	}
 
 	public void setChangedDate(Long changedDate) {
@@ -194,5 +194,9 @@ public class Task implements Serializable {
 	public void setParent(ParentTask parent) {
 		this.parent = parent;
 	}
-	
+
+	@Override
+	public String getTaskName() {
+		return this.id;
+	}	
 }
