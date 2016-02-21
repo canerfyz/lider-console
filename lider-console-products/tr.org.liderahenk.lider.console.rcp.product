@@ -942,7 +942,6 @@ Public License instead of this License.  But first, please read
       <plugin id="org.w3c.dom.smil"/>
       <plugin id="org.w3c.dom.svg"/>
       <plugin id="tr.org.liderahenk.liderconsole.core"/>
-      <plugin id="tr.org.liderahenk.liderconsole.networkinventory"/>
       <plugin id="tr.org.liderahenk.liderconsole.rcp"/>
    </plugins>
 
