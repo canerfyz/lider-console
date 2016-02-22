@@ -1,9 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.views;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import org.apache.directory.studio.ldapbrowser.ui.views.connection.Messages;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -26,6 +23,7 @@ import org.osgi.service.event.EventHandler;
 import tr.org.liderahenk.liderconsole.core.task.ITask;
 import tr.org.liderahenk.liderconsole.core.task.ParentTask;
 import tr.org.liderahenk.liderconsole.core.task.Task;
+import tr.org.liderahenk.liderconsole.core.task.TaskCommState;
 import tr.org.liderahenk.liderconsole.core.task.TaskState;
 
 /**
@@ -39,11 +37,8 @@ public class TaskOverview extends ViewPart {
 	public static final String ID = "tr.org.liderahenk.liderconsole.core.views.taskOverview.TaskOverview";
 
 	private TreeViewer viewer;
-	private ParentTask[] parentTaskList=null;
-
 	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 
-	// Keeps track of the current selection in the LDAP result list
 	private IStructuredSelection currentSelection = null;
 	
 	private final EventHandler updateList = new EventHandler() {
@@ -60,20 +55,7 @@ public class TaskOverview extends ViewPart {
 			Object data = event.getProperty(IEventBroker.DATA);
 			if (data instanceof String) {
 				
-				
-				// Read parent task file
-				ArrayList<ParentTask> parentTaskList = readParentTaskList();
-				// Create our new parent task:
-				ParentTask parent = new ParentTask();
-				parent.setPluginId((String) data);
-				parent.setCreationDate(getCurrentDate());
-//				parent.setTasks(createTasksFromCurrentSelection(parent,(String) data));
-				// Append latest parent task to list and refresh the list
-				parentTaskList.add(parent);
-				refresh(parentTaskList);
-				// Save back to parent task file
-//				writeFile(parentTaskList);
-				// TODO Create a thread to update tasks as completed (or failed)
+				//TODO 
 			}
 		}
 	};
@@ -88,14 +70,27 @@ public class TaskOverview extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 
+		
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.getTree().setHeaderVisible(true);
-		
 		createColumns();
+		
+		refresh();
+		
+	}
 
-		readParentTaskArrayAsCompleted();
-		viewer.setInput(parentTaskList);
+	private void refresh() {
+		
+		ArrayList<ITask> taskList=null;
+		taskList=readParentTaskList();
+		
+		if(taskList!=null && !taskList.isEmpty()){
+			viewer.setInput(taskList);
+		}
+		
+		viewer.refresh();
+		
 	}
 
 	private void createColumns() {
@@ -103,7 +98,7 @@ public class TaskOverview extends ViewPart {
 		TreeViewerColumn nameColumn = new TreeViewerColumn(viewer, SWT.NONE);
 		nameColumn.getColumn().setText(Messages.getString("NAME"));
 		nameColumn.getColumn().setAlignment(SWT.LEFT);
-		nameColumn.getColumn().setWidth((int)((int)viewer.getControl().getShell().getSize().x*0.25));
+		nameColumn.getColumn().setWidth((int)((int)viewer.getControl().getShell().getSize().x*0.33));
 		nameColumn.setLabelProvider(new ColumnLabelProvider(){
 			@Override
 			public String getText(Object element){
@@ -116,7 +111,7 @@ public class TaskOverview extends ViewPart {
 
 		TreeViewerColumn statusColumn = new TreeViewerColumn(viewer, SWT.NONE);
 		statusColumn.getColumn().setText(Messages.getString("STATE"));
-		statusColumn.getColumn().setWidth((int)((int)viewer.getControl().getShell().getSize().x*0.25));
+		statusColumn.getColumn().setWidth((int)((int)viewer.getControl().getShell().getSize().x*0.33));
 		statusColumn.getColumn().setAlignment(SWT.LEFT);
 		statusColumn.setLabelProvider(new ColumnLabelProvider(){
 			@Override
@@ -130,27 +125,13 @@ public class TaskOverview extends ViewPart {
 
 		TreeViewerColumn creationDateColumn = new TreeViewerColumn(viewer,SWT.NONE);
 		creationDateColumn.getColumn().setText(Messages.getString("START_DATE"));
-		creationDateColumn.getColumn().setWidth((int)((int)viewer.getControl().getShell().getSize().x*0.25));
+		creationDateColumn.getColumn().setWidth((int)((int)viewer.getControl().getShell().getSize().x*0.33));
 		creationDateColumn.getColumn().setAlignment(SWT.CENTER);
 		creationDateColumn.setLabelProvider(new ColumnLabelProvider(){
 			@Override
 			public String getText(Object element){
 				if(element instanceof ITask)
 					return ((ITask) element).getCreationDate();
-				
-				return null;
-			}
-		});
-
-		TreeViewerColumn lastChangeDateColumn = new TreeViewerColumn(viewer,SWT.NONE);
-		lastChangeDateColumn.getColumn().setText(Messages.getString("LAST_UPDATE"));
-		lastChangeDateColumn.getColumn().setWidth((int)((int)viewer.getControl().getShell().getSize().x*0.25));
-		lastChangeDateColumn.getColumn().setAlignment(SWT.CENTER);
-		lastChangeDateColumn.setLabelProvider(new ColumnLabelProvider(){
-			@Override
-			public String getText(Object element){
-				if(element instanceof ITask)
-					return ((ITask) element).getChangedDate();
 				
 				return null;
 			}
@@ -178,48 +159,37 @@ public class TaskOverview extends ViewPart {
 		});
 		
 	}
-	
-	private void readParentTaskArrayAsCompleted() {
-		ArrayList<ParentTask> list = readParentTaskList();
-		if(list !=null && !list.isEmpty()){
-			for (ParentTask parent : list) {
-				List<Task> tasks = parent.getTasks();
-				for (Task task : tasks) {
-					TaskState state = task.getState();
-				}
-			}
-			parentTaskList= list.toArray(new ParentTask[] {});
-		}
-	}
 
-	@SuppressWarnings("unchecked")
-	private ArrayList<ParentTask> readParentTaskList() {
+	private ArrayList<ITask> readParentTaskList() {
 		
-		return null;
+		ArrayList<ITask> taskList = new ArrayList<ITask>();
+		
+				
+		Task t = new Task("a", true, new Long(100), new Long(100), 1, 1, 1, TaskState.TASK_PROCESSED, TaskCommState.AGENT_OFFLINE, new Long(100),
+				null, "a", "s", null, "d", "f", "g");
+		
+		ArrayList<Task> innerTaskList = new ArrayList<Task>();
+		innerTaskList.add(t);
+		innerTaskList.add(t);
+		innerTaskList.add(t);
+		
+		ParentTask p = new ParentTask("1", "2", "3", "4", TaskState.CREATED, innerTaskList);
+		
+		taskList.add(p);
+		taskList.add(p);
+		taskList.add(t);
+		taskList.add(t);
+		taskList.add(t);
+
+		return taskList;
 	}
 
-
-	private String getCurrentDate() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		Date d = new Date();
-		return dateFormat.format(d);
-	}
 
 	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
 
-	/**
-	 * 
-	 */
-	public void refresh(ArrayList<ParentTask> parentTaskList) {
-		
-		if(parentTaskList!=null && !parentTaskList.isEmpty()){
-			viewer.setInput(parentTaskList);
-		}
-		viewer.refresh();
-	}
 
 	@Override
 	public void dispose() {

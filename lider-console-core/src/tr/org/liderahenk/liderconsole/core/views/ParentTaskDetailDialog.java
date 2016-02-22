@@ -44,8 +44,7 @@ public class ParentTaskDetailDialog extends TitleAreaDialog{
 	
 		setTitle(parentTask.getTaskName()); 
 	    setMessage(Messages.getString("STATE")+":\t"+Messages.getString(parentTask.getState().toString())+"\n"
-	    		+Messages.getString("START_DATE")+":\t"+parentTask.getCreationDate()+"\n"
-	    		+Messages.getString("CHANGED_DATE")+":\t"+parentTask.getChangedDate()); 
+	    		+Messages.getString("START_DATE")+":\t"+parentTask.getCreationDate()); 
 	}
 	
 	@Override
