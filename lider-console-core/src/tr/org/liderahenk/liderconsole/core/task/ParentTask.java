@@ -32,6 +32,10 @@ public class ParentTask implements Serializable,ITask {
 		this.state=taskState;
 	}
 
+	public void addTask(Task task) {
+		this.tasks.add(task);
+	}
+	
 	public List<Task> getTasks() {
 		return tasks;
 	}
@@ -84,5 +88,7 @@ public class ParentTask implements Serializable,ITask {
 	public String getTaskName() {
 		return id;
 	}
+	
+	
 
 }

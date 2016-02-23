@@ -35,7 +35,6 @@ public class ParentTaskDetailDialog extends TitleAreaDialog{
 	public ParentTaskDetailDialog(Shell activeShell,ParentTask parentTask) {
 		super(activeShell);
 		this.parentTask=parentTask;
-		
 	}
 	
 	@Override
@@ -43,8 +42,9 @@ public class ParentTaskDetailDialog extends TitleAreaDialog{
 		super.create();
 	
 		setTitle(parentTask.getTaskName()); 
-	    setMessage(Messages.getString("STATE")+":\t"+Messages.getString(parentTask.getState().toString())+"\n"
-	    		+Messages.getString("START_DATE")+":\t"+parentTask.getCreationDate()); 
+	    setMessage(Messages.getString("STATE")+":\t"
+		+Messages.getString(parentTask.getState()!=null ? parentTask.getState().toString() : "NONE")+"\n"
+		+Messages.getString("START_DATE")+":\t"+parentTask.getCreationDate()); 
 	}
 	
 	@Override
@@ -117,7 +117,7 @@ public class ParentTaskDetailDialog extends TitleAreaDialog{
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Task) {
-					return ((Task) element).getActive().toString();
+					return ((Task) element).getActive() != null ? ((Task) element).getActive().toString() : null;
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -150,7 +150,7 @@ public class ParentTaskDetailDialog extends TitleAreaDialog{
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Task) {
-					return ((Task) element).getVersion().toString();
+					return ((Task) element).getVersion() != null ? ((Task) element).getVersion().toString() : null;
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -162,7 +162,7 @@ public class ParentTaskDetailDialog extends TitleAreaDialog{
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Task) {
-					return ((Task) element).getOrder().toString();
+					return ((Task) element).getOrder() != null ? ((Task) element).getOrder().toString() : null;
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -173,7 +173,7 @@ public class ParentTaskDetailDialog extends TitleAreaDialog{
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Task) {
-					return ((Task) element).getPriority().toString();
+					return ((Task) element).getPriority() != null ? ((Task) element).getPriority().toString() : null;
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -184,7 +184,7 @@ public class ParentTaskDetailDialog extends TitleAreaDialog{
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Task) {
-					return Messages.getString(((Task) element).getState().toString());
+					return Messages.getString( ((Task) element).getState() != null ? ((Task) element).getState().toString() : "");
 				}
 				return Messages.getString("UNTITLED");
 			}

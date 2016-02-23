@@ -75,11 +75,11 @@ public class Task implements Serializable,ITask {
 	}
 
 	public String getCreationDate() {
-		return new Date(creationDate).toString();
+		return creationDate != null ? new Date(creationDate).toString() : null;
 	}
 
 	public String getChangedDate() {
-		return new Date(changedDate).toString();
+		return changedDate != null ? new Date(changedDate).toString() : null;
 	}
 
 	public void setChangedDate(Long changedDate) {
