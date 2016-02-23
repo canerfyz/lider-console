@@ -1,8 +1,6 @@
 # lider-console
 
-## Overview
-
-lider-console contains core funtionalities (such as REST client, LDAP client), base RCP application and an API for other plug-ins.
+lider-console is the GUI for Lider Ahenk project built as an Eclipse application. It also contains core functionalities (such as REST client, LDAP client), and provides an API for other plug-ins.
 
 ## Prerequisites
 
@@ -59,7 +57,7 @@ While, fortunately, many dependencies can be found as OSGI bundles in [Orbit](ht
   2. Then we need to add this URL to Eclipse via 'Help --> Install New Software --> Add'.
   3. Finally, required bundles can be installed. (At the moment, only *gson* and *apache httpcomponents* are required but you can always install all bundles just in case.)
   4. Restart Eclipse after successfull installation.
-3. Clone lider-console project by running `git clone git@git.agem.com.tr:lider-ahenk/lider-console.git`.
+3. Clone lider-console project by running `git clone https://github.com/Pardus-Kurumsal/lider-console.git`.
 4. Change directory to *lider-console-dependencies/* and run `mvn clean p2:site` to generate third party dependencies. This command will generate OSGI bundles under *lider-console-dependencies/target/repository/* directory.
 5. Import the project into Eclipse as 'Existing Maven Projects'.
 6. Go to 'Help --> Install New Software --> Add', enter http://directory.apache.org/studio/update as location and select Apache Directory Studio in the list, then install selected bundles.
@@ -73,5 +71,4 @@ While, fortunately, many dependencies can be found as OSGI bundles in [Orbit](ht
 We also use checkstyle and findbugs plugins to do static analyzing on the changes. Run the following commands to analyze your code to check if it is compatible.
 
 `mvn clean compile -P findbugs`
-
 `mvn clean validate -P checkstyle`
