@@ -249,17 +249,6 @@
 	</editor>
 </extension>
 
-<extension
-	point="org.eclipse.ui.editors">
-	<editor
-       class="tr.org.liderahenk.liderconsole.networkinventory.editors.NetworkInventoryEditor"
-       default="true"
-       icon="icons/sample.gif"
-       id="tr.org.liderahenk.liderconsole.networkinventory.editors.NetworkInventoryEditor"
-       name="%editor.ldap.search">
-	</editor>
-</extension>
-
  <extension
        point="org.eclipse.ui.perspectives">
     <perspective
