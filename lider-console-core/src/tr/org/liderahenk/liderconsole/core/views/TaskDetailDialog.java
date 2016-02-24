@@ -1,9 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.views;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -11,8 +9,6 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -21,9 +17,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 
-import tr.org.liderahenk.liderconsole.core.rest.RestClient;
-import tr.org.liderahenk.liderconsole.core.rest.RestRequest;
-import tr.org.liderahenk.liderconsole.core.rest.RestResponse;
 import tr.org.liderahenk.liderconsole.core.task.Messages;
 import tr.org.liderahenk.liderconsole.core.task.Task;
 
@@ -50,8 +43,9 @@ public class TaskDetailDialog extends TitleAreaDialog {
 		super.create();
 		
 		setTitle(selectedTask.getId());
-	    setMessage(Messages.getString("STATE")+":\t"+Messages.getString(selectedTask.getState().toString())+"\n"
-	    		+Messages.getString("START_DATE")+":\t"+selectedTask.getCreationDate()); 
+	    setMessage(Messages.getString("STATE")+":\t"
+		+Messages.getString(selectedTask.getState() !=null ?selectedTask.getState().toString() : "NONE")+"\n"
+	    +Messages.getString("START_DATE")+":\t"+selectedTask.getCreationDate()); 
 	}
 	
 	@Override
@@ -64,49 +58,12 @@ public class TaskDetailDialog extends TitleAreaDialog {
 		cmpMain.setLayout(new GridLayout(1, false));
 		createTable(cmpMain);
 		
-		btn = new Button(cmpMain, SWT.None);
-		btn.setText(Messages.getString("BUTTON"));
-		btn.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		btn.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				getLastTasks(10);
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
 		refresh();
 		
 		return parent;
 		
 	}
 
-	private List<Task> getLastTasks(Integer quantity) {
-		
-		
-		final Map<String, Object> parameterMap = new HashMap<String, Object>();
-		parameterMap.put("quantity",quantity );
-		
-		RestRequest request = new RestRequest();
-		request.setPluginName("TASK_OBSERVER");
-		request.setPluginVersion("1.0.0");
-		request.setCommandId("commandId");
-		request.setParameterMap(parameterMap);
-		
-		RestResponse response = RestClient.getInstance().post(request);
-		
-//		System.out.println(response.getResultMap().isEmpty());;
-		
-		return null;
-	}
-	
 	private void createTable(Composite cmpMain) {
 
 		tblDetail=new TableViewer(cmpMain, 
