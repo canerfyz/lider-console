@@ -9,6 +9,7 @@ import java.util.Map;
  * LDAP entries to process.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @see tr.org.liderahenk.liderconsole.core.rest.RestClient
  *
  */
 public class RestRequest implements Serializable {
@@ -58,6 +59,32 @@ public class RestRequest implements Serializable {
 	 * Priority indicates how important a task compared to others.
 	 */
 	private Priority priority;
+
+	public RestRequest() {
+		super();
+	}
+
+	public RestRequest(List<String> dnList, RestDNType dnType, String pluginName, String pluginVersion,
+			String commandId, Map<String, Object> parameterMap, String cronExpression, Priority priority) {
+		super();
+		this.dnList = dnList;
+		this.dnType = dnType;
+		this.pluginName = pluginName;
+		this.pluginVersion = pluginVersion;
+		this.commandId = commandId;
+		this.parameterMap = parameterMap;
+		this.cronExpression = cronExpression;
+		this.priority = priority;
+	}
+	
+	public RestRequest(String pluginName, String pluginVersion, String commandId, Map<String, Object> parameterMap) {
+		super();
+		this.pluginName = pluginName;
+		this.pluginVersion = pluginVersion;
+		this.commandId = commandId;
+		this.parameterMap = parameterMap;
+		this.priority = Priority.NORMAL;
+	}
 
 	public List<String> getDnList() {
 		return dnList;
