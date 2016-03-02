@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Rest response object representing a response to {@link RestRequest}
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
@@ -30,15 +31,41 @@ public class RestResponse implements Serializable {
 	 */
 	private String pluginVersion;
 
+	/**
+	 * ID of the executed command of the plugin.
+	 */
+	private String commandId;
+
+	/**
+	 * Response messages can be used along with status to notify result.
+	 */
 	private List<String> messages;
-	
-	private RestResponseBody responseBody;
-	
+
 	/**
 	 * Contains result parameters which can be used by the plugin (e.g.
 	 * displaying results)
 	 */
 	private Map<String, Object> resultMap;
+
+	/**
+	 * array of task ID
+	 */
+	private String[] tasks;
+
+	public RestResponse() {
+	}
+
+	public RestResponse(RestResponseStatus status, String pluginName, String pluginVersion, String commandId,
+			List<String> messages, Map<String, Object> resultMap, String[] tasks) {
+		super();
+		this.status = status;
+		this.pluginName = pluginName;
+		this.pluginVersion = pluginVersion;
+		this.commandId = commandId;
+		this.messages = messages;
+		this.resultMap = resultMap;
+		this.tasks = tasks;
+	}
 
 	public RestResponseStatus getStatus() {
 		return status;
@@ -46,22 +73,6 @@ public class RestResponse implements Serializable {
 
 	public void setStatus(RestResponseStatus status) {
 		this.status = status;
-	}
-
-	public String getPluginVersion() {
-		return pluginVersion;
-	}
-
-	public void setPluginVersion(String pluginVersion) {
-		this.pluginVersion = pluginVersion;
-	}
-
-	public Map<String, Object> getResultMap() {
-		return resultMap;
-	}
-
-	public void setResultMap(Map<String, Object> resultMap) {
-		this.resultMap = resultMap;
 	}
 
 	public String getPluginName() {
@@ -72,6 +83,22 @@ public class RestResponse implements Serializable {
 		this.pluginName = pluginName;
 	}
 
+	public String getPluginVersion() {
+		return pluginVersion;
+	}
+
+	public void setPluginVersion(String pluginVersion) {
+		this.pluginVersion = pluginVersion;
+	}
+
+	public String getCommandId() {
+		return commandId;
+	}
+
+	public void setCommandId(String commandId) {
+		this.commandId = commandId;
+	}
+
 	public List<String> getMessages() {
 		return messages;
 	}
@@ -80,12 +107,20 @@ public class RestResponse implements Serializable {
 		this.messages = messages;
 	}
 
-	public RestResponseBody getResponseBody() {
-		return responseBody;
+	public Map<String, Object> getResultMap() {
+		return resultMap;
 	}
 
-	public void setResponseBody(RestResponseBody responseBody) {
-		this.responseBody = responseBody;
+	public void setResultMap(Map<String, Object> resultMap) {
+		this.resultMap = resultMap;
+	}
+
+	public String[] getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(String[] tasks) {
+		this.tasks = tasks;
 	}
 
 }
