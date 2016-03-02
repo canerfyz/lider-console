@@ -19,6 +19,7 @@ public class LiderConstants {
 		public static final String LOGGER = "tr.org.liderahenk.liderconsole.core.logger";
 		public static final String PROFILE_MENU = "tr.org.liderahenk.liderconsole.core.profilemenu";
 		public static final String ACTION_MENU = "tr.org.liderahenk.liderconsole.core.actionmenu";
+		public static final String POLICY_MENU = "tr.org.liderahenk.liderconsole.core.policymenu";
 	}
 
 	public static class EventTopics {
