@@ -9,6 +9,7 @@
    </extension>
    <extension-point id="tr.org.liderahenk.liderconsole.core.logger" name="%extension.point.logger" schema="schema/tr.org.liderahenk.liderconsole.core.logger.exsd"/>
    <extension-point id="tr.org.liderahenk.liderconsole.core.profilemenu" name="%extension.point.profile.menu" schema="schema/tr.org.liderahenk.liderconsole.core.profilemenu.exsd"/>
+   <extension-point id="tr.org.liderahenk.liderconsole.core.policymenu" name="%extension.point.policy.menu" schema="schema/tr.org.liderahenk.liderconsole.core.policymenu.exsd"/>
    <extension
          point="org.eclipse.help.toc">
       <toc
@@ -32,6 +33,11 @@
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"            
             name="%editor.ldap.search">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.core.commands.Policy"
+            name="%policy.command">
       </command>  
       
    </extension>
@@ -45,19 +51,65 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.RefreshHandler"
             commandId="org.eclipse.ui.file.refresh">
-      </handler>              
+      </handler>
+	   <handler
+	         class="tr.org.liderahenk.liderconsole.core.handlers.PolicyHandler"
+	         commandId="tr.org.liderahenk.liderconsole.core.commands.Policy">
+	      <enabledWhen>
+	         <and>
+	            <with
+	                  variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
+	            </with>
+	            <with
+	                  variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isAhenkSelected">
+	            </with>
+	         </and>
+	      </enabledWhen>
+	   </handler>    
    </extension> 
    
    <extension
          point="org.eclipse.ui.menus">
        <menuContribution
-            locationURI="menu:tr.org.liderahenk.liderconsole.menus.Lider?after=additions">
+            locationURI="popup:tr.org.liderahenk.liderconsole.menus.LiderPopup?after=additions">
             <command
                   commandId="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
                   id="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
                   icon="icons/search.png"
                   tooltip="%command.tooltip">
 			
+            </command>
+            <command
+                  commandId="tr.org.liderahenk.liderconsole.core.commands.Policy"
+                  id="tr.org.liderahenk.liderconsole.commands.PolicyCommand"
+                  style="push">
+               <visibleWhen>
+                  <and>
+                     <iterate
+                           operator="or">
+                        <or>
+                           <with
+                                 variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected">
+                              <equals
+                                    value="true">
+                              </equals>
+                           </with>
+                           <with
+                                 variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isEntrySelected">
+                              <equals
+                                    value="true">
+                              </equals>
+                           </with>
+                        </or>
+                     </iterate>
+                     <with
+                           variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isAhenkSelected">
+                        <equals
+                              value="true">
+                        </equals>
+                     </with>
+                  </and>
+               </visibleWhen>
             </command>
       </menuContribution>
   </extension>
@@ -258,5 +310,10 @@
           id="tr.org.liderahenk.liderconsole.core.perspectives.MainPerspective"
           name="%view.main.perspective">
     </perspective>
+ </extension>
+ <extension
+       point="tr.org.liderahenk.liderconsole.core.policymenu">
+    <policyItem>
+    </policyItem>
  </extension>
 </plugin>
