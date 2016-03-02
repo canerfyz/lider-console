@@ -311,9 +311,4 @@
           name="%view.main.perspective">
     </perspective>
  </extension>
- <extension
-       point="tr.org.liderahenk.liderconsole.core.policymenu">
-    <policyItem>
-    </policyItem>
- </extension>
 </plugin>

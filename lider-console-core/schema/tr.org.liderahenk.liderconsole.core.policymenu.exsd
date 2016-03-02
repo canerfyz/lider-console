@@ -73,16 +73,6 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="handlerClass" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java"/>
-               </appinfo>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
