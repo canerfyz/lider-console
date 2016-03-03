@@ -6,6 +6,6 @@ public interface IPolicy {
 	 * List profiles for a plugin.
 	 * 
 	 */
-	void listProfiles();
+	String[] listProfiles();
 
 }

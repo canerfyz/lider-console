@@ -4,7 +4,6 @@ import org.apache.directory.studio.ldapbrowser.core.model.IEntry;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -31,9 +30,6 @@ public class PolicyHandler extends AbstractHandler {
 			if (selectedItem instanceof IEntry) {
 				IEntry selectedEntry = (IEntry) selectedItem;
 				String ahenkDn = selectedEntry.getDn().getName();
-				
-				EvaluateContributionsHandler handler = new EvaluateContributionsHandler();
-				handler.execute(Platform.getExtensionRegistry());
 				
 				PolicyMenuDialog dialog = new PolicyMenuDialog(Display.getDefault().getActiveShell(), ahenkDn);
 				dialog.create();

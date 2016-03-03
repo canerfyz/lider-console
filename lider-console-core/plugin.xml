@@ -89,12 +89,6 @@
                            operator="or">
                         <or>
                            <with
-                                 variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected">
-                              <equals
-                                    value="true">
-                              </equals>
-                           </with>
-                           <with
                                  variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isEntrySelected">
                               <equals
                                     value="true">
@@ -102,12 +96,6 @@
                            </with>
                         </or>
                      </iterate>
-                     <with
-                           variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isAhenkSelected">
-                        <equals
-                              value="true">
-                        </equals>
-                     </with>
                   </and>
                </visibleWhen>
             </command>
