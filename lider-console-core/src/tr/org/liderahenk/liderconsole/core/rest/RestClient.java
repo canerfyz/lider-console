@@ -29,6 +29,7 @@ import tr.org.liderahenk.liderconsole.core.utils.PropertyLoader;
  * handling their responses.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @see tr.org.liderahenk.liderconsole.core.rest.RestRequest
  *
  */
 @SuppressWarnings("restriction")
@@ -105,8 +106,8 @@ public class RestClient {
 			entity = new StringEntity(URLEncoder.encode(gson.toJson(request), "UTF-8"), StandardCharsets.UTF_8);
 			httpPost.setEntity(entity);
 
-			httpPost.setHeader(USERNAME_HEADER, "lider"/*UserSettings.USER_ID*/);
-			httpPost.setHeader(PASSWORD_HEADER, "12345"/*UserSettings.USER_PASSWORD*/);
+			httpPost.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
+			httpPost.setHeader(PASSWORD_HEADER, UserSettings.USER_PASSWORD);
 
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			if (httpResponse.getStatusLine().getStatusCode() != 200) {

@@ -32,6 +32,8 @@ import tr.org.liderahenk.liderconsole.core.current.UserSettings;
 import tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
+import tr.org.liderahenk.liderconsole.core.rest.RestRequest;
+import tr.org.liderahenk.liderconsole.core.rest.RestResponse;
 import tr.org.liderahenk.liderconsole.core.ui.GenericEditorInput;
 import tr.org.liderahenk.liderconsole.core.widgets.notifier.Notifier;
 import tr.org.liderahenk.liderconsole.core.xmpp.XMPPClient;
@@ -161,43 +163,6 @@ public class LdapConnectionListener implements IConnectionListener {
 							.get(LiderConstants.LdapAttributes.configRestFulAddressAttribute);
 					String restFulAddress = LdapUtils.getInstance().findAttributeValue(attribute);
 
-					// TODO read these attributes from a properties file. (Same
-					// as LiderConstants.LdapAttributes)
-					// attribute =
-					// item.getAttributes().get(LiderConstants.LdapAttributes.configDeviceObjectClassAttribute);
-					// String tmp =
-					// LdapUtils.getInstance().findAttributeValue(attribute);
-					// if (tmp != null && !"".equals(tmp)) {
-					// LiderConstants.LdapAttributes.PardusAhenkObjectClass =
-					// tmp;
-					// }
-					//
-					// attribute =
-					// item.getAttributes().get(LiderConstants.LdapAttributes.configUserObjectClassAttribute);
-					// tmp =
-					// LdapUtils.getInstance().findAttributeValue(attribute);
-					// if (tmp != null && !"".equals(tmp)) {
-					// LiderConstants.LdapAttributes.PardusUserObjectClass =
-					// tmp;
-					// }
-					//
-					// attribute =
-					// item.getAttributes().get(LiderConstants.LdapAttributes.configUserIdentityAttribute);
-					// tmp =
-					// LdapUtils.getInstance().findAttributeValue(attribute);
-					// if (tmp != null && !"".equals(tmp)) {
-					// LiderConstants.LdapAttributes.UserIdentityAttribute =
-					// tmp;
-					// }
-					//
-					// attribute =
-					// item.getAttributes().get(LiderConstants.LdapAttributes.configOwnerAttribute);
-					// tmp =
-					// LdapUtils.getInstance().findAttributeValue(attribute);
-					// if (tmp != null && !"".equals(tmp)) {
-					// LiderConstants.LdapAttributes.AhenkUserAttribute = tmp;
-					// }
-
 					if ("".equals(UserSettings.USER_DN)) {
 						// TODO messages_tr/en
 						Notifier.notify("WARNING",
@@ -206,20 +171,24 @@ public class LdapConnectionListener implements IConnectionListener {
 										LiderConstants.LdapAttributes.UserIdentityAttribute));
 					} else {
 						if (!"".equals(restFulAddress)) {
-							// TODO
-//							RestSettings.setServerRestUrl(restFulAddress);
-//
-//							Map<String, Object> XmppInfo = new RestClient().getXmppAddress();
-//							if (XmppInfo != null) {
-//								// Initialise UID map before connecting to XMPP
-//								// server.
-//								LdapUtils.getInstance().getUidMap(conn, monitor);
-//								XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
-//										XmppInfo.get("xmppDomain").toString(), XmppInfo.get("xmppIp").toString(), 5222);
-//							} else {
-//								// TODO messages_tr/en
-//								Notifier.notify("WARNING", "XMPP Baglanti Bilgilerine Erisilemiyor.");
-//							}
+							RestSettings.setServerUrl(restFulAddress);
+
+							RestRequest request = new RestRequest("LIDER-CONFIG", "1.0.0",
+									"GET-SYSTEM-CONFIG", null);
+							RestResponse response = RestClient.getInstance().post(request);
+							Map<String, Object> xmppConfig = response.getResultMap();
+							if (xmppConfig != null) {
+								// Initialise UID map before connecting to XMPP
+								// server.
+								LdapUtils.getInstance().getUidMap(conn, monitor);
+								XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
+										xmppConfig.get("xmppServiceName").toString(),
+										xmppConfig.get("xmppHost").toString(),
+										new Integer(xmppConfig.get("xmppPort").toString()));
+							} else {
+								// TODO messages_tr/en
+								Notifier.notify("WARNING", "XMPP Baglanti Bilgilerine Erisilemiyor.");
+							}
 						} else {
 							// TODO messages_tr/en
 							Notifier.notify("WARNING",

@@ -167,15 +167,14 @@ public class TaskOverview extends ViewPart {
 		RestResponse response = RestClient.getInstance().post(request);
 		
 		if( response != null 
-				&& response.getResponseBody()!=null && response.getResponseBody().getResultMap()!=null 
-				&& !response.getResponseBody().getResultMap().isEmpty() && response.getResponseBody().getResultMap().get(RESPONSE_RESULT)!=null
-				&& !"[]".equals(response.getResponseBody().getResultMap().get(RESPONSE_RESULT).toString())){
-			taskList=(List<Task>) response.getResponseBody().getResultMap().get(RESPONSE_RESULT);
+				&& response.getResultMap()!=null 
+				&& !response.getResultMap().isEmpty() && response.getResultMap().get(RESPONSE_RESULT)!=null
+				&& !"[]".equals(response.getResultMap().get(RESPONSE_RESULT).toString())){
+			taskList=(List<Task>) response.getResultMap().get(RESPONSE_RESULT);
 		}
 
 		return prepareParents(taskList);
 	}
-
 
 	private List<ITask> prepareParents(List<Task> taskList) {
 
