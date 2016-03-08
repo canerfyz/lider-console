@@ -187,7 +187,7 @@ public class LdapConnectionListener implements IConnectionListener {
 										new Integer(xmppConfig.get("xmppPort").toString()));
 							} else {
 								// TODO messages_tr/en
-								Notifier.notify("WARNING", "XMPP Baglanti Bilgilerine Erisilemiyor.");
+//								Notifier.notify("WARNING", "XMPP Baglanti Bilgilerine Erisilemiyor.");
 							}
 						} else {
 							// TODO messages_tr/en
