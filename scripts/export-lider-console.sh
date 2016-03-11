@@ -16,7 +16,7 @@ J_PID=$!
 
 # While server is running, start Tycho
 cd ..
-mvn clean verify
+mvn clean install -DskipTests
 
 # After exporting products, kill jetty server process
 kill $J_PID
