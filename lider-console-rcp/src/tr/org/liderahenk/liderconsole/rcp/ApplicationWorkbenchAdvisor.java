@@ -60,7 +60,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * Return initial perspective ID specified in config.properties
 	 */
 	public String getInitialWindowPerspectiveId() {
-		String perspectiveId = ConfigProvider.getInstance().get(LiderConstants.CONFIG_PROPS.INITIAL_PERSPECTIVE_ID);
+		String perspectiveId = ConfigProvider.getInstance().get(LiderConstants.CONFIG.GUI_INITIAL_PERSPECTIVE_ID);
 		return perspectiveId != null ? perspectiveId : LiderConstants.PERSPECTIVES.MAIN_PERSPECTIVE_ID;
 	}
 
