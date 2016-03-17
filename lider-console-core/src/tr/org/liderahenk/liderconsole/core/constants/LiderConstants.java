@@ -36,25 +36,23 @@ public class LiderConstants {
 		public static final String TASK = "task";
 	}
 
-	public static final class CONFIG_PROPS {
-		public static final String PROFILE_BASE_URL = "rest.profile.base.url";
-		public static final String POLICY_BASE_URL = "rest.policy.base.url";
-		public static final String TASK_BASE_URL = "rest.task.base.url";
-		public static final String INITIAL_PERSPECTIVE_ID = "gui.initial.perspective.id";
-	}
-
-	// TODO read these attributes from a properties file!
-	public static final class LdapAttributes {
-		public static final String UserIdentityAttribute = "uid";
-		public static final String configRestFulAddressAttribute = "liderServiceAddress";
-		public static final String configOwnerAttribute = "liderAhenkOwnerAttributeName";
-		public static final String configDeviceObjectClassAttribute = "liderDeviceObjectClassName";
-		public static final String configUserIdentityAttribute = "liderUserIdentityAttributeName";
-		public static final String configUserObjectClassAttribute = "liderUserObjectClassName";
-		public static final String liderPrivilegeAttribute = "liderPrivilege";
-		public static final String AhenkUserAttribute = "owner";
-		public static final String PardusAhenkObjectClass = "pardusDevice";
-		public static final String PardusUserObjectClass = "pardusAccount";
+	/**
+	 * Configuration properties used in config.properties file
+	 */
+	public static final class CONFIG {
+		public static final String REST_PROFILE_BASE_URL = "rest.profile.base.url";
+		public static final String REST_POLICY_BASE_URL = "rest.policy.base.url";
+		public static final String REST_TASK_BASE_URL = "rest.task.base.url";
+		public static final String GUI_INITIAL_PERSPECTIVE_ID = "gui.initial.perspective.id";
+		public static final String XMPP_MAX_RETRY_CONN = "xmpp.max.retry.connection.count";
+		public static final String XMPP_REPLAY_TIMEOUT = "xmpp.packet.replay.timeout";
+		public static final String XMPP_PING_TIMEOUT = "xmpp.ping.timeout";
+		public static final String XMPP_USE_SSL = "xmpp.use.ssl";
+		public static final String USER_LDAP_OBJ_CLS = "user.ldap.object.classes";
+		public static final String USER_LDAP_UID_ATTR = "user.ldap.uid.attribute";
+		public static final String USER_LDAP_PRIVILEGE_ATTR = "user.ldap.privilege.attribute";
+		public static final String AGENT_LDAP_OBJ_CLS = "agent.ldap.object.classes";
+		public static final String LDAP_REST_ADDRESS_ATTR = "ldap.rest.address.attribute";
 	}
 
 	public static class FILES {
