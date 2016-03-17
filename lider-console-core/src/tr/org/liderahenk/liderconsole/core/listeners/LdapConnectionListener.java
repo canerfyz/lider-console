@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
@@ -147,7 +148,7 @@ public class LdapConnectionListener implements IConnectionListener {
 				} else {
 					String principal = conn.getBindPrincipal();
 					String uid = LdapUtils.getInstance().findAttributeValueByDn(principal,
-							LiderConstants.LdapAttributes.UserIdentityAttribute, conn, monitor);
+							ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR), conn, monitor);
 					String passwd = conn.getBindPassword();
 					UserSettings.setCurrentUserDn(principal);
 					UserSettings.setCurrentUserId(uid);
@@ -168,7 +169,7 @@ public class LdapConnectionListener implements IConnectionListener {
 
 					// REST Address
 					Attribute attribute = item.getAttributes()
-							.get(LiderConstants.LdapAttributes.configRestFulAddressAttribute);
+							.get(ConfigProvider.getInstance().get(LiderConstants.CONFIG.LDAP_REST_ADDRESS_ATTR));
 					String restFulAddress = LdapUtils.getInstance().findAttributeValue(attribute);
 
 					if ("".equals(UserSettings.USER_DN)) {
@@ -176,7 +177,7 @@ public class LdapConnectionListener implements IConnectionListener {
 						Notifier.notify("WARNING",
 								String.format(
 										"Lider özelliklerini kullanabilmeniz\r\niçin, bağlandığınız kullanıcının\r\n'%s' özelliği tanımlı olmalıdır.",
-										LiderConstants.LdapAttributes.UserIdentityAttribute));
+										ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR)));
 					} else {
 						if (!"".equals(restFulAddress)) {
 							RestSettings.setServerUrl(restFulAddress);
@@ -202,7 +203,8 @@ public class LdapConnectionListener implements IConnectionListener {
 							Notifier.notify("WARNING",
 									"Bu LDAP Sunucusu Lider ile calismak uzere konfigure edilmemiş. Kullanabilmek için, lütfen '"
 											+ restFulConfigDN + "' oluşturup '"
-											+ LiderConstants.LdapAttributes.configRestFulAddressAttribute
+											+ ConfigProvider.getInstance()
+													.get(LiderConstants.CONFIG.LDAP_REST_ADDRESS_ATTR)
 											+ "' özelliğe lider web servisi adres bilgilerini giriniz.");
 						}
 					}

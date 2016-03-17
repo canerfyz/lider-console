@@ -141,7 +141,7 @@ public class ProfileUtils {
 	 */
 	private static StringBuilder getBaseUrl() {
 		StringBuilder url = new StringBuilder(
-				ConfigProvider.getInstance().get(LiderConstants.CONFIG_PROPS.PROFILE_BASE_URL));
+				ConfigProvider.getInstance().get(LiderConstants.CONFIG.REST_PROFILE_BASE_URL));
 		return url;
 	}
 

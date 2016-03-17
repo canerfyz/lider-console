@@ -45,6 +45,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.labelproviders.LdapSearchLabelProvider;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
@@ -333,11 +334,17 @@ public class LdapSearchEditor extends EditorPart {
 		filterExpressions.add("(objectClass=*)");
 
 		if (btnSearchUsers.getSelection()) {
-			filterExpressions.add("(objectClass="
-					+ LiderConstants.LdapAttributes.PardusUserObjectClass + ")");
+			String[] userObjClsArr = ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS);
+			for (String userObjCls : userObjClsArr) {
+				filterExpressions.add("(objectClass="
+						+ userObjCls + ")");
+			}
 		} else if (btnSearchAgents.getSelection()) {
-			filterExpressions.add("(objectClass="
-					+ LiderConstants.LdapAttributes.PardusAhenkObjectClass + ")");
+			String[] agentObjClsArr = ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS);
+			for (String agentObjCls : agentObjClsArr) {
+				filterExpressions.add("(objectClass="
+						+ agentObjCls + ")");
+			}
 		}
 
 		Control[] children = cmpSearchCritera.getChildren();

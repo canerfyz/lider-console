@@ -59,7 +59,7 @@ public class TaskUtils {
 	 */
 	private static StringBuilder getBaseUrl() {
 		StringBuilder url = new StringBuilder(
-				ConfigProvider.getInstance().get(LiderConstants.CONFIG_PROPS.TASK_BASE_URL));
+				ConfigProvider.getInstance().get(LiderConstants.CONFIG.REST_TASK_BASE_URL));
 		return url;
 	}
 

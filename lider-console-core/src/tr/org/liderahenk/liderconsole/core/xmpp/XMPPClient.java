@@ -34,6 +34,7 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager.AutoReceiptMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
@@ -131,10 +132,11 @@ public class XMPPClient {
 		this.serviceName = serviceName;
 		this.host = host;
 		this.port = port;
-		this.maxRetryConnectionCount = 5; // TODO read from config file
-		this.maxPingTimeoutCount = 3000; // TODO read from config file
-		this.packetReplyTimeout = 10000; // TODO read from config file
-		this.pingTimeout = 3000; // TODO read from config file
+		this.maxRetryConnectionCount = ConfigProvider.getInstance()
+				.getInt(LiderConstants.CONFIG.XMPP_MAX_RETRY_CONN);
+		this.maxPingTimeoutCount = ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.XMPP_PING_TIMEOUT);
+		this.packetReplyTimeout = ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.XMPP_REPLAY_TIMEOUT);
+		this.pingTimeout = ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.XMPP_PING_TIMEOUT);
 		logger.debug(this.toString());
 	}
 

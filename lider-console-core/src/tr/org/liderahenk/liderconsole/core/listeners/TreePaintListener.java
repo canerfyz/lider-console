@@ -1,6 +1,9 @@
 package tr.org.liderahenk.liderconsole.core.listeners;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -21,6 +24,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.event.EventHandler;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
@@ -138,17 +142,25 @@ public class TreePaintListener implements Listener {
 
 			if (originalImage != pardusAhenkImage && data instanceof IEntry) {
 				Collection<ObjectClass> classes = ((IEntry) data).getObjectClassDescriptions();
-				// Boolean specialIcon=false;
-				for (ObjectClass c : classes) {
-					String cname = c.getName();
-					if (cname.equals(LiderConstants.LdapAttributes.PardusAhenkObjectClass)) {
-						// event.gc.drawImage(pardusAhenkImage, event.x-4,
-						// event.y+4);
-						// specialIcon=true;
-						item.setImage(pardusAhenkImage);
-						originalImage = item.getImage();
-						break;
+				List<String> agentObjClsArr = new ArrayList<String>(ConfigProvider.getInstance()
+						.getStringList(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS));
+				
+				// Remove common elements from the list
+				for (Iterator<String> iterator = agentObjClsArr.iterator(); iterator.hasNext();) {
+					String agentObjCls = iterator.next();
+					for (ObjectClass c : classes) {
+						String cName = c.getName();
+						if (cName.equals(agentObjCls)) {
+							iterator.remove();
+							break;
+						}
 					}
+				}
+				// If the resulting list is empty, then specified entry belongs
+				// to an agent
+				if (agentObjClsArr.isEmpty()) {
+					item.setImage(pardusAhenkImage);
+					originalImage = item.getImage();
 				}
 			}
 			if (originalImage != null)
@@ -171,7 +183,7 @@ public class TreePaintListener implements Listener {
 				}
 			}
 
-			event.gc.drawText(text, event.x + 20, event.y, true); // + offset2
+			event.gc.drawText(text, event.x + 20, event.y, true);
 			break;
 		}
 		case SWT.EraseItem: {

@@ -137,7 +137,7 @@ public class PolicyUtils {
 	 */
 	private static StringBuilder getBaseUrl() {
 		StringBuilder url = new StringBuilder(
-				ConfigProvider.getInstance().get(LiderConstants.CONFIG_PROPS.POLICY_BASE_URL));
+				ConfigProvider.getInstance().get(LiderConstants.CONFIG.REST_POLICY_BASE_URL));
 		return url;
 	}
 

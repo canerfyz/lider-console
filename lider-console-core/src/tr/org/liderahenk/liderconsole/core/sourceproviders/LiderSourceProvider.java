@@ -3,6 +3,7 @@ package tr.org.liderahenk.liderconsole.core.sourceproviders;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
@@ -104,13 +106,45 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 					if (!(selectedItem instanceof BaseDNEntry)) {
 						isEntry = true;
 						Collection<ObjectClass> classes = entry.getObjectClassDescriptions();
-						for (ObjectClass c : classes) {
-							String cname = c.getName();
-							if (cname.equals(LiderConstants.LdapAttributes.PardusAhenkObjectClass)) {
-								isAhenk = true;
+						List<String> userObjClsArr = new ArrayList<String>(ConfigProvider.getInstance()
+								.getStringList(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS));
+
+						// Check if the entry belongs to a user by removing
+						// common elements from the user obj classes list.
+						for (Iterator<String> iterator = userObjClsArr.iterator(); iterator.hasNext();) {
+							String userObjCls = iterator.next();
+							for (ObjectClass c : classes) {
+								String cName = c.getName();
+								if (cName.equals(userObjCls)) {
+									iterator.remove();
+									break;
+								}
 							}
-							if (cname.equals(LiderConstants.LdapAttributes.PardusUserObjectClass)) {
-								isLdapUser = true;
+						}
+						// If the resulting list is empty, then specified entry
+						// belongs to a user
+						if (userObjClsArr.isEmpty()) {
+							isLdapUser = true;
+						}
+						// If it does not, check if the entry belongs to an
+						// agent
+						if (!isLdapUser) {
+							List<String> agentObjClsArr = new ArrayList<String>(ConfigProvider.getInstance()
+									.getStringList(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS));
+							// Again, remove any common elements from agent obj
+							// classes list.
+							for (Iterator<String> iterator = agentObjClsArr.iterator(); iterator.hasNext();) {
+								String agentObjCls = iterator.next();
+								for (ObjectClass c : classes) {
+									String cName = c.getName();
+									if (cName.equals(agentObjCls)) {
+										iterator.remove();
+										break;
+									}
+								}
+							}
+							if (agentObjClsArr.isEmpty()) {
+								isAhenk = true;
 							}
 						}
 					}
@@ -268,8 +302,9 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 					window.getSelectionService().addPostSelectionListener(
 							"org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView",
 							browserSelectionListener);
-//					window.getSelectionService().addSelectionListener(
-//							"tr.org.liderahenk.liderconsole.core.views.SubBrowserView", userBrowserSelectionListener);
+					// window.getSelectionService().addSelectionListener(
+					// "tr.org.liderahenk.liderconsole.core.views.SubBrowserView",
+					// userBrowserSelectionListener);
 				}
 			} else {
 				IWorkbench workbench = PlatformUI.getWorkbench();
@@ -278,7 +313,7 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 				if (windows != null && windows.length > 0) {
 					IWorkbenchWindow window = windows[0];
 					window.getSelectionService().removePostSelectionListener(browserSelectionListener);
-//					window.getSelectionService().removeSelectionListener(userBrowserSelectionListener);
+					// window.getSelectionService().removeSelectionListener(userBrowserSelectionListener);
 				}
 			}
 
