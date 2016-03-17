@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
@@ -35,11 +34,6 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager.AutoReceiptMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import tr.org.liderahenk.liderconsole.core.TaskStatusUpdate;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
@@ -262,10 +256,10 @@ public class XMPPClient {
 									if (!dn.equals("")) {
 										if (presence.getType() == Type.available) {
 											onlineUsers.add(jid.substring(0, jid.indexOf('@')));
-											eventBroker.send(LiderConstants.EventTopics.ROSTER_ONLINE, dn);
+											eventBroker.send(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 										} else if (presence.getType() == Type.unavailable) {
 											onlineUsers.remove(jid.substring(0, jid.indexOf('@')));
-											eventBroker.send(LiderConstants.EventTopics.ROSTER_OFFLINE, dn);
+											eventBroker.send(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 										}
 									}
 								} catch (Exception e) {
@@ -291,39 +285,39 @@ public class XMPPClient {
 		@Override
 		public void connectionClosed() {
 			logger.info("XMPP connection was closed.");
-			eventBroker.send(LiderConstants.EventTopics.XMPP_OFFLINE, "");
+			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
 		}
 
 		@Override
 		public void connectionClosedOnError(Exception e) {
 			logger.error("XMPP connection closed with an error", e.getMessage());
-			eventBroker.send(LiderConstants.EventTopics.XMPP_OFFLINE, "");
+			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
 		}
 
 		@Override
 		public void reconnectingIn(int seconds) {
 			logger.info("Reconnecting in {} seconds.", seconds);
-			eventBroker.send(LiderConstants.EventTopics.XMPP_OFFLINE, "");
+			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
 		}
 
 		@Override
 		public void reconnectionFailed(Exception e) {
 			logger.error("Failed to reconnect to the XMPP server.", e.getMessage());
-			eventBroker.send(LiderConstants.EventTopics.XMPP_OFFLINE, "");
+			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
 		}
 
 		@Override
 		public void reconnectionSuccessful() {
 			pingTimeoutCount = 0;
 			logger.info("Successfully reconnected to the XMPP server.");
-			eventBroker.send(LiderConstants.EventTopics.XMPP_ONLINE, "");
+			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, "");
 		}
 
 		@Override
 		public void connected(XMPPConnection connection) {
 			logger.info("User: {} connected to XMPP Server {} via port {}",
 					new Object[] { connection.getUser(), connection.getHost(), connection.getPort() });
-			eventBroker.send(LiderConstants.EventTopics.XMPP_ONLINE, "");
+			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, "");
 		}
 
 		@Override
@@ -332,7 +326,7 @@ public class XMPPClient {
 			if (resumed) {
 				logger.info("A previous XMPP session's stream was resumed");
 			}
-			eventBroker.send(LiderConstants.EventTopics.XMPP_ONLINE, "");
+			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, "");
 		}
 	}
 
@@ -379,26 +373,35 @@ public class XMPPClient {
 
 	protected void postTaskStatus(String body) {
 
-		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").serializeNulls().create();
-		final TaskStatusUpdate taskStatus = (TaskStatusUpdate) gson.fromJson(body, new TypeToken<TaskStatusUpdate>() {
-		}.getType());
+		// TODO
+		// TODO
+		// TODO
+		// TODO
 
-		if (taskStatus != null && taskStatus.getPlugin() != null) {
-
-			// Show task notification
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					// TODO notification elden gecirilecek
-					// Notification.TaskNotification(taskStatus.getPlugin());
-					// Notifier.notify("Test", "Test");
-				}
-			});
-
-			// Notify related plug-in
-			eventBroker.post(taskStatus.getPlugin(), body);
-			eventBroker.post(LiderConstants.EventTopics.TASK, body);
-		}
+		// TaskStatusUpdate taskStatus = null;
+		// try {
+		// taskStatus = new ObjectMapper().readValue(body,
+		// TaskStatusUpdate.class);
+		// } catch (IOException e) {
+		// logger.error(e.getMessage(), e);
+		// }
+		//
+		// if (taskStatus != null && taskStatus.getPlugin() != null) {
+		//
+		// // Show task notification
+		// Display.getDefault().asyncExec(new Runnable() {
+		// @Override
+		// public void run() {
+		// // TODO notification elden gecirilecek
+		// // Notification.TaskNotification(taskStatus.getPlugin());
+		// // Notifier.notify("Test", "Test");
+		// }
+		// });
+		//
+		// // Notify related plug-in
+		// eventBroker.post(taskStatus.getPlugin(), body);
+		// eventBroker.post(LiderConstants.EventTopics.TASK, body);
+		// }
 
 	}
 
@@ -431,9 +434,9 @@ public class XMPPClient {
 								LdapConnectionListener.getMonitor());
 				if (dn != null && !dn.isEmpty()) {
 					if (presence.getType() == Type.available) {
-						eventBroker.send(LiderConstants.EventTopics.ROSTER_ONLINE, dn);
+						eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 					} else if (presence.getType() == Type.unavailable) {
-						eventBroker.send(LiderConstants.EventTopics.ROSTER_OFFLINE, dn);
+						eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 					}
 				}
 			}
@@ -449,7 +452,7 @@ public class XMPPClient {
 						: LdapUtils.getInstance().findDnByUid(jid, LdapConnectionListener.getConnection(),
 								LdapConnectionListener.getMonitor());
 				if (dn != null && !dn.isEmpty()) {
-					eventBroker.send("roster_offline", dn);
+					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 				}
 			}
 		}
@@ -465,9 +468,9 @@ public class XMPPClient {
 							LdapConnectionListener.getMonitor());
 			if (dn != null && !dn.isEmpty()) {
 				if (presence.getType() == Type.available) {
-					eventBroker.send(LiderConstants.EventTopics.ROSTER_ONLINE, dn);
+					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 				} else if (presence.getType() == Type.unavailable) {
-					eventBroker.send(LiderConstants.EventTopics.ROSTER_OFFLINE, dn);
+					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 				}
 			}
 
@@ -488,7 +491,7 @@ public class XMPPClient {
 			connection.removeConnectionListener(connectionListener);
 			PingManager.getInstanceFor(connection).setPingInterval(-1);
 			connection.disconnect();
-			eventBroker.send(LiderConstants.EventTopics.XMPP_OFFLINE, "");
+			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
 			logger.info("Successfully closed XMPP connection.");
 		}
 	}

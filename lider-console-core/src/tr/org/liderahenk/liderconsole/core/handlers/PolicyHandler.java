@@ -11,7 +11,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import tr.org.liderahenk.liderconsole.core.views.PolicyMenuDialog;
+import tr.org.liderahenk.liderconsole.core.dialogs.PolicyMenuDialog;
 
 public class PolicyHandler extends AbstractHandler {
 

@@ -48,10 +48,6 @@
             class="tr.org.liderahenk.liderconsole.core.handlers.LdapSearchHandler"
             commandId="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor">
       </handler>
-	  <handler
-            class="tr.org.liderahenk.liderconsole.core.RefreshHandler"
-            commandId="org.eclipse.ui.file.refresh">
-      </handler>
 	   <handler
 	         class="tr.org.liderahenk.liderconsole.core.handlers.PolicyHandler"
 	         commandId="tr.org.liderahenk.liderconsole.core.commands.Policy">
@@ -75,9 +71,8 @@
             <command
                   commandId="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
                   id="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
-                  icon="icons/search.png"
+                  icon="icons/32/search.png"
                   tooltip="%command.tooltip">
-			
             </command>
             <command
                   commandId="tr.org.liderahenk.liderconsole.core.commands.Policy"
@@ -144,10 +139,10 @@
       </category>
       <view
             category="tr.org.liderahenk.liderconsole.core.category"
-            class="tr.org.liderahenk.liderconsole.core.views.xmpplogs.XmppLogsView"
-            id="tr.org.liderahenk.liderconsole.core.views.xmpplogs.XmppLogsView"
-            name="%view.xmpp.logs"
-            icon="icons/offline-red.png"
+            class="tr.org.liderahenk.liderconsole.core.views.SystemLogsView"
+            id="tr.org.liderahenk.liderconsole.core.views.SystemLogsView"
+            name="%view.system.logs"
+            icon="icons/32/log-book.png"
             restorable="true">
       </view>
       <view
@@ -181,7 +176,7 @@
    <extension
          point="org.eclipse.ui.services">
       <sourceProvider
-            provider="tr.org.liderahenk.liderconsole.core.sourceproviders.Main">
+            provider="tr.org.liderahenk.liderconsole.core.sourceproviders.LiderSourceProvider">
          <variable
                name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available"
                priorityLevel="workbench">
@@ -294,7 +289,7 @@
     <perspective
           class="tr.org.liderahenk.liderconsole.core.perspectives.MainPerspective"
           fixed="true"
-          icon="icons/pardusAhenk.png"
+          icon="icons/32/pardusAhenk.png"
           id="tr.org.liderahenk.liderconsole.core.perspectives.MainPerspective"
           name="%view.main.perspective">
     </perspective>

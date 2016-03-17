@@ -2,7 +2,6 @@ package tr.org.liderahenk.liderconsole.core.listeners;
 
 import java.util.Map;
 
-import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
@@ -25,20 +24,29 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
 import tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
-import tr.org.liderahenk.liderconsole.core.rest.RestClient;
-import tr.org.liderahenk.liderconsole.core.rest.RestRequest;
-import tr.org.liderahenk.liderconsole.core.rest.RestResponse;
+import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
+import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
 import tr.org.liderahenk.liderconsole.core.ui.GenericEditorInput;
-import tr.org.liderahenk.liderconsole.core.widgets.notifier.Notifier;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 import tr.org.liderahenk.liderconsole.core.xmpp.XMPPClient;
 
+/**
+ * This class listens to LDAP connection & send events accordingly.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class LdapConnectionListener implements IConnectionListener {
+
+	private static final Logger logger = LoggerFactory.getLogger(LdapConnectionListener.class);
 
 	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 
@@ -55,7 +63,7 @@ public class LdapConnectionListener implements IConnectionListener {
 
 			// This code block is used to paint initially 'offline' icons on
 			// LDAP user and agent entries.
-			BrowserView browserView = (BrowserView) window.getActivePage().findView(LiderConstants.Views.BROWSER_VIEW);
+			BrowserView browserView = (BrowserView) window.getActivePage().findView(LiderConstants.VIEWS.BROWSER_VIEW);
 			if (browserView != null) {
 
 				final Tree tree = browserView.getMainWidget().getViewer().getTree();
@@ -173,9 +181,8 @@ public class LdapConnectionListener implements IConnectionListener {
 						if (!"".equals(restFulAddress)) {
 							RestSettings.setServerUrl(restFulAddress);
 
-							RestRequest request = new RestRequest("LIDER-CONFIG", "1.0.0",
-									"GET-SYSTEM-CONFIG", null);
-							RestResponse response = RestClient.getInstance().post(request);
+							IResponse response = TaskUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG");
+
 							Map<String, Object> xmppConfig = response.getResultMap();
 							if (xmppConfig != null) {
 								// Initialise UID map before connecting to XMPP
@@ -187,7 +194,8 @@ public class LdapConnectionListener implements IConnectionListener {
 										new Integer(xmppConfig.get("xmppPort").toString()));
 							} else {
 								// TODO messages_tr/en
-//								Notifier.notify("WARNING", "XMPP Baglanti Bilgilerine Erisilemiyor.");
+								// Notifier.notify("WARNING", "XMPP Baglanti
+								// Bilgilerine Erisilemiyor.");
 							}
 						} else {
 							// TODO messages_tr/en
@@ -199,8 +207,8 @@ public class LdapConnectionListener implements IConnectionListener {
 						}
 					}
 				}
-			} catch (NamingException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -213,6 +221,7 @@ public class LdapConnectionListener implements IConnectionListener {
 
 	}
 
+	// TODO handle this via event listener
 	private void openLdapSearchEditor() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
@@ -220,7 +229,7 @@ public class LdapConnectionListener implements IConnectionListener {
 			IWorkbenchWindow window = windows[0];
 			final IWorkbenchPage activePage = window.getActivePage();
 			IPerspectiveDescriptor perspective = activePage.getPerspective();
-			if (LiderConstants.Perspectives.MAIN_PERSPECTIVE_ID.equalsIgnoreCase(perspective.getId())) {
+			if (LiderConstants.PERSPECTIVES.MAIN_PERSPECTIVE_ID.equalsIgnoreCase(perspective.getId())) {
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {

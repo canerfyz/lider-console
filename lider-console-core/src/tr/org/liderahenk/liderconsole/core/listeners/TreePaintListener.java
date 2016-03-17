@@ -31,44 +31,45 @@ public class TreePaintListener implements Listener {
 	private final Image offlineImage;
 	private final Image onlineImage;
 	private final Image pardusAhenkImage;
+
 	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 	private final Map<String, Boolean> onlineInfo;
 
 	public TreePaintListener(final Tree tree) {
-		// TODO implement system-wide image registry class
+
 		offlineImage = new Image(Display.getDefault(),
-				this.getClass().getClassLoader().getResourceAsStream("icons/offline-red-mini.png"));
+				this.getClass().getClassLoader().getResourceAsStream("icons/32/offline-red-mini.png"));
 		onlineImage = new Image(Display.getDefault(),
-				this.getClass().getClassLoader().getResourceAsStream("icons/online-mini.png"));
+				this.getClass().getClassLoader().getResourceAsStream("icons/32/online-mini.png"));
 		pardusAhenkImage = new Image(Display.getDefault(),
-				this.getClass().getClassLoader().getResourceAsStream("icons/pardusAhenk.png"));
+				this.getClass().getClassLoader().getResourceAsStream("icons/32/pardusAhenk.png"));
 		onlineInfo = new TreeMap<String, Boolean>();
 
-		eventBroker.subscribe(LiderConstants.EventTopics.ROSTER_ONLINE, new EventHandler() {
+		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				String dn = (String) event.getProperty("org.eclipse.e4.data");
 				onlineInfo.put(dn, true);
 				try {
 					tree.redraw();
 				} catch (Exception e) {
-					// ignore (uygulama kapatılırken tree nesnesi dispose
-					// edilmiş olabiliyor)
+					// On system shutdown, tree object might already be
+					// disposed!
 				}
 			}
 		});
-		eventBroker.subscribe(LiderConstants.EventTopics.ROSTER_OFFLINE, new EventHandler() {
+		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				String dn = (String) event.getProperty("org.eclipse.e4.data");
 				onlineInfo.put(dn, false);
 				try {
 					tree.redraw();
 				} catch (Exception e) {
-					// ignore (uygulama kapatılırken tree nesnesi dispose
-					// edilmiş olabiliyor)
+					// On system shutdown, tree object might already be
+					// disposed!
 				}
 			}
 		});
-		eventBroker.subscribe(LiderConstants.EventTopics.XMPP_OFFLINE, new EventHandler() {
+		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				globalState = false;
 				for (Entry<String, Boolean> k : onlineInfo.entrySet()) {
@@ -83,20 +84,20 @@ public class TreePaintListener implements Listener {
 				try {
 					tree.redraw();
 				} catch (Exception e) {
-					// ignore (uygulama kapatılırken tree nesnesi dispose
-					// edilmiş olabiliyor)
+					// On system shutdown, tree object might already be
+					// disposed!
 				}
 			}
 		});
-		eventBroker.subscribe(LiderConstants.EventTopics.XMPP_ONLINE, new EventHandler() {
+		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				globalState = true;
 				onlineInfo.put(UserSettings.USER_DN, true);
 				try {
 					tree.redraw();
 				} catch (Exception e) {
-					// ignore (uygulama kapatılırken tree nesnesi dispose
-					// edilmiş olabiliyor)
+					// On system shutdown, tree object might already be
+					// disposed!
 				}
 			}
 		});
@@ -156,7 +157,6 @@ public class TreePaintListener implements Listener {
 			if (data instanceof IBookmark)
 				data = ((IBookmark) data).getEntry();
 
-			// TODO Bookmark icin de yapilacak.
 			if (data instanceof IEntry) {
 				IEntry entry = (IEntry) data;
 				String dn = entry.getDn().getName();

@@ -61,7 +61,7 @@ public class ProfileMenuView extends ViewPart {
 		// Find ProfileMenu contributions
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry
-				.getExtensionPoint(LiderConstants.ExtensionPoints.PROFILE_MENU);
+				.getExtensionPoint(LiderConstants.EXTENSION_POINTS.PROFILE_MENU);
 		IConfigurationElement[] config = extensionPoint
 				.getConfigurationElements();
 

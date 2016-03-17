@@ -9,7 +9,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.Test;
 
-import tr.org.liderahenk.liderconsole.core.widgets.notifier.NotifierColorsFactory.NotifierTheme;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
+import tr.org.liderahenk.liderconsole.core.widgets.NotifierColorsFactory.NotifierTheme;
 
 public class NotifierTest {
 

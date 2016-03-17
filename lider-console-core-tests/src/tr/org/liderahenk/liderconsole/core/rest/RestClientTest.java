@@ -8,6 +8,8 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+import tr.org.liderahenk.liderconsole.core.rest.enums.RestDNType;
+
 public class RestClientTest {
 
 	@Test

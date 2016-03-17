@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.directory.api.ldap.model.exception.LdapInvalidDnException;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.studio.ldapbrowser.common.widgets.search.EntryWidget;
@@ -13,8 +12,6 @@ import org.apache.directory.studio.ldapbrowser.core.BrowserCorePlugin;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
@@ -26,14 +23,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
 import tr.org.liderahenk.liderconsole.core.dialogs.LiderMessageDialog;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
-import tr.org.liderahenk.liderconsole.core.rest.RestClient;
-import tr.org.liderahenk.liderconsole.core.utils.BaseWidgetUtils;
 
 
 /**
@@ -131,14 +122,14 @@ public class LiderPriviligeInfoEditorWidget extends TitleAreaDialog {
         }
         setDnText(selectedDn);
 
-        BaseWidgetUtils.createLabel(composite, " ", 1);
+//        BaseWidgetUtils.createLabel(composite, " ", 1);
         // TODO yeni auth ve rest yapisina gore duzenle!!! - emre
 //        ServerResult serverResult = new RestClient().getServerResult(new HashMap<String, Object>(), "GET", "NA", "LIST", "PLUGIN", "NA", "Ldap", "NA", false, null); 
 //        if(serverResult == null)
 //        {
 //        	LiderMessageDialog.openError(shell, "Lider sunucu REST servisi", "Lider sunucu REST servisi cevap vermemektedir. Lütfen tekrar deneyiniz.");
 //        }
-        GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
+//        GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
         ArrayList<Privilege> itemList = new ArrayList<Privilege>();
         PrivilegeObject itemMap = new PrivilegeObject();
 //        if (null != serverResult) {
@@ -150,185 +141,185 @@ public class LiderPriviligeInfoEditorWidget extends TitleAreaDialog {
         itemList = (ArrayList<Privilege>) itemMap.getPluginList(); //$NON-NLS-1$
         ArrayList<Privilege> arr = itemList;
 // 		itemList.toArray(arr);
-        chkAll = BaseWidgetUtils.createCheckbox(composite, "Hepsini Sec", 1);
- 		chkAll.setData("ALL");
- 		final Button chkClear = BaseWidgetUtils.createCheckbox(composite, "Temizle", 1);
- 		chkClear.setData("CLEAR");
- 		final Button chkInverse = BaseWidgetUtils.createCheckbox(composite, "Tersine Cevir", 2);
- 		chkInverse.setData("INVERSE");
- 		
- 		chkAll.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(chkAll.getSelection())
-				{
-				for(Control c: composite.getChildren())
-				{			
-					if(c instanceof Group)								
-					for (Control ctlgrp: ((Group)c).getChildren())
-					{		
-						if(!((Button)ctlgrp).getData().equals(GET_XMPP_ADDRESS) && !((Button)ctlgrp).getData().equals(GET_PLUGIN_LIST))
-						{
-							((Button)ctlgrp).setSelection(true);
-						}
-					}			
-				}
-				chkClear.setSelection(false);
-				chkInverse.setSelection(false);
-				}
-				else
-				{
-					for(Control c: composite.getChildren())
-					{			
-						if(c instanceof Group)								
-						for (Control ctlgrp: ((Group)c).getChildren())
-						{	
-							if(!((Button)ctlgrp).getData().equals(GET_XMPP_ADDRESS) && !((Button)ctlgrp).getData().equals(GET_PLUGIN_LIST))
-							{
-								((Button)ctlgrp).setSelection(false);
-							}
-						}			
-					}
-				}
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-				
-			}
-		});
- 		chkClear.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(chkClear.getSelection())
-				{
-				for(Control c: composite.getChildren())
-				{			
-					if(c instanceof Group)								
-					for (Control ctlgrp: ((Group)c).getChildren())
-					{
-						if(!((Button)ctlgrp).getData().equals(GET_XMPP_ADDRESS) && !((Button)ctlgrp).getData().equals(GET_PLUGIN_LIST))
-						{
-							((Button)ctlgrp).setSelection(false);	
-						}
-					}			
-				}
-				chkAll.setSelection(false);
-				chkInverse.setSelection(false);
-				}
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-				
-			}
-		});
- 		
- 		chkInverse.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				
-				for(Control c: composite.getChildren())
-				{							
-					if(c instanceof Group)								
-					for (Control ctlgrp: ((Group)c).getChildren())
-					{
-						if(!((Button)ctlgrp).getData().equals(GET_XMPP_ADDRESS) && !((Button)ctlgrp).getData().equals(GET_PLUGIN_LIST))
-						{
-							if(((Button)ctlgrp).getSelection())
-								((Button)ctlgrp).setSelection(false);
-	 						else
-	 							((Button)ctlgrp).setSelection(true);
-						}
-					}			
-				}
-				chkAll.setSelection(false);
-				chkClear.setSelection(false);
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);				
-			}
-		});
- 		
- 		
- 		groups = new HashMap<String,ArrayList<Privilege>>();
-
- 		ArrayList<Privilege> hGroup = null;
-
- 		for(Object o : arr)
- 		{
- 			Privilege p = (Privilege)o;
- 			if(p.getPluginId() != null && !p.getPluginId().trim().equalsIgnoreCase(""))
- 			{
- 				
- 				if(groups.containsKey(p.getPluginId())) {
- 					hGroup = groups.get(p.getPluginId());  					
- 					hGroup.add(p);
- 					
- 					groups.remove(p.getPluginId());
- 					groups.put(p.getPluginId(),hGroup);
- 				}
- 				else {
- 					hGroup = new ArrayList<Privilege>();
- 					hGroup.add(p);
- 					groups.put(p.getPluginId(),hGroup);
- 				} 				
- 			}
- 			else {
- 				if ( !groups.containsKey("NA") ) {
- 					ArrayList<Privilege> pr = new ArrayList<Privilege>();
- 					pr.add(p); 					
- 					groups.put("NA", pr); 					
-				}
- 				else {
-					groups.get("NA").add(p);
-				}
-			}
- 		}
- 		
- 		createLiderManuPrivileges(groups);
-// 		HashMap<String, Group> naGroups = new HashMap<String, Group>();
- 		for(String s : groups.keySet())
- 		{
- 			Group wGroups = null;
- 			if (!"NA".equals(s) && null != groups.get(s).get(0).getGroupTitle() && !groups.get(s).get(0).getGroupTitle().equals("NA") && groups.get(s).get(0).getPluginId() != null) {
- 				wGroups = BaseWidgetUtils.createGroup(composite, tr.org.liderahenk.liderconsole.core.handlers.i18n.Messages.getString( groups.get(s).get(0).getPluginId() ), 1);
- 				createCheckBoxGroup(s, wGroups);
-			}
- 		}
- 		Group g = BaseWidgetUtils.createGroup(composite, tr.org.liderahenk.liderconsole.core.handlers.i18n.Messages.getString( "NA" ), 1);
- 		g.setVisible(false);
- 		g.setEnabled(false);
- 		
-		createCheckBoxGroup("NA", g);
- 		
- 		if(selectedLiderPrivilegeInfo.contains(":ALL:true"))
- 		{
- 			chkAll.setSelection(true);
- 			for(Control c: composite.getChildren())
-			{			
-				if(c instanceof Group)								
-				for (Control ctlgrp: ((Group)c).getChildren())
-				{			
-					((Button)ctlgrp).setSelection(true);
-				}			
-			}
- 		}
-        chkCanInherit = BaseWidgetUtils.createCheckbox(composite, Messages.TargetDnAndPriviligeInfoEditorWidget_tr20, 3);
-        chkCanInherit.setSelection(selectedInherit);
-        chkCanInherit.setVisible(false);
-        sc.setMinSize(150,composite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-		sc.setContent(composite);
-        composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        sc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+//        chkAll = BaseWidgetUtils.createCheckbox(composite, "Hepsini Sec", 1);
+// 		chkAll.setData("ALL");
+// 		final Button chkClear = BaseWidgetUtils.createCheckbox(composite, "Temizle", 1);
+// 		chkClear.setData("CLEAR");
+// 		final Button chkInverse = BaseWidgetUtils.createCheckbox(composite, "Tersine Cevir", 2);
+// 		chkInverse.setData("INVERSE");
+// 		
+// 		chkAll.addSelectionListener(new SelectionListener() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				if(chkAll.getSelection())
+//				{
+//				for(Control c: composite.getChildren())
+//				{			
+//					if(c instanceof Group)								
+//					for (Control ctlgrp: ((Group)c).getChildren())
+//					{		
+//						if(!((Button)ctlgrp).getData().equals(GET_XMPP_ADDRESS) && !((Button)ctlgrp).getData().equals(GET_PLUGIN_LIST))
+//						{
+//							((Button)ctlgrp).setSelection(true);
+//						}
+//					}			
+//				}
+//				chkClear.setSelection(false);
+//				chkInverse.setSelection(false);
+//				}
+//				else
+//				{
+//					for(Control c: composite.getChildren())
+//					{			
+//						if(c instanceof Group)								
+//						for (Control ctlgrp: ((Group)c).getChildren())
+//						{	
+//							if(!((Button)ctlgrp).getData().equals(GET_XMPP_ADDRESS) && !((Button)ctlgrp).getData().equals(GET_PLUGIN_LIST))
+//							{
+//								((Button)ctlgrp).setSelection(false);
+//							}
+//						}			
+//					}
+//				}
+//			}
+//			
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				widgetSelected(e);
+//				
+//			}
+//		});
+// 		chkClear.addSelectionListener(new SelectionListener() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				if(chkClear.getSelection())
+//				{
+//				for(Control c: composite.getChildren())
+//				{			
+//					if(c instanceof Group)								
+//					for (Control ctlgrp: ((Group)c).getChildren())
+//					{
+//						if(!((Button)ctlgrp).getData().equals(GET_XMPP_ADDRESS) && !((Button)ctlgrp).getData().equals(GET_PLUGIN_LIST))
+//						{
+//							((Button)ctlgrp).setSelection(false);	
+//						}
+//					}			
+//				}
+//				chkAll.setSelection(false);
+//				chkInverse.setSelection(false);
+//				}
+//			}
+//			
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				widgetSelected(e);
+//				
+//			}
+//		});
+// 		
+// 		chkInverse.addSelectionListener(new SelectionListener() {
+//			
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				
+//				for(Control c: composite.getChildren())
+//				{							
+//					if(c instanceof Group)								
+//					for (Control ctlgrp: ((Group)c).getChildren())
+//					{
+//						if(!((Button)ctlgrp).getData().equals(GET_XMPP_ADDRESS) && !((Button)ctlgrp).getData().equals(GET_PLUGIN_LIST))
+//						{
+//							if(((Button)ctlgrp).getSelection())
+//								((Button)ctlgrp).setSelection(false);
+//	 						else
+//	 							((Button)ctlgrp).setSelection(true);
+//						}
+//					}			
+//				}
+//				chkAll.setSelection(false);
+//				chkClear.setSelection(false);
+//				
+//			}
+//			
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//				widgetSelected(e);				
+//			}
+//		});
+// 		
+// 		
+// 		groups = new HashMap<String,ArrayList<Privilege>>();
+//
+// 		ArrayList<Privilege> hGroup = null;
+//
+// 		for(Object o : arr)
+// 		{
+// 			Privilege p = (Privilege)o;
+// 			if(p.getPluginId() != null && !p.getPluginId().trim().equalsIgnoreCase(""))
+// 			{
+// 				
+// 				if(groups.containsKey(p.getPluginId())) {
+// 					hGroup = groups.get(p.getPluginId());  					
+// 					hGroup.add(p);
+// 					
+// 					groups.remove(p.getPluginId());
+// 					groups.put(p.getPluginId(),hGroup);
+// 				}
+// 				else {
+// 					hGroup = new ArrayList<Privilege>();
+// 					hGroup.add(p);
+// 					groups.put(p.getPluginId(),hGroup);
+// 				} 				
+// 			}
+// 			else {
+// 				if ( !groups.containsKey("NA") ) {
+// 					ArrayList<Privilege> pr = new ArrayList<Privilege>();
+// 					pr.add(p); 					
+// 					groups.put("NA", pr); 					
+//				}
+// 				else {
+//					groups.get("NA").add(p);
+//				}
+//			}
+// 		}
+// 		
+// 		createLiderManuPrivileges(groups);
+//// 		HashMap<String, Group> naGroups = new HashMap<String, Group>();
+// 		for(String s : groups.keySet())
+// 		{
+// 			Group wGroups = null;
+// 			if (!"NA".equals(s) && null != groups.get(s).get(0).getGroupTitle() && !groups.get(s).get(0).getGroupTitle().equals("NA") && groups.get(s).get(0).getPluginId() != null) {
+// 				wGroups = BaseWidgetUtils.createGroup(composite, tr.org.liderahenk.liderconsole.core.handlers.i18n.Messages.getString( groups.get(s).get(0).getPluginId() ), 1);
+// 				createCheckBoxGroup(s, wGroups);
+//			}
+// 		}
+// 		Group g = BaseWidgetUtils.createGroup(composite, tr.org.liderahenk.liderconsole.core.handlers.i18n.Messages.getString( "NA" ), 1);
+// 		g.setVisible(false);
+// 		g.setEnabled(false);
+// 		
+//		createCheckBoxGroup("NA", g);
+// 		
+// 		if(selectedLiderPrivilegeInfo.contains(":ALL:true"))
+// 		{
+// 			chkAll.setSelection(true);
+// 			for(Control c: composite.getChildren())
+//			{			
+//				if(c instanceof Group)								
+//				for (Control ctlgrp: ((Group)c).getChildren())
+//				{			
+//					((Button)ctlgrp).setSelection(true);
+//				}			
+//			}
+// 		}
+//        chkCanInherit = BaseWidgetUtils.createCheckbox(composite, Messages.TargetDnAndPriviligeInfoEditorWidget_tr20, 3);
+//        chkCanInherit.setSelection(selectedInherit);
+//        chkCanInherit.setVisible(false);
+//        sc.setMinSize(150,composite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+//		sc.setContent(composite);
+//        composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+//        sc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         return composite;
 	}
 	
@@ -359,53 +350,53 @@ public class LiderPriviligeInfoEditorWidget extends TitleAreaDialog {
 			List<Privilege> privs = privilege.getValue();
 			
 			String str = privilege.getKey();
-			Button b = BaseWidgetUtils.createCheckbox(wGroups, tr.org.liderahenk.liderconsole.core.handlers.i18n.Messages.getString( str ), 1);	 				
-			b.addSelectionListener(new SelectionListener() {
-				
-				@Override
-				public void widgetSelected(SelectionEvent e) {					
-					chkAll.setSelection(false);					
-				}
-				
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					
-				}
-			});
-			Font chkFont = b.getFont();
-			FontData[] chkFd = chkFont.getFontData();
-			chkFd[0].setStyle(SWT.NORMAL);
-			chkFd[0].setName("tahoma");
-			chkFd[0].setHeight(8);
-			Font chkFont2 = new Font(chkFont.getDevice(), chkFd);
-			b.setFont(chkFont2);
-			List<String> list = new ArrayList<String>();
-				
-				
- 			for(Privilege str1 : privs)
- 			{
- 				if (!list.contains(str1.getAttribute()+"/"+str1.getCommand()+"/"+str1.getAction())) {
- 					list.add(str1.getAttribute()+"/"+str1.getCommand()+"/"+str1.getAction());
- 					
- 		 			b.setData( StringUtils.join(list, ",") );
- 		 			if ((str1.getAttribute()+"/"+str1.getCommand()+"/"+str1.getAction()).equals(GET_XMPP_ADDRESS)) {
- 						b.setSelection(true);
- 						b.setEnabled(false);
- 					}
- 		 			if ((str1.getAttribute()+"/"+str1.getCommand()+"/"+str1.getAction()).equals(GET_PLUGIN_LIST)) {
- 						b.setSelection(true);
- 						b.setEnabled(false);
- 					}
-				}	 				
- 			}
- 			if(!list.contains(GET_XMPP_ADDRESS))
- 				list.add(GET_XMPP_ADDRESS);
- 			if (!list.contains(GET_PLUGIN_LIST)) {
- 				list.add(GET_PLUGIN_LIST);	
-			} 		 			
-
-			if(selectedLiderPrivilegeInfo.contains((String)b.getData()))
-				b.setSelection(true);
+//			Button b = BaseWidgetUtils.createCheckbox(wGroups, tr.org.liderahenk.liderconsole.core.handlers.i18n.Messages.getString( str ), 1);	 				
+//			b.addSelectionListener(new SelectionListener() {
+//				
+//				@Override
+//				public void widgetSelected(SelectionEvent e) {					
+//					chkAll.setSelection(false);					
+//				}
+//				
+//				@Override
+//				public void widgetDefaultSelected(SelectionEvent e) {
+//					
+//				}
+//			});
+//			Font chkFont = b.getFont();
+//			FontData[] chkFd = chkFont.getFontData();
+//			chkFd[0].setStyle(SWT.NORMAL);
+//			chkFd[0].setName("tahoma");
+//			chkFd[0].setHeight(8);
+//			Font chkFont2 = new Font(chkFont.getDevice(), chkFd);
+//			b.setFont(chkFont2);
+//			List<String> list = new ArrayList<String>();
+//				
+//				
+// 			for(Privilege str1 : privs)
+// 			{
+// 				if (!list.contains(str1.getAttribute()+"/"+str1.getCommand()+"/"+str1.getAction())) {
+// 					list.add(str1.getAttribute()+"/"+str1.getCommand()+"/"+str1.getAction());
+// 					
+// 		 			b.setData( StringUtils.join(list, ",") );
+// 		 			if ((str1.getAttribute()+"/"+str1.getCommand()+"/"+str1.getAction()).equals(GET_XMPP_ADDRESS)) {
+// 						b.setSelection(true);
+// 						b.setEnabled(false);
+// 					}
+// 		 			if ((str1.getAttribute()+"/"+str1.getCommand()+"/"+str1.getAction()).equals(GET_PLUGIN_LIST)) {
+// 						b.setSelection(true);
+// 						b.setEnabled(false);
+// 					}
+//				}	 				
+// 			}
+// 			if(!list.contains(GET_XMPP_ADDRESS))
+// 				list.add(GET_XMPP_ADDRESS);
+// 			if (!list.contains(GET_PLUGIN_LIST)) {
+// 				list.add(GET_PLUGIN_LIST);	
+//			} 		 			
+//
+//			if(selectedLiderPrivilegeInfo.contains((String)b.getData()))
+//				b.setSelection(true);
 		}
 	}
 	

@@ -12,8 +12,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
 
-//import tr.org.pardus.mys.liderahenksetup.utils.FontProvider;
-
+/**
+ * GUIHelper provides easy-to-use widget methods that can be used to build
+ * consistent & elegant GUI throughout the system.
+ * 
+ * @author Caner Feyzullahoğlu <caner.feyzullahoglu@agem.com.tr>
+ *
+ */
 public class GUIHelper {
 
 	/**
@@ -22,8 +27,7 @@ public class GUIHelper {
 	 * @return
 	 */
 	public static Text createText(Composite parent) {
-		return createText(parent, new GridData(GridData.FILL, GridData.FILL,
-				true, true));
+		return createText(parent, new GridData(GridData.FILL, GridData.FILL, true, true));
 	}
 
 	/**
@@ -42,27 +46,25 @@ public class GUIHelper {
 	 * @return
 	 */
 	public static Text createPasswordText(Composite parent) {
-		return createPasswordText(parent, new GridData(GridData.FILL,
-				GridData.FILL, true, true));
+		return createPasswordText(parent, new GridData(GridData.FILL, GridData.FILL, true, true));
 	}
-	
+
 	/**
 	 * 
-	 * This method creates a text with given style.
-	 * (e.g. for style parameter: 
+	 * This method creates a text with given style. (e.g. for style parameter:
 	 * SWT.NONE | SWT.SINGLE | SWT.PASSWORD)
+	 * 
 	 * @author Caner Feyzullahoğlu <caner.feyzullahoglu@agem.com.tr>
 	 * @param parent
 	 * @param layoutData
 	 * @param style
-	 * @return 
+	 * @return
 	 */
 	public static Text createText(Composite parent, Object layoutData, int style) {
 		Text t = new Text(parent, style);
 		t.setLayoutData(layoutData);
 		t.setBackground(getApplicationBackground());
 		t.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-//		t.setFont(FontProvider.getInstance().get(FontProvider.INPUT_FONT));
 		return t;
 	}
 
@@ -73,12 +75,10 @@ public class GUIHelper {
 	 * @return
 	 */
 	public static Text createPasswordText(Composite parent, Object layoutData) {
-		Text t = new Text(parent, SWT.NONE | SWT.BORDER | SWT.SINGLE
-				| SWT.PASSWORD);
+		Text t = new Text(parent, SWT.NONE | SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
 		t.setLayoutData(layoutData);
 		t.setBackground(getApplicationBackground());
 		t.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-//		t.setFont(FontProvider.getInstance().get(FontProvider.INPUT_FONT));
 		return t;
 	}
 
@@ -100,8 +100,7 @@ public class GUIHelper {
 	 * @param layoutData
 	 * @return
 	 */
-	public static Composite createComposite(Composite parent, Layout layout,
-			Object layoutData) {
+	public static Composite createComposite(Composite parent, Layout layout, Object layoutData) {
 		Composite c = new Composite(parent, SWT.NONE);
 		c.setLayoutData(layoutData);
 		c.setLayout(layout);
@@ -127,8 +126,7 @@ public class GUIHelper {
 	 * @param layoutData
 	 * @return
 	 */
-	public static Group createGroup(Composite parent, Layout layout,
-			Object layoutData) {
+	public static Group createGroup(Composite parent, Layout layout, Object layoutData) {
 		Group g = new Group(parent, SWT.NONE);
 		g.setLayoutData(layoutData);
 		g.setLayout(layout);
@@ -153,12 +151,10 @@ public class GUIHelper {
 	 * @param text
 	 * @return
 	 */
-	public static Button createButton(Composite parent, int buttonType,
-			String text) {
+	public static Button createButton(Composite parent, int buttonType, String text) {
 		Button b = new Button(parent, buttonType | SWT.BORDER);
 		b.setText(text);
 		b.setBackground(getApplicationBackground());
-//		b.setFont(FontProvider.getInstance().get(FontProvider.LABEL_FONT));
 		return b;
 	}
 
@@ -181,7 +177,6 @@ public class GUIHelper {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(text);
 		l.setBackground(getApplicationBackground());
-//		l.setFont(FontProvider.getInstance().get(FontProvider.LABEL_FONT));
 		return l;
 	}
 
@@ -196,7 +191,6 @@ public class GUIHelper {
 		Label l = new Label(parent, style | SWT.NONE);
 		l.setText(text);
 		l.setBackground(getApplicationBackground());
-//		l.setFont(FontProvider.getInstance().get(FontProvider.LABEL_FONT));
 		return l;
 	}
 

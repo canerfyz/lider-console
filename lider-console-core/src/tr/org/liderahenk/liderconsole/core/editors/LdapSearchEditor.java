@@ -49,9 +49,9 @@ import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.labelproviders.LdapSearchLabelProvider;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
-import tr.org.liderahenk.liderconsole.core.widgets.ldapSearchAttr.AttrOperator;
-import tr.org.liderahenk.liderconsole.core.widgets.ldapSearchAttr.AttrText;
-import tr.org.liderahenk.liderconsole.core.widgets.ldapSearchAttr.AttrValueText;
+import tr.org.liderahenk.liderconsole.core.widgets.AttrOperator;
+import tr.org.liderahenk.liderconsole.core.widgets.AttrText;
+import tr.org.liderahenk.liderconsole.core.widgets.AttrValueText;
 
 public class LdapSearchEditor extends EditorPart {
 
