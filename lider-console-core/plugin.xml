@@ -67,16 +67,24 @@
    <extension
          point="org.eclipse.ui.menus">
        <menuContribution
-            locationURI="popup:tr.org.liderahenk.liderconsole.menus.LiderPopup?after=additions">
+            locationURI="popup:org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView?after=additions">
             <command
                   commandId="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
                   id="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
-                  icon="icons/32/search.png"
-                  tooltip="%command.tooltip">
+                  icon="icons/16/ldap.png"
+                  tooltip="%command.tooltip.ldap.search.editor">
             </command>
+      </menuContribution>
+  </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+       <menuContribution
+            locationURI="popup:tr.org.liderahenk.liderconsole.menus.LiderPolicyPopup?after=additions">
             <command
                   commandId="tr.org.liderahenk.liderconsole.core.commands.Policy"
                   id="tr.org.liderahenk.liderconsole.commands.PolicyCommand"
+                  icon="icons/16/send.png"
                   style="push">
                <visibleWhen>
                   <and>
@@ -124,10 +132,23 @@
       </menuContribution>   
       <menuContribution
             locationURI="popup:org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView">
+         <!-- Use LiderTaskPopup if you have any task-related dialog/editor -->
          <menu
-               id="tr.org.liderahenk.liderconsole.menus.LiderPopup"
-               label="%menu.label.0"
-               mnemonic="%menu.mnemonic.0">
+               id="tr.org.liderahenk.liderconsole.menus.LiderTaskPopup"
+               label="%menu.label.task.popup"
+               mnemonic="%menu.mnemonic.task.popup">
+         </menu>
+         <!-- Use LiderPolicyPopup for policy definition & execution dialogs -->
+         <menu
+               id="tr.org.liderahenk.liderconsole.menus.LiderPolicyPopup"
+               label="%menu.label.policy.popup"
+               mnemonic="%menu.mnemonic.policy.popup">
+         </menu>
+         <!-- Use LiderProfilePopup for profile definition & execution dialogs -->
+         <menu
+               id="tr.org.liderahenk.liderconsole.menus.LiderProfilePopup"
+               label="%menu.label.profile.popup"
+               mnemonic="%menu.mnemonic.profile.popup">
          </menu>
       </menuContribution>         
 	</extension>
@@ -149,7 +170,7 @@
             allowMultiple="false"
             category="tr.org.liderahenk.liderconsole.core.category"
             class="tr.org.liderahenk.liderconsole.core.views.ProfileMenuView"
-            icon="icons/folder-open.png"
+            icon="icons/32/folder-open.png"
             id="tr.org.liderahenk.liderconsole.core.views.ProfileMenuView"
             name="%view.profile.menu"
             restorable="true">
@@ -158,7 +179,7 @@
             allowMultiple="false"
             category="tr.org.liderahenk.liderconsole.core.category"
             class="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
-            icon="icons/task-play.png"
+            icon="icons/32/task-play.png"
             id="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
             name="%view.task.overview"
             restorable="true">
@@ -278,7 +299,7 @@
 	<editor
        class="tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor"
        default="true"
-       icon="icons/task-play.png"
+       icon="icons/32/ldap.png"
        id="tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor"
        name="%editor.ldap.search">
 	</editor>

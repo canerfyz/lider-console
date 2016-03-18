@@ -133,7 +133,7 @@ public class LdapSearchEditor extends EditorPart {
 		// Search criterias can be added/removed dynamically
 		btnAddCriteria = new Button(cmpSearchCritera, SWT.NONE);
 		btnAddCriteria.setImage(new Image(cmpSearchCritera.getDisplay(), this
-				.getClass().getResourceAsStream("/icons/add.png")));
+				.getClass().getResourceAsStream("/icons/16/add.png")));
 		btnAddCriteria.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -160,7 +160,7 @@ public class LdapSearchEditor extends EditorPart {
 
 		btnSearch = new Button(composite, SWT.PUSH);
 		btnSearch.setImage(new Image(parent.getDisplay(), this.getClass()
-				.getResourceAsStream("/icons/filter.png")));
+				.getResourceAsStream("/icons/16/filter.png")));
 		btnSearch.setText("Aramayı Başlat");
 		btnSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
