@@ -37,7 +37,6 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
-import tr.org.liderahenk.liderconsole.core.utils.ColumnViewerSorter;
 import tr.org.liderahenk.liderconsole.task.i18n.Messages;
 
 

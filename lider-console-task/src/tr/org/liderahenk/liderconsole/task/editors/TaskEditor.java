@@ -60,7 +60,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import tr.org.liderahenk.liderconsole.core.ui.GenericEditorInput;
-import tr.org.liderahenk.liderconsole.core.utils.ColumnViewerSorter;
 import tr.org.liderahenk.liderconsole.task.dialogs.TaskHistoryDialog;
 import tr.org.liderahenk.liderconsole.task.i18n.Messages;
 

@@ -5,26 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Test;
-
-import tr.org.liderahenk.liderconsole.core.rest.enums.RestDNType;
 
 public class RestClientTest {
 
 	@Test
 	public void authEntries() {
-		RestRequest request = new RestRequest();
-		request.setDnList(buildDnList());
-		request.setDnType(RestDNType.AHENK);
-		request.setPluginName("BROWSER");
-		request.setPluginVersion("1.0.0");
-		request.setCommandId("SAVE_PROFILE");
-		request.setParameterMap(buildParameterMap());
-		request.setPriority(Priority.HIGH);
-		RestResponse post = RestClient.getInstance().post(request);
-		Assert.assertNotNull(post);
-		System.out.println(post);
+//		RestRequest request = new RestRequest();
+//		request.setDnList(buildDnList());
+//		request.setDnType(RestDNType.AHENK);
+//		request.setPluginName("BROWSER");
+//		request.setPluginVersion("1.0.0");
+//		request.setCommandId("SAVE_PROFILE");
+//		request.setParameterMap(buildParameterMap());
+//		request.setPriority(Priority.HIGH);
+//		RestResponse post = RestClient.getInstance().post(request);
+//		Assert.assertNotNull(post);
+//		System.out.println(post);
 	}
 
 	private List<String> buildDnList() {
