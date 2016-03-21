@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
-import tr.org.liderahenk.liderconsole.core.dialogs.LiderMessageDialog;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
 
 
@@ -453,7 +452,7 @@ public class LiderPriviligeInfoEditorWidget extends TitleAreaDialog {
 		
 		if(ww.getDn().isEmpty())
 		{
-			LiderMessageDialog.openConfirm(shell, "Yetki verilecek düğüm seçilmedi.", "Lütfen yetki vermek istediginiz düğümü seçiniz.");
+//			LiderMessageDialog.openConfirm(shell, "Yetki verilecek düğüm seçilmedi.", "Lütfen yetki vermek istediginiz düğümü seçiniz.");
 			return;
 		}
 		String privilegeStr=""; //$NON-NLS-1$
@@ -479,7 +478,7 @@ public class LiderPriviligeInfoEditorWidget extends TitleAreaDialog {
 		}
 		if(privilegeStr.length()==0 || (privilegeStr.length() > 4 && privilegeStr.startsWith("ALL")))
 		{
-			LiderMessageDialog.openConfirm(shell, "Yetki verilirken hata" , "Yetki verilirken \"ALL\" seçeğini yada ilgili pluginleri seçerek yetki veriniz.");
+//			LiderMessageDialog.openConfirm(shell, "Yetki verilirken hata" , "Yetki verilirken \"ALL\" seçeğini yada ilgili pluginleri seçerek yetki veriniz.");
 			return;
 		}
 		liderPriviligeInfo = "[" + ww.getDn()+":" + privilegeStr.substring(0, privilegeStr.length()-1) + ":" + "true" +"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

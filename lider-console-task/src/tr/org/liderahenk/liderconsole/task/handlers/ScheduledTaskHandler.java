@@ -8,9 +8,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import tr.org.liderahenk.liderconsole.core.editorinput.GenericEditorInput;
 import tr.org.liderahenk.liderconsole.task.i18n.Messages;
-import tr.org.liderahenk.liderconsole.core.current.RestSettings;
-import tr.org.liderahenk.liderconsole.core.ui.GenericEditorInput;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.

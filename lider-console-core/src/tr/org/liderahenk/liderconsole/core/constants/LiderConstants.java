@@ -20,6 +20,10 @@ public class LiderConstants {
 	public static final class VIEWS {
 		public static final String BROWSER_VIEW = "org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView";
 	}
+	
+	public static final class EDITORS {
+		public static final String PROFILE_EDITOR = "";
+	}
 
 	public static final class EXTENSION_POINTS {
 		public static final String LOGGER = "tr.org.liderahenk.liderconsole.core.logger";

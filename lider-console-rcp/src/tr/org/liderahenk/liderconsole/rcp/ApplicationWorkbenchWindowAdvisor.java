@@ -292,8 +292,6 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private void removeUnusedPreferences() {
 		PreferenceManager manager = PlatformUI.getWorkbench().getPreferenceManager();
 		if (manager != null) {
-			// Remove M2E preferences page
-			manager.remove("org.eclipse.m2e.core.preferences.Maven2PreferencePage");
 			// Remove Debug preferences page
 			manager.remove("org.eclipse.debug.ui.DebugPreferencePage");
 			// Remove Team preferences page

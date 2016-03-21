@@ -10,13 +10,19 @@
  *******************************************************************************/
 package tr.org.liderahenk.liderconsole.core.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -26,27 +32,44 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Resource;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for managing OS resources associated with SWT controls such as colors, fonts, images, etc.
+ * Utility class for managing OS resources associated with SWT controls such as
+ * colors, fonts, images, etc.
  * <p>
- * !!! IMPORTANT !!! Application code must explicitly invoke the <code>dispose()</code> method to release the
- * operating system resources managed by cached objects when those objects and OS resources are no longer
+ * !!! IMPORTANT !!! Application code must explicitly invoke the
+ * <code>dispose()</code> method to release the operating system resources
+ * managed by cached objects when those objects and OS resources are no longer
  * needed (e.g. on application shutdown)
  * <p>
  * This class may be freely distributed as part of any application or plugin.
  * <p>
+ * 
  * @author scheglov_ke
  * @author Dan Rubel
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  */
 public class SWTResourceManager {
+	private static final Logger logger = LoggerFactory.getLogger(SWTResourceManager.class);
 	////////////////////////////////////////////////////////////////////////////
 	//
 	// Color
 	//
 	////////////////////////////////////////////////////////////////////////////
 	private static Map<RGB, Color> m_colorMap = new HashMap<RGB, Color>();
+
 	/**
 	 * Returns the system {@link Color} matching the specific ID.
 	 * 
@@ -56,8 +79,12 @@ public class SWTResourceManager {
 	 */
 	public static Color getColor(int systemColorID) {
 		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
 		return display.getSystemColor(systemColorID);
 	}
+
 	/**
 	 * Returns a {@link Color} given its red, green and blue component values.
 	 * 
@@ -67,11 +94,13 @@ public class SWTResourceManager {
 	 *            the green component of the color
 	 * @param b
 	 *            the blue component of the color
-	 * @return the {@link Color} matching the given red, green and blue component values
+	 * @return the {@link Color} matching the given red, green and blue
+	 *         component values
 	 */
 	public static Color getColor(int r, int g, int b) {
 		return getColor(new RGB(r, g, b));
 	}
+
 	/**
 	 * Returns a {@link Color} given its RGB value.
 	 * 
@@ -88,6 +117,7 @@ public class SWTResourceManager {
 		}
 		return color;
 	}
+
 	/**
 	 * Dispose of all the cached {@link Color}'s.
 	 */
@@ -97,6 +127,7 @@ public class SWTResourceManager {
 		}
 		m_colorMap.clear();
 	}
+
 	////////////////////////////////////////////////////////////////////////////
 	//
 	// Image
@@ -106,6 +137,7 @@ public class SWTResourceManager {
 	 * Maps image paths to images.
 	 */
 	private static Map<String, Image> m_imageMap = new HashMap<String, Image>();
+
 	/**
 	 * Returns an {@link Image} encoded by the specified {@link InputStream}.
 	 * 
@@ -116,6 +148,9 @@ public class SWTResourceManager {
 	protected static Image getImage(InputStream stream) throws IOException {
 		try {
 			Display display = Display.getCurrent();
+			if (display == null) {
+				display = Display.getDefault();
+			}
 			ImageData data = new ImageData(stream);
 			if (data.transparentPixel > 0) {
 				return new Image(display, data, data.getTransparencyMask());
@@ -125,6 +160,23 @@ public class SWTResourceManager {
 			stream.close();
 		}
 	}
+	
+	/**
+	 * Loads an image and create a SWT Image corresponding to this file
+	 *
+	 * @param fileName
+	 *            file name of the image
+	 * @return an image
+	 * @see org.eclipse.swt.graphics.Image
+	 */
+	public static Image createImageFromFile(final String fileName) {
+		if (new File(fileName).exists()) {
+			return new Image(Display.getCurrent(), fileName);
+		} else {
+			return new Image(Display.getCurrent(), SWTResourceManager.class.getClassLoader().getResourceAsStream(fileName));
+		}
+	}
+
 	/**
 	 * Returns an {@link Image} stored in the file at the specified path.
 	 * 
@@ -139,14 +191,37 @@ public class SWTResourceManager {
 				image = getImage(new FileInputStream(path));
 				m_imageMap.put(path, image);
 			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
 				image = getMissingImage();
 				m_imageMap.put(path, image);
 			}
 		}
 		return image;
 	}
+
 	/**
-	 * Returns an {@link Image} stored in the file at the specified path relative to the specified class.
+	 * Returns an {@link Image} stored in the file at the specified path
+	 * relative to specified bundle ID.
+	 * 
+	 * @param bundleId
+	 * @param path
+	 * @return the {@link Image} stored in the file at the specified path
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	public static Image getImage(String bundleId, String path) {
+		URL entry = Platform.getBundle(bundleId).getEntry(path);
+		try {
+			return getImage(FileLocator.resolve(entry).getPath());
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns an {@link Image} stored in the file at the specified path
+	 * relative to the specified class.
 	 * 
 	 * @param clazz
 	 *            the {@link Class} relative to which to find the image
@@ -155,22 +230,29 @@ public class SWTResourceManager {
 	 * @return the {@link Image} stored in the file at the specified path
 	 */
 	public static Image getImage(Class<?> clazz, String path) {
+		if (clazz == null) {
+			clazz = SWTResourceManager.class;
+		}
 		String key = clazz.getName() + '|' + path;
 		Image image = m_imageMap.get(key);
 		if (image == null) {
 			try {
-				image = getImage(clazz.getResourceAsStream(path));
+				image = getImage(clazz.getClassLoader().getResourceAsStream(path));
 				m_imageMap.put(key, image);
 			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
 				image = getMissingImage();
 				m_imageMap.put(key, image);
 			}
 		}
 		return image;
 	}
+
 	private static final int MISSING_IMAGE_SIZE = 10;
+
 	/**
-	 * @return the small {@link Image} that can be used as placeholder for missing image.
+	 * @return the small {@link Image} that can be used as placeholder for
+	 *         missing image.
 	 */
 	private static Image getMissingImage() {
 		Image image = new Image(Display.getCurrent(), MISSING_IMAGE_SIZE, MISSING_IMAGE_SIZE);
@@ -182,20 +264,25 @@ public class SWTResourceManager {
 		//
 		return image;
 	}
+
 	/**
-	 * Style constant for placing decorator image in top left corner of base image.
+	 * Style constant for placing decorator image in top left corner of base
+	 * image.
 	 */
 	public static final int TOP_LEFT = 1;
 	/**
-	 * Style constant for placing decorator image in top right corner of base image.
+	 * Style constant for placing decorator image in top right corner of base
+	 * image.
 	 */
 	public static final int TOP_RIGHT = 2;
 	/**
-	 * Style constant for placing decorator image in bottom left corner of base image.
+	 * Style constant for placing decorator image in bottom left corner of base
+	 * image.
 	 */
 	public static final int BOTTOM_LEFT = 3;
 	/**
-	 * Style constant for placing decorator image in bottom right corner of base image.
+	 * Style constant for placing decorator image in bottom right corner of base
+	 * image.
 	 */
 	public static final int BOTTOM_RIGHT = 4;
 	/**
@@ -207,8 +294,10 @@ public class SWTResourceManager {
 	 */
 	@SuppressWarnings("unchecked")
 	private static Map<Image, Map<Image, Image>>[] m_decoratedImageMap = new Map[LAST_CORNER_KEY];
+
 	/**
-	 * Returns an {@link Image} composed of a base image decorated by another image.
+	 * Returns an {@link Image} composed of a base image decorated by another
+	 * image.
 	 * 
 	 * @param baseImage
 	 *            the base {@link Image} that should be decorated
@@ -219,8 +308,10 @@ public class SWTResourceManager {
 	public static Image decorateImage(Image baseImage, Image decorator) {
 		return decorateImage(baseImage, decorator, BOTTOM_RIGHT);
 	}
+
 	/**
-	 * Returns an {@link Image} composed of a base image decorated by another image.
+	 * Returns an {@link Image} composed of a base image decorated by another
+	 * image.
 	 * 
 	 * @param baseImage
 	 *            the base {@link Image} that should be decorated
@@ -269,6 +360,7 @@ public class SWTResourceManager {
 		}
 		return result;
 	}
+
 	/**
 	 * Dispose all of the cached {@link Image}'s.
 	 */
@@ -294,6 +386,7 @@ public class SWTResourceManager {
 			}
 		}
 	}
+
 	////////////////////////////////////////////////////////////////////////////
 	//
 	// Font
@@ -307,6 +400,7 @@ public class SWTResourceManager {
 	 * Maps fonts to their bold versions.
 	 */
 	private static Map<Font, Font> m_fontToBoldFontMap = new HashMap<Font, Font>();
+
 	/**
 	 * Returns a {@link Font} based on its name, height and style.
 	 * 
@@ -321,9 +415,10 @@ public class SWTResourceManager {
 	public static Font getFont(String name, int height, int style) {
 		return getFont(name, height, style, false, false);
 	}
+
 	/**
-	 * Returns a {@link Font} based on its name, height and style. Windows-specific strikeout and underline
-	 * flags are also supported.
+	 * Returns a {@link Font} based on its name, height and style.
+	 * Windows-specific strikeout and underline flags are also supported.
 	 * 
 	 * @param name
 	 *            the name of the font
@@ -335,7 +430,8 @@ public class SWTResourceManager {
 	 *            the strikeout flag (warning: Windows only)
 	 * @param underline
 	 *            the underline flag (warning: Windows only)
-	 * @return {@link Font} The font matching the name, height, style, strikeout and underline
+	 * @return {@link Font} The font matching the name, height, style, strikeout
+	 *         and underline
 	 */
 	public static Font getFont(String name, int size, int style, boolean strikeout, boolean underline) {
 		String fontName = name + '|' + size + '|' + style + '|' + strikeout + '|' + underline;
@@ -355,7 +451,8 @@ public class SWTResourceManager {
 						}
 					}
 				} catch (Throwable e) {
-					System.err.println("Unable to set underline or strikeout" + " (probably on a non-Windows platform). " + e); //$NON-NLS-1$ //$NON-NLS-2$
+					System.err.println(
+							"Unable to set underline or strikeout" + " (probably on a non-Windows platform). " + e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			font = new Font(Display.getCurrent(), fontData);
@@ -363,6 +460,23 @@ public class SWTResourceManager {
 		}
 		return font;
 	}
+	
+	/**
+	 * Apply a very basic pseudo-HTML formating to a text stored in a StyledText
+	 * widget. Supported tags are <b>, <i>, <u> , <COLOR>, <backgroundcolor>,
+	 * <size> and <BbrR/>
+	 *
+	 * @param styledText
+	 *            styled text that contains an HTML text
+	 */
+	public static void applyHTMLFormating(final StyledText styledText) {
+		try {
+			new HTMLStyledTextParser(styledText).parse();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Returns a bold version of the given {@link Font}.
 	 * 
@@ -380,6 +494,7 @@ public class SWTResourceManager {
 		}
 		return font;
 	}
+
 	/**
 	 * Dispose all of the cached {@link Font}'s.
 	 */
@@ -395,6 +510,7 @@ public class SWTResourceManager {
 		}
 		m_fontToBoldFontMap.clear();
 	}
+
 	////////////////////////////////////////////////////////////////////////////
 	//
 	// Cursor
@@ -404,6 +520,7 @@ public class SWTResourceManager {
 	 * Maps IDs to cursors.
 	 */
 	private static Map<Integer, Cursor> m_idToCursorMap = new HashMap<Integer, Cursor>();
+
 	/**
 	 * Returns the system cursor matching the specific ID.
 	 * 
@@ -429,14 +546,188 @@ public class SWTResourceManager {
 		}
 		m_idToCursorMap.clear();
 	}
+	
+	////////////////////////////////////////////////////////////////////////////
+	//
+	// Widgets
+	//
+	////////////////////////////////////////////////////////////////////////////
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	public static Text createText(Composite parent) {
+		return createText(parent, new GridData(GridData.FILL, GridData.FILL, true, true));
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param layoutData
+	 * @return
+	 */
+	public static Text createText(Composite parent, Object layoutData) {
+		return createText(parent, layoutData, SWT.NONE | SWT.BORDER | SWT.SINGLE);
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	public static Text createPasswordText(Composite parent) {
+		return createPasswordText(parent, new GridData(GridData.FILL, GridData.FILL, true, true));
+	}
+	/**
+	 * 
+	 * This method creates a text with given style. (e.g. for style parameter:
+	 * SWT.NONE | SWT.SINGLE | SWT.PASSWORD)
+	 * 
+	 * @author Caner Feyzullahoğlu <caner.feyzullahoglu@agem.com.tr>
+	 * @param parent
+	 * @param layoutData
+	 * @param style
+	 * @return
+	 */
+	public static Text createText(Composite parent, Object layoutData, int style) {
+		Text t = new Text(parent, style);
+		t.setLayoutData(layoutData);
+		t.setBackground(getApplicationBackground());
+		t.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+		return t;
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param layoutData
+	 * @return
+	 */
+	public static Text createPasswordText(Composite parent, Object layoutData) {
+		Text t = new Text(parent, SWT.NONE | SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
+		t.setLayoutData(layoutData);
+		t.setBackground(getApplicationBackground());
+		t.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+		return t;
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param numColumns
+	 * @return
+	 */
+	public static Composite createComposite(Composite parent, int numColumns) {
+		return createComposite(parent, new GridLayout(numColumns, false),
+				new GridData(GridData.FILL, GridData.FILL, true, true));
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param layout
+	 * @param layoutData
+	 * @return
+	 */
+	public static Composite createComposite(Composite parent, Layout layout, Object layoutData) {
+		Composite c = new Composite(parent, SWT.NONE);
+		c.setLayoutData(layoutData);
+		c.setLayout(layout);
+		c.setBackground(getApplicationBackground());
+		return c;
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param numColumns
+	 * @return
+	 */
+	public static Group createGroup(Composite parent, int numColumns) {
+		return createGroup(parent, new GridLayout(numColumns, false),
+				new GridData(GridData.FILL, GridData.FILL, true, true));
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param layout
+	 * @param layoutData
+	 * @return
+	 */
+	public static Group createGroup(Composite parent, Layout layout, Object layoutData) {
+		Group g = new Group(parent, SWT.NONE);
+		g.setLayoutData(layoutData);
+		g.setLayout(layout);
+		g.setBackground(getApplicationBackground());
+		return g;
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param buttonType
+	 * @return
+	 */
+	public static Button createButton(Composite parent, int buttonType) {
+		return createButton(parent, buttonType, "");
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param buttonType
+	 * @param text
+	 * @return
+	 */
+	public static Button createButton(Composite parent, int buttonType, String text) {
+		Button b = new Button(parent, buttonType | SWT.BORDER);
+		b.setText(text);
+		b.setBackground(getApplicationBackground());
+		return b;
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	public static Label createLabel(Composite parent) {
+		return createLabel(parent, "");
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param text
+	 * @return
+	 */
+	public static Label createLabel(Composite parent, String text) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText(text);
+		l.setBackground(getApplicationBackground());
+		return l;
+	}
+	/**
+	 * 
+	 * @param parent
+	 * @param text
+	 * @param style
+	 * @return
+	 */
+	public static Label createLabel(Composite parent, String text, int style) {
+		Label l = new Label(parent, style | SWT.NONE);
+		l.setText(text);
+		l.setBackground(getApplicationBackground());
+		return l;
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	public static Color getApplicationBackground() {
+		return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+	}
+
 	////////////////////////////////////////////////////////////////////////////
 	//
 	// General
 	//
 	////////////////////////////////////////////////////////////////////////////
 	/**
-	 * Dispose of cached objects and their underlying OS resources. This should only be called when the cached
-	 * objects are no longer needed (e.g. on application shutdown).
+	 * Dispose of cached objects and their underlying OS resources. This should
+	 * only be called when the cached objects are no longer needed (e.g. on
+	 * application shutdown).
 	 */
 	public static void dispose() {
 		disposeColors();
@@ -444,4 +735,17 @@ public class SWTResourceManager {
 		disposeFonts();
 		disposeCursors();
 	}
+	
+	/**
+	 * Dispose safely any SWT resource
+	 *
+	 * @param resource
+	 *            the resource to dispose
+	 */
+	public static void safeDispose(final Resource resource) {
+		if (resource != null && !resource.isDisposed()) {
+			resource.dispose();
+		}
+	}
+
 }

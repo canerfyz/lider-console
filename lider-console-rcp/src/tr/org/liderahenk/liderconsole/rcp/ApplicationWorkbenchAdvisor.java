@@ -14,6 +14,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 
 /**
  * Public base class for configuring the workbench.
@@ -75,6 +76,13 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	public boolean preShutdown() {
 		return true; // ShutdownPreferencesPage.promptOnExit();
+	}
+
+	@Override
+	public void postShutdown() {
+		super.postShutdown();
+		// Dispose all allocated resources!
+		SWTResourceManager.dispose();
 	}
 
 }

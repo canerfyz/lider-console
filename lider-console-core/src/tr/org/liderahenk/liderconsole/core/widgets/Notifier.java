@@ -10,7 +10,6 @@
  *******************************************************************************/
 package tr.org.liderahenk.liderconsole.core.widgets;
 
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -26,13 +25,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import tr.org.liderahenk.liderconsole.core.Activator;
-import tr.org.liderahenk.liderconsole.core.utils.SWTGraphicUtil;
+import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.NotifierColorsFactory.NotifierTheme;
 
 /**
- * This class provides a notifier window, which is a window that appears in the bottom of the screen and slides.
+ * This class provides a notifier window, which is a window that appears in the bottom of the screen.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * 
  */
 public class Notifier {
 
@@ -45,26 +46,24 @@ public class Notifier {
 
 	private static final int STEP = 5;
 	
-	private static final ImageRegistry IMAGE_REGISTRY = new ImageRegistry();
-	
 	public static void error(final String title, final String text) {
-//		notify(SWTResourceManager.getImage("icons/error.png"), title, text, NotifierTheme.ERROR_THEME);
-		notify(IMAGE_REGISTRY.get("error"), title, text, NotifierTheme.ERROR_THEME);
+		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
+		notify(image, title, text, NotifierTheme.ERROR_THEME);
 	}
 	
 	public static void warning(final String title, final String text) {
-//		notify(SWTResourceManager.getImage("icons/warning.png"), title, text, NotifierTheme.WARNING_THEME);
-		notify(IMAGE_REGISTRY.get("warning"), title, text, NotifierTheme.WARNING_THEME);
+		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
+		notify(image, title, text, NotifierTheme.WARNING_THEME);
 	}
 	
 	public static void info(final String title, final String text) {
-//		notify(SWTResourceManager.getImage("icons/information.png"), title, text, NotifierTheme.INFO_THEME);
-		notify(IMAGE_REGISTRY.get("information"), title, text, NotifierTheme.INFO_THEME);
+		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
+		notify(image, title, text, NotifierTheme.INFO_THEME);
 	}
 	
 	public static void success(final String title, final String text) {
-//		notify(SWTResourceManager.getImage("icons/success.png"), title, text, NotifierTheme.SUCCESS_THEME);
-		notify(IMAGE_REGISTRY.get("success"), title, text, NotifierTheme.SUCCESS_THEME);
+		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
+		notify(image, title, text, NotifierTheme.SUCCESS_THEME);
 	}
 
 	/**
@@ -115,8 +114,13 @@ public class Notifier {
 	 * @see NotifierTheme
 	 */
 	public static void notify(final Image image, final String title, final String text, final NotifierTheme theme) {
-		final Shell shell = createNotificationWindow(image, title, text, NotifierColorsFactory.getColorsForTheme(theme));
-		makeShellAppears(shell);
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				final Shell shell = createNotificationWindow(image, title, text, NotifierColorsFactory.getColorsForTheme(theme));
+				makeShellAppears(shell);				
+			}
+		});
 	}
 
 	/**
@@ -166,11 +170,10 @@ public class Notifier {
 		titleLabel.setLayoutData(gdLabel);
 		final Color titleColor = colors.titleColor;
 		titleLabel.setForeground(titleColor);
-
-		final Font titleFont = SWTGraphicUtil.buildFontFrom(titleLabel, SWT.BOLD, FONT_SIZE);
+		
+		final Font titleFont = SWTResourceManager.getFont(titleLabel.getFont().getFontData()[0].getName(), FONT_SIZE, SWT.BOLD);
 		titleLabel.setFont(titleFont);
 		titleLabel.setText(title);
-		SWTGraphicUtil.addDisposer(shell, titleFont);
 	}
 
 	/**
@@ -185,13 +188,11 @@ public class Notifier {
 		gdImage.horizontalIndent = 10;
 		labelImage.setLayoutData(gdImage);
 		if (image == null) {
-			final Image temp = SWTGraphicUtil.createImageFromFile("icons/information.png");
+			final Image temp = SWTResourceManager.getImage(Notifier.class, "icons/32/done.png");
 			labelImage.setImage(temp);
-			SWTGraphicUtil.addDisposer(shell, temp);
 		} else {
 			labelImage.setImage(image);
 		}
-
 	}
 
 	/**
@@ -207,16 +208,15 @@ public class Notifier {
 		gdText.horizontalIndent = 15;
 		textLabel.setLayoutData(gdText);
 		textLabel.setEnabled(false);
-		final Font textFont = SWTGraphicUtil.buildFontFrom(textLabel, SWT.NONE, 10);
+		
+		final Font textFont = SWTResourceManager.getFont(textLabel.getFont().getFontData()[0].getName(), 10, SWT.NONE);
 		textLabel.setFont(textFont);
 
 		final Color textColor = colors.textColor;
 		textLabel.setForeground(textColor);
 
 		textLabel.setText(text);
-		SWTGraphicUtil.applyHTMLFormating(textLabel);
-
-		SWTGraphicUtil.addDisposer(shell, textFont);
+		SWTResourceManager.applyHTMLFormating(textLabel);
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class Notifier {
 				gc.fillRoundRectangle(30, 1, rect.width - 32, rect.height - 2, 8, 8);
 				gc.fillRectangle(30, 1, 10, rect.height - 2);
 
-				final Image closeImage = SWTGraphicUtil.createImageFromFile("icons/close.png");
+				final Image closeImage = SWTResourceManager.createImageFromFile("icons/16/cancel.png");
 				gc.drawImage(closeImage, rect.width - 21, 13);
 
 				gc.dispose();

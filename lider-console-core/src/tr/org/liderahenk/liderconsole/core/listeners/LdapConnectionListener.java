@@ -31,11 +31,11 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
+import tr.org.liderahenk.liderconsole.core.editorinput.GenericEditorInput;
 import tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
-import tr.org.liderahenk.liderconsole.core.ui.GenericEditorInput;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 import tr.org.liderahenk.liderconsole.core.xmpp.XMPPClient;
 
@@ -180,24 +180,34 @@ public class LdapConnectionListener implements IConnectionListener {
 										ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR)));
 					} else {
 						if (!"".equals(restFulAddress)) {
+							
 							RestSettings.setServerUrl(restFulAddress);
-
-							IResponse response = TaskUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG");
-
-							Map<String, Object> xmppConfig = response.getResultMap();
-							if (xmppConfig != null) {
-								// Initialise UID map before connecting to XMPP
-								// server.
-								LdapUtils.getInstance().getUidMap(conn, monitor);
-								XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
-										xmppConfig.get("xmppServiceName").toString(),
-										xmppConfig.get("xmppHost").toString(),
-										new Integer(xmppConfig.get("xmppPort").toString()));
-							} else {
-								// TODO messages_tr/en
-								// Notifier.notify("WARNING", "XMPP Baglanti
-								// Bilgilerine Erisilemiyor.");
+							IResponse response = null;
+									
+							try {
+								response = TaskUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG");
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
+								Notifier.error("Lider Sunucu", "Sunucu adresine (" + restFulAddress + ") erişilemiyor.");
 							}
+							
+							if (response != null) {
+								Map<String, Object> config = response.getResultMap();
+								if (config != null) {
+									// Initialise UID map before connecting to XMPP
+									// server.
+									LdapUtils.getInstance().getUidMap(conn, monitor);
+									XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
+											config.get("xmppServiceName").toString(),
+											config.get("xmppHost").toString(),
+											new Integer(config.get("xmppPort").toString()));
+								} else {
+									// TODO messages_tr/en
+									// Notifier.notify("WARNING", "XMPP Baglanti
+									// Bilgilerine Erisilemiyor.");
+								}
+							}
+
 						} else {
 							// TODO messages_tr/en
 							Notifier.notify("WARNING",

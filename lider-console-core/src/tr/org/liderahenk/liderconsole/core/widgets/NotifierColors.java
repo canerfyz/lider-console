@@ -12,7 +12,7 @@ package tr.org.liderahenk.liderconsole.core.widgets;
 
 import org.eclipse.swt.graphics.Color;
 
-import tr.org.liderahenk.liderconsole.core.utils.SWTGraphicUtil;
+import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 
 /**
  * This class is a simple POJO that holds colors used by the Notifier widget
@@ -26,10 +26,10 @@ public class NotifierColors {
 	Color rightColor;
 
 	void dispose() {
-		SWTGraphicUtil.safeDispose(this.titleColor);
-		SWTGraphicUtil.safeDispose(this.borderColor);
-		SWTGraphicUtil.safeDispose(this.leftColor);
-		SWTGraphicUtil.safeDispose(this.rightColor);
-		SWTGraphicUtil.safeDispose(this.textColor);
+		SWTResourceManager.safeDispose(this.titleColor);
+		SWTResourceManager.safeDispose(this.borderColor);
+		SWTResourceManager.safeDispose(this.leftColor);
+		SWTResourceManager.safeDispose(this.rightColor);
+		SWTResourceManager.safeDispose(this.textColor);
 	}
 }

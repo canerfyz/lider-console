@@ -59,7 +59,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import tr.org.liderahenk.liderconsole.core.ui.GenericEditorInput;
+import tr.org.liderahenk.liderconsole.core.editorinput.GenericEditorInput;
 import tr.org.liderahenk.liderconsole.task.dialogs.TaskHistoryDialog;
 import tr.org.liderahenk.liderconsole.task.i18n.Messages;
 

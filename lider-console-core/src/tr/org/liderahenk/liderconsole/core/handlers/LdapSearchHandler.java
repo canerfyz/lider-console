@@ -8,8 +8,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import tr.org.liderahenk.liderconsole.core.editorinput.GenericEditorInput;
 import tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor;
-import tr.org.liderahenk.liderconsole.core.ui.GenericEditorInput;
 
 public class LdapSearchHandler extends AbstractHandler {
 
