@@ -32,12 +32,12 @@
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"            
-            name="%editor.ldap.search">
+            name="%command.ldap.search">
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.core.commands.Policy"
-            name="%policy.command">
+            name="%command.policy">
       </command>  
       
    </extension>
@@ -72,7 +72,7 @@
                   commandId="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
                   id="tr.org.liderahenk.liderconsole.commands.LdapSearchEditor"
                   icon="icons/16/ldap.png"
-                  tooltip="%command.tooltip.ldap.search.editor">
+                  tooltip="%command.ldap.search.editor">
             </command>
       </menuContribution>
   </extension>
@@ -83,7 +83,7 @@
             locationURI="popup:tr.org.liderahenk.liderconsole.menus.LiderPolicyPopup?after=additions">
             <command
                   commandId="tr.org.liderahenk.liderconsole.core.commands.Policy"
-                  id="tr.org.liderahenk.liderconsole.commands.PolicyCommand"
+                  id="tr.org.liderahenk.liderconsole.core.commands.Policy"
                   icon="icons/16/send.png"
                   style="push">
                <visibleWhen>
@@ -299,10 +299,16 @@
 	<editor
        class="tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor"
        default="true"
-       icon="icons/32/ldap.png"
+       icon="icons/16/ldap.png"
        id="tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor"
        name="%editor.ldap.search">
 	</editor>
+    <editor
+	    class="tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor"
+	    icon="icons/16/profile.png"
+	    id="tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor"
+	    name="%editor.default.profile">
+    </editor> 
 </extension>
 
  <extension
