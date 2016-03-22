@@ -107,7 +107,7 @@ public class DefaultProfileDialog extends Dialog {
 		new Label(composite, SWT.NONE);
 
 		// Trigger plugin provided implementation
-		dialog.createDialogArea(childComposite);
+		dialog.createDialogArea(childComposite, selectedProfile);
 
 		applyDialogFont(composite);
 		return composite;
@@ -147,7 +147,7 @@ public class DefaultProfileDialog extends Dialog {
 		}
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK) {
-			Notifier.success(null, Messages.getString("SAVED_SUCCESSFULLY"));
+			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
 		}

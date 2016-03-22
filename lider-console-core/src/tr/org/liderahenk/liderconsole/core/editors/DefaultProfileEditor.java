@@ -190,7 +190,7 @@ public class DefaultProfileEditor extends EditorPart {
 
 		String[] titles = { Messages.getString("LABEL"), Messages.getString("DESCRIPTION"),
 				Messages.getString("CREATE_DATE"), Messages.getString("MODIFY_DATE"), Messages.getString("ACTIVE") };
-		int[] bounds = { 100, 200, 50, 50, 10 };
+		int[] bounds = { 100, 400, 150, 150, 10 };
 
 		TableViewerColumn nameColumn = createTableViewerColumn(titles[0], bounds[0]);
 		nameColumn.setLabelProvider(new ColumnLabelProvider() {
@@ -335,7 +335,7 @@ public class DefaultProfileEditor extends EditorPart {
 				try {
 					response = ProfileUtils.delete(getSelectedProfile().getId());
 					if (response.getStatus() == RestResponseStatus.OK) {
-						Notifier.success(null, Messages.getString("PROFILE_DELETED"));
+						Notifier.success(null, Messages.getString("RECORD_DELETED"));
 						refresh();
 					} else {
 						Notifier.error(null, response.getMessages().isEmpty() ? Messages.getString("ERROR_ON_DELETE")

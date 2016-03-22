@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
 
+import tr.org.liderahenk.liderconsole.core.model.Profile;
+
 public interface IProfileDialog {
 
 	/**
@@ -16,10 +18,11 @@ public interface IProfileDialog {
 	 * This is the main method that can be used to profile specific input
 	 * widgets.
 	 * 
+	 * @param profile
 	 * @param composite
 	 *            parent composite instance with one-column grid layout.
 	 */
-	void createDialogArea(Composite parent);
+	void createDialogArea(Composite parent, Profile profile);
 
 	/**
 	 * Triggered on 'OK' button pressed. Implementation of this method provide

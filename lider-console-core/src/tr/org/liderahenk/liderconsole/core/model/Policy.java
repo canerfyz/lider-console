@@ -2,14 +2,15 @@ package tr.org.liderahenk.liderconsole.core.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Profile implements Serializable {
+public class Policy implements Serializable {
 
-	private static final long serialVersionUID = 6401256297602058418L;
+	private static final long serialVersionUID = 7155303948904448104L;
 
 	private Long id;
 
@@ -17,33 +18,32 @@ public class Profile implements Serializable {
 
 	private String description;
 
-	private boolean overridable;
+	private boolean active = true;
 
-	private boolean active;
+	private boolean deleted = false;
 
-	private boolean deleted;
-
-	private Map<String, Object> profileData;
+	private Set<Profile> profiles = new HashSet<Profile>();
 
 	private Date createDate;
 
 	private Date modifyDate;
 
-	public Profile() {
+	private String policyVersion;
+
+	public Policy() {
 	}
 
-	public Profile(Long id, String label, String description, boolean overridable, boolean active, boolean deleted,
-			Map<String, Object> profileData, Date createDate, Date modifyDate) {
-		super();
+	public Policy(Long id, String label, String description, boolean active, boolean deleted, Set<Profile> profiles,
+			Date createDate, Date modifyDate, String policyVersion) {
 		this.id = id;
 		this.label = label;
 		this.description = description;
-		this.overridable = overridable;
 		this.active = active;
 		this.deleted = deleted;
-		this.profileData = profileData;
+		this.profiles = profiles;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
+		this.policyVersion = policyVersion;
 	}
 
 	public Long getId() {
@@ -70,14 +70,6 @@ public class Profile implements Serializable {
 		this.description = description;
 	}
 
-	public boolean isOverridable() {
-		return overridable;
-	}
-
-	public void setOverridable(boolean overridable) {
-		this.overridable = overridable;
-	}
-
 	public boolean isActive() {
 		return active;
 	}
@@ -94,12 +86,12 @@ public class Profile implements Serializable {
 		this.deleted = deleted;
 	}
 
-	public Map<String, Object> getProfileData() {
-		return profileData;
+	public Set<Profile> getProfiles() {
+		return profiles;
 	}
 
-	public void setProfileData(Map<String, Object> profileData) {
-		this.profileData = profileData;
+	public void setProfiles(Set<Profile> profiles) {
+		this.profiles = profiles;
 	}
 
 	public Date getCreateDate() {
@@ -116,6 +108,14 @@ public class Profile implements Serializable {
 
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
+	}
+
+	public String getPolicyVersion() {
+		return policyVersion;
+	}
+
+	public void setPolicyVersion(String policyVersion) {
+		this.policyVersion = policyVersion;
 	}
 
 }
