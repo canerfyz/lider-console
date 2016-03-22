@@ -22,7 +22,7 @@ public class LiderConstants {
 	}
 	
 	public static final class EDITORS {
-		public static final String PROFILE_EDITOR = "";
+		public static final String PROFILE_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor";
 	}
 
 	public static final class EXTENSION_POINTS {
