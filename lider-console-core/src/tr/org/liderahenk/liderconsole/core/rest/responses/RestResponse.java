@@ -7,7 +7,6 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
-import tr.org.liderahenk.liderconsole.core.rest.requests.TaskRequest;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RestResponse implements IResponse {
@@ -74,7 +73,7 @@ public class RestResponse implements IResponse {
 
 	@Override
 	public Object toObject(String json) throws Exception {
-		return new ObjectMapper().readValue(json, TaskRequest.class);
+		return new ObjectMapper().readValue(json, RestResponse.class);
 	}
 
 }
