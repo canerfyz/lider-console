@@ -1,13 +1,21 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
+import java.util.List;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
+import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ProfileRequest;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
  * Utility class for sending profile related requests to Lider server.
@@ -66,9 +74,8 @@ public class ProfileUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse list(String pluginName, String pluginVersion, String label, Boolean active)
+	public static List<Profile> list(String pluginName, String pluginVersion, String label, Boolean active)
 			throws Exception {
-
 		if (pluginName == null || pluginName.isEmpty()) {
 			throw new IllegalArgumentException("Plugin name was null.");
 		}
@@ -90,7 +97,19 @@ public class ProfileUtils {
 		}
 
 		// Send GET request to server
-		return RestClient.get(url.toString());
+		IResponse response = RestClient.get(url.toString());
+		List<Profile> profiles = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("profiles") != null) {
+			profiles = new ObjectMapper().readValue(response.getResultMap().get("profiles").toString(),
+					new TypeReference<List<Profile>>() {
+					});
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return profiles;
 	}
 
 	/**

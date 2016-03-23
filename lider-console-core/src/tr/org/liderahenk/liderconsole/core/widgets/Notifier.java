@@ -173,7 +173,7 @@ public class Notifier {
 		
 		final Font titleFont = SWTResourceManager.getFont(titleLabel.getFont().getFontData()[0].getName(), FONT_SIZE, SWT.BOLD);
 		titleLabel.setFont(titleFont);
-		titleLabel.setText(title);
+		titleLabel.setText(title == null ? new String() : title);
 	}
 
 	/**

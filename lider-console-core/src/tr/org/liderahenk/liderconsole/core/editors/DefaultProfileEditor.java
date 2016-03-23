@@ -36,7 +36,6 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
-import tr.org.liderahenk.liderconsole.core.rest.responses.RestResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -138,6 +137,7 @@ public class DefaultProfileEditor extends EditorPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 				Object firstElement = selection.getFirstElement();
+				firstElement = (Profile) firstElement;
 				if (firstElement instanceof Profile) {
 					setSelectedProfile((Profile) firstElement);
 				}
@@ -163,19 +163,13 @@ public class DefaultProfileEditor extends EditorPart {
 	 * with profile records.
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	private void populateTable() {
 		try {
 			ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
-			RestResponse response = (RestResponse) ProfileUtils.list(editorInput.getPluginName(),
-					editorInput.getPluginVersion(), null, null);
-			if (response.getStatus() == RestResponseStatus.OK) {
-				List<Profile> profiles = (List<Profile>) response.getResultMap().get("profiles");
-				if (profiles != null) {
-					tableViewer.setInput(profiles);
-				}
-			} else {
-				Notifier.error("Profile", "Profiller listelenemedi.");
+			List<Profile> profiles = ProfileUtils.list(editorInput.getPluginName(), editorInput.getPluginVersion(),
+					null, null);
+			if (profiles != null) {
+				tableViewer.setInput(profiles);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -219,7 +213,8 @@ public class DefaultProfileEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Profile) {
-					return ((Profile) element).getCreateDate().toString();
+					return ((Profile) element).getCreateDate() != null ? ((Profile) element).getCreateDate().toString()
+							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -230,7 +225,8 @@ public class DefaultProfileEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Profile) {
-					return ((Profile) element).getModifyDate().toString();
+					return ((Profile) element).getModifyDate() != null ? ((Profile) element).getModifyDate().toString()
+							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -241,7 +237,7 @@ public class DefaultProfileEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Profile) {
-					return ((Profile) element).isActive() ? Messages.getString("TRUE") : Messages.getString("FALSE");
+					return ((Profile) element).isActive() ? Messages.getString("YES") : Messages.getString("NO");
 				}
 				return Messages.getString("UNTITLED");
 			}

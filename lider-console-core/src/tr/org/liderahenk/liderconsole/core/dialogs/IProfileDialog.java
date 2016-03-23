@@ -29,7 +29,8 @@ public interface IProfileDialog {
 	 * necessary profile data that need to be saved on database.
 	 * 
 	 * @return
+	 * @throws Exception
 	 */
-	Map<String, Object> getProfileData();
+	Map<String, Object> getProfileData() throws Exception;
 
 }

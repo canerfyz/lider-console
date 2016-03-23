@@ -63,6 +63,9 @@ public class DefaultProfileDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		parent.setLayout(new GridLayout(1, false));
+
 		Composite composite = (Composite) super.createDialogArea(parent);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		composite.setLayout(new GridLayout(2, false));
@@ -93,18 +96,15 @@ public class DefaultProfileDialog extends Dialog {
 		btnActive = new Button(composite, SWT.CHECK);
 		btnActive.setText(Messages.getString("ACTIVE"));
 		btnActive.setSelection(selectedProfile != null && selectedProfile.isActive());
-		new Label(composite, SWT.NONE);
 
 		// Profile overridable
 		btnOverridable = new Button(composite, SWT.CHECK);
 		btnOverridable.setText(Messages.getString("OVERRIDABLE"));
 		btnOverridable.setSelection(selectedProfile != null && selectedProfile.isOverridable());
-		new Label(composite, SWT.NONE);
 
 		// Create child composite for plugin
-		Composite childComposite = new Composite(composite, SWT.BORDER);
+		Composite childComposite = new Composite(parent, SWT.NONE);
 		childComposite.setLayout(new GridLayout(1, false));
-		new Label(composite, SWT.NONE);
 
 		// Trigger plugin provided implementation
 		dialog.createDialogArea(childComposite, selectedProfile);
@@ -133,7 +133,12 @@ public class DefaultProfileDialog extends Dialog {
 		profile.setDescription(txtDesc.getText());
 		profile.setLabel(txtLabel.getText());
 		profile.setOverridable(btnOverridable.getSelection());
-		profile.setProfileData(dialog.getProfileData());
+		try {
+			profile.setProfileData(dialog.getProfileData());
+		} catch (Exception e1) {
+			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+			logger.error(e1.getMessage(), e1);
+		}
 
 		IResponse response = null;
 		try {
