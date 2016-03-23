@@ -36,7 +36,7 @@ public class ProfileUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse add(ProfileRequest profile) throws Exception {
+	public static Profile add(ProfileRequest profile) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
@@ -44,7 +44,18 @@ public class ProfileUtils {
 		logger.debug("Sending request: {} to URL: {}", new Object[] { profile, url.toString() });
 
 		// Send POST request to server
-		return RestClient.post(profile, url.toString());
+		IResponse response = RestClient.post(profile, url.toString());
+		Profile result = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("profile") != null) {
+			result = new ObjectMapper().readValue(response.getResultMap().get("profile").toString(), Profile.class);
+			Notifier.success(null, Messages.getString("RECORD_SAVED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+		}
+
+		return result;
 	}
 
 	/**
@@ -54,14 +65,26 @@ public class ProfileUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse update(ProfileRequest profile) throws Exception {
+	public static Profile update(ProfileRequest profile) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
 		url.append("/update");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { profile, url.toString() });
 
-		return RestClient.post(profile, url.toString());
+		// Send POST request to server
+		IResponse response = RestClient.post(profile, url.toString());
+		Profile result = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("profile") != null) {
+			result = new ObjectMapper().readValue(response.getResultMap().get("profile").toString(), Profile.class);
+			Notifier.success(null, Messages.getString("RECORD_SAVED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+		}
+
+		return result;
 	}
 
 	/**
@@ -105,6 +128,7 @@ public class ProfileUtils {
 			profiles = new ObjectMapper().readValue(response.getResultMap().get("profiles").toString(),
 					new TypeReference<List<Profile>>() {
 					});
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
@@ -119,8 +143,7 @@ public class ProfileUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse get(Long profileId) throws Exception {
-
+	public static Profile get(Long profileId) throws Exception {
 		if (profileId == null) {
 			throw new IllegalArgumentException("ID was null.");
 		}
@@ -130,7 +153,18 @@ public class ProfileUtils {
 		url.append("/").append(profileId).append("/get");
 		logger.debug("Sending request to URL: {}", url.toString());
 
-		return RestClient.get(url.toString());
+		IResponse response = RestClient.get(url.toString());
+		Profile profile = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("profile") != null) {
+			profile = new ObjectMapper().readValue(response.getResultMap().get("profile").toString(), Profile.class);
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return profile;
 	}
 
 	/**
@@ -140,8 +174,7 @@ public class ProfileUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse delete(Long profileId) throws Exception {
-
+	public static boolean delete(Long profileId) throws Exception {
 		if (profileId == null) {
 			throw new IllegalArgumentException("ID was null.");
 		}
@@ -151,7 +184,15 @@ public class ProfileUtils {
 		url.append("/").append(profileId).append("/delete");
 		logger.debug("Sending request to URL: {}", url.toString());
 
-		return RestClient.get(url.toString());
+		IResponse response = RestClient.get(url.toString());
+		
+		if (response != null && response.getStatus() == RestResponseStatus.OK) {
+			Notifier.error(null, Messages.getString("RECORD_DELETED"));
+			return true;
+		}
+		
+		Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+		return false;
 	}
 
 	/**

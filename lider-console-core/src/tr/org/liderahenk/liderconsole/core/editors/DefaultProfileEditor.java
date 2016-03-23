@@ -34,8 +34,6 @@ import tr.org.liderahenk.liderconsole.core.dialogs.DefaultProfileDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.ProfileEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
-import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
-import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -173,6 +171,7 @@ public class DefaultProfileEditor extends EditorPart {
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
 	}
 
@@ -299,7 +298,7 @@ public class DefaultProfileEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (null == getSelectedProfile()) {
-					Notifier.error("Profile Editor", Messages.getString("PLEASE_SELECT_PROFILE"));
+					Notifier.warning(null, Messages.getString("PLEASE_SELECT_PROFILE"));
 					return;
 				}
 				ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
@@ -324,19 +323,11 @@ public class DefaultProfileEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (null == getSelectedProfile()) {
-					Notifier.error("Profile Editor", Messages.getString("PLEASE_SELECT_PROFILE"));
+					Notifier.warning(null, Messages.getString("PLEASE_SELECT_PROFILE"));
 					return;
 				}
-				IResponse response;
 				try {
-					response = ProfileUtils.delete(getSelectedProfile().getId());
-					if (response.getStatus() == RestResponseStatus.OK) {
-						Notifier.success(null, Messages.getString("RECORD_DELETED"));
-						refresh();
-					} else {
-						Notifier.error(null, response.getMessages().isEmpty() ? Messages.getString("ERROR_ON_DELETE")
-								: response.getMessages().get(0));
-					}
+					ProfileUtils.delete(getSelectedProfile().getId());
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
 					Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));

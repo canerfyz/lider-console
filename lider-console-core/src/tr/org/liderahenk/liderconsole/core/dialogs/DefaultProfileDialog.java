@@ -17,9 +17,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
-import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ProfileRequest;
-import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -120,7 +118,7 @@ public class DefaultProfileDialog extends Dialog {
 
 		// Check if label is empty
 		if (txtLabel.getText().isEmpty()) {
-			Notifier.error(null, Messages.getString("FILL_LABEL_FIELD"));
+			Notifier.warning(null, Messages.getString("FILL_LABEL_FIELD"));
 			return;
 		}
 
@@ -133,27 +131,16 @@ public class DefaultProfileDialog extends Dialog {
 		profile.setDescription(txtDesc.getText());
 		profile.setLabel(txtLabel.getText());
 		profile.setOverridable(btnOverridable.getSelection());
+
 		try {
 			profile.setProfileData(dialog.getProfileData());
-		} catch (Exception e1) {
-			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
-			logger.error(e1.getMessage(), e1);
-		}
-
-		IResponse response = null;
-		try {
 			if (selectedProfile != null && selectedProfile.getId() != null) {
-				response = ProfileUtils.update(profile);
+				ProfileUtils.update(profile);
 			} else {
-				response = ProfileUtils.add(profile);
+				ProfileUtils.add(profile);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-		}
-
-		if (response != null && response.getStatus() == RestResponseStatus.OK) {
-			Notifier.success(null, Messages.getString("RECORD_SAVED"));
-		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
 		}
 
