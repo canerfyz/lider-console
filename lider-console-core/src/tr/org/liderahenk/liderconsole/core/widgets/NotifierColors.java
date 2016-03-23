@@ -15,7 +15,9 @@ import org.eclipse.swt.graphics.Color;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 
 /**
- * This class is a simple POJO that holds colors used by the Notifier widget
+ * This class is a simple POJO that holds colors used by the Notifier widget.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
 public class NotifierColors {
@@ -26,10 +28,11 @@ public class NotifierColors {
 	Color rightColor;
 
 	void dispose() {
-		SWTResourceManager.safeDispose(this.titleColor);
+		// DO NOT dispose titleColor and textColor since we are not the ones
+		// allocating them in the first place! They will be disposed by the
+		// system if necessary.
 		SWTResourceManager.safeDispose(this.borderColor);
 		SWTResourceManager.safeDispose(this.leftColor);
 		SWTResourceManager.safeDispose(this.rightColor);
-		SWTResourceManager.safeDispose(this.textColor);
 	}
 }
