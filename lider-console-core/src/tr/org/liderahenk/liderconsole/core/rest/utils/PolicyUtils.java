@@ -1,14 +1,23 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
+import java.util.List;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.model.Policy;
+import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
+import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyRequest;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ProfileRequest;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
  * Utility class for sending policy related requests to Lider server.
@@ -29,7 +38,7 @@ public class PolicyUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse add(PolicyRequest policy) throws Exception {
+	public static Policy add(PolicyRequest policy) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
@@ -37,7 +46,18 @@ public class PolicyUtils {
 		logger.debug("Sending request: {} to URL: {}", new Object[] { policy, url.toString() });
 
 		// Send POST request to server
-		return RestClient.post(policy, url.toString());
+		IResponse response = RestClient.post(policy, url.toString());
+		Policy result = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("policy") != null) {
+			result = new ObjectMapper().readValue(response.getResultMap().get("policy").toString(), Policy.class);
+			Notifier.success(null, Messages.getString("RECORD_SAVED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+		}
+
+		return result;
 	}
 
 	/**
@@ -47,14 +67,25 @@ public class PolicyUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse update(ProfileRequest policy) throws Exception {
+	public static Policy update(ProfileRequest policy) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
 		url.append("/update");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { policy, url.toString() });
 
-		return RestClient.post(policy, url.toString());
+		IResponse response = RestClient.post(policy, url.toString());
+		Policy result = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("policy") != null) {
+			result = new ObjectMapper().readValue(response.getResultMap().get("policy").toString(), Policy.class);
+			Notifier.success(null, Messages.getString("RECORD_SAVED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+		}
+
+		return result;
 	}
 
 	/**
@@ -67,7 +98,7 @@ public class PolicyUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse list(String pluginName, String pluginVersion, String label, Boolean active)
+	public static List<Policy> list(String pluginName, String pluginVersion, String label, Boolean active)
 			throws Exception {
 
 		// Build URL
@@ -86,7 +117,20 @@ public class PolicyUtils {
 		logger.debug("Sending request to URL: {}", url.toString());
 
 		// Send GET request to server
-		return RestClient.get(url.toString());
+		IResponse response = RestClient.get(url.toString());
+		List<Policy> policies = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("policies") != null) {
+			policies = new ObjectMapper().readValue(response.getResultMap().get("policies").toString(),
+					new TypeReference<List<Profile>>() {
+					});
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return policies;
 	}
 
 	/**
@@ -96,7 +140,7 @@ public class PolicyUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse get(Long policyId) throws Exception {
+	public static Policy get(Long policyId) throws Exception {
 
 		if (policyId == null) {
 			throw new IllegalArgumentException("ID was null.");
@@ -107,7 +151,18 @@ public class PolicyUtils {
 		url.append("/").append(policyId).append("/get");
 		logger.debug("Sending request to URL: {}", url.toString());
 
-		return RestClient.get(url.toString());
+		IResponse response = RestClient.get(url.toString());
+		Policy policy = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("policy") != null) {
+			policy = new ObjectMapper().readValue(response.getResultMap().get("policy").toString(), Policy.class);
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return policy;
 	}
 
 	/**
@@ -117,7 +172,7 @@ public class PolicyUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IResponse delete(Long policyId) throws Exception {
+	public static boolean delete(Long policyId) throws Exception {
 
 		if (policyId == null) {
 			throw new IllegalArgumentException("ID was null.");
@@ -128,7 +183,15 @@ public class PolicyUtils {
 		url.append("/").append(policyId).append("/delete");
 		logger.debug("Sending request to URL: {}", url.toString());
 
-		return RestClient.get(url.toString());
+		IResponse response = RestClient.get(url.toString());
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK) {
+			Notifier.error(null, Messages.getString("RECORD_DELETED"));
+			return true;
+		}
+
+		Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+		return false;
 	}
 
 	/**
