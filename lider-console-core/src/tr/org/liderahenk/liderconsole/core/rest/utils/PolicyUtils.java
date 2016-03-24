@@ -98,8 +98,7 @@ public class PolicyUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<Policy> list(String pluginName, String pluginVersion, String label, Boolean active)
-			throws Exception {
+	public static List<Policy> list(String label, Boolean active) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();

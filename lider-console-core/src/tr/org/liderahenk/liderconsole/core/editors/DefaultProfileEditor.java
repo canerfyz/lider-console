@@ -93,175 +93,6 @@ public class DefaultProfileEditor extends EditorPart {
 	}
 
 	/**
-	 * Create main widget of the editor - table viewer.
-	 * 
-	 * @param composite
-	 */
-	private void createTableArea(final Composite composite) {
-
-		GridData dataSearchGrid = new GridData();
-		dataSearchGrid.grabExcessHorizontalSpace = true;
-		dataSearchGrid.horizontalAlignment = GridData.FILL;
-
-		tableViewer = new TableViewer(composite,
-				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-
-		// Create table columns
-		createTableColumns();
-
-		// Configure table layout
-		final Table table = tableViewer.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.getVerticalBar().setEnabled(true);
-		table.getVerticalBar().setVisible(true);
-		tableViewer.setContentProvider(new ArrayContentProvider());
-
-		// Populate table with profiles
-		populateTable();
-
-		GridData gridData = new GridData();
-		gridData.verticalAlignment = GridData.FILL;
-		gridData.horizontalSpan = 3;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.heightHint = 420;
-		gridData.horizontalAlignment = GridData.FILL;
-		tableViewer.getControl().setLayoutData(gridData);
-
-		// Hook up listeners
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-				Object firstElement = selection.getFirstElement();
-				firstElement = (Profile) firstElement;
-				if (firstElement instanceof Profile) {
-					setSelectedProfile((Profile) firstElement);
-				}
-				btnEditProfile.setEnabled(true);
-				btnDeleteProfile.setEnabled(true);
-			}
-		});
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
-				DefaultProfileDialog dialog = new DefaultProfileDialog(composite.getShell(), getSelectedProfile(),
-						getSelf(), editorInput.getProfileDialog());
-				if (dialog.open() == SWT.OK) {
-					refresh();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Search profile by plugin name and version, then populate specified table
-	 * with profile records.
-	 * 
-	 */
-	private void populateTable() {
-		try {
-			ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
-			List<Profile> profiles = ProfileUtils.list(editorInput.getPluginName(), editorInput.getPluginVersion(),
-					null, null);
-			if (profiles != null) {
-				tableViewer.setInput(profiles);
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
-		}
-	}
-
-	/**
-	 * Create table columns related to profile database columns.
-	 * 
-	 */
-	private void createTableColumns() {
-
-		String[] titles = { Messages.getString("LABEL"), Messages.getString("DESCRIPTION"),
-				Messages.getString("CREATE_DATE"), Messages.getString("MODIFY_DATE"), Messages.getString("ACTIVE") };
-		int[] bounds = { 100, 400, 150, 150, 10 };
-
-		TableViewerColumn nameColumn = createTableViewerColumn(titles[0], bounds[0]);
-		nameColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof Profile) {
-					return ((Profile) element).getLabel();
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-
-		TableViewerColumn descColumn = createTableViewerColumn(titles[1], bounds[1]);
-		descColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof Profile) {
-					return ((Profile) element).getDescription();
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-
-		TableViewerColumn createDateColumn = createTableViewerColumn(titles[2], bounds[2]);
-		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof Profile) {
-					return ((Profile) element).getCreateDate() != null ? ((Profile) element).getCreateDate().toString()
-							: Messages.getString("UNTITLED");
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-
-		TableViewerColumn modifyDateColumn = createTableViewerColumn(titles[3], bounds[3]);
-		modifyDateColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof Profile) {
-					return ((Profile) element).getModifyDate() != null ? ((Profile) element).getModifyDate().toString()
-							: Messages.getString("UNTITLED");
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-
-		TableViewerColumn activeColumn = createTableViewerColumn(titles[4], bounds[4]);
-		activeColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof Profile) {
-					return ((Profile) element).isActive() ? Messages.getString("YES") : Messages.getString("NO");
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-	}
-
-	/**
-	 * Create new table viewer column instance.
-	 * 
-	 * @param title
-	 * @param bound
-	 * @return
-	 */
-	private TableViewerColumn createTableViewerColumn(String title, int bound) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		final TableColumn column = viewerColumn.getColumn();
-		column.setText(title);
-		column.setWidth(bound);
-		column.setResizable(true);
-		column.setMoveable(false);
-		column.setAlignment(SWT.LEFT);
-		return viewerColumn;
-	}
-
-	/**
 	 * Create add, edit, delete button for the table.
 	 * 
 	 * @param composite
@@ -338,6 +169,175 @@ public class DefaultProfileEditor extends EditorPart {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+	}
+
+	/**
+	 * Create main widget of the editor - table viewer.
+	 * 
+	 * @param composite
+	 */
+	private void createTableArea(final Composite composite) {
+
+		GridData dataSearchGrid = new GridData();
+		dataSearchGrid.grabExcessHorizontalSpace = true;
+		dataSearchGrid.horizontalAlignment = GridData.FILL;
+
+		tableViewer = new TableViewer(composite,
+				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+
+		// Create table columns
+		createTableColumns();
+
+		// Configure table layout
+		final Table table = tableViewer.getTable();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		table.getVerticalBar().setEnabled(true);
+		table.getVerticalBar().setVisible(true);
+		tableViewer.setContentProvider(new ArrayContentProvider());
+
+		// Populate table with profiles
+		populateTable();
+
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.horizontalSpan = 3;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.heightHint = 420;
+		gridData.horizontalAlignment = GridData.FILL;
+		tableViewer.getControl().setLayoutData(gridData);
+
+		// Hook up listeners
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+				Object firstElement = selection.getFirstElement();
+				firstElement = (Profile) firstElement;
+				if (firstElement instanceof Profile) {
+					setSelectedProfile((Profile) firstElement);
+				}
+				btnEditProfile.setEnabled(true);
+				btnDeleteProfile.setEnabled(true);
+			}
+		});
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
+				DefaultProfileDialog dialog = new DefaultProfileDialog(composite.getShell(), getSelectedProfile(),
+						getSelf(), editorInput.getProfileDialog());
+				if (dialog.open() == SWT.OK) {
+					refresh();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create table columns related to profile database columns.
+	 * 
+	 */
+	private void createTableColumns() {
+
+		String[] titles = { Messages.getString("LABEL"), Messages.getString("DESCRIPTION"),
+				Messages.getString("CREATE_DATE"), Messages.getString("MODIFY_DATE"), Messages.getString("ACTIVE") };
+		int[] bounds = { 100, 400, 150, 150, 10 };
+
+		TableViewerColumn labelColumn = createTableViewerColumn(titles[0], bounds[0]);
+		labelColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Profile) {
+					return ((Profile) element).getLabel();
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn descColumn = createTableViewerColumn(titles[1], bounds[1]);
+		descColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Profile) {
+					return ((Profile) element).getDescription();
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn createDateColumn = createTableViewerColumn(titles[2], bounds[2]);
+		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Profile) {
+					return ((Profile) element).getCreateDate() != null ? ((Profile) element).getCreateDate().toString()
+							: Messages.getString("UNTITLED");
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn modifyDateColumn = createTableViewerColumn(titles[3], bounds[3]);
+		modifyDateColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Profile) {
+					return ((Profile) element).getModifyDate() != null ? ((Profile) element).getModifyDate().toString()
+							: Messages.getString("UNTITLED");
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn activeColumn = createTableViewerColumn(titles[4], bounds[4]);
+		activeColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Profile) {
+					return ((Profile) element).isActive() ? Messages.getString("YES") : Messages.getString("NO");
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+	}
+
+	/**
+	 * Create new table viewer column instance.
+	 * 
+	 * @param title
+	 * @param bound
+	 * @return
+	 */
+	private TableViewerColumn createTableViewerColumn(String title, int bound) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		final TableColumn column = viewerColumn.getColumn();
+		column.setText(title);
+		column.setWidth(bound);
+		column.setResizable(true);
+		column.setMoveable(false);
+		column.setAlignment(SWT.LEFT);
+		return viewerColumn;
+	}
+	
+	/**
+	 * Search profile by plugin name and version, then populate specified table
+	 * with profile records.
+	 * 
+	 */
+	private void populateTable() {
+		try {
+			ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
+			List<Profile> profiles = ProfileUtils.list(editorInput.getPluginName(), editorInput.getPluginVersion(),
+					null, null);
+			if (profiles != null) {
+				tableViewer.setInput(profiles);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
 	}
 
 	@Override

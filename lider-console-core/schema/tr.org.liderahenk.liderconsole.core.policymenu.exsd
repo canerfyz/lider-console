@@ -49,38 +49,35 @@
 
    <element name="policyItem">
       <complexType>
-         <attribute name="label" type="string">
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="type" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="listClass" type="string">
-            <annotation>
-               <documentation>
-                  
+                  Plugin label used for combo box.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":tr.org.liderahenk.liderconsole.core.policy.IPolicy"/>
+                  <meta.attribute translatable="true"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="handlerClass" type="string">
+         <attribute name="pluginName" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Plugin name used in Lider bundle (same as IPluginInfo.getPluginVersion()).
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="java"/>
-               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="pluginVersion" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Plugin version used in Lider bundle (same as IPluginInfo.getPluginVersion()).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="profileCommandId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Command ID used for plugin profile handler
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

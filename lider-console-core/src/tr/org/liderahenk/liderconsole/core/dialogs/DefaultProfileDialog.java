@@ -1,7 +1,5 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,7 +27,7 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @see tr.org.liderahenk.liderconsole.core.dialogs.IProfileDialog
  *
  */
-public class DefaultProfileDialog extends Dialog {
+public class DefaultProfileDialog extends DefaultLiderDialog {
 
 	private static final Logger logger = LoggerFactory.getLogger(DefaultProfileDialog.class);
 
@@ -58,6 +56,9 @@ public class DefaultProfileDialog extends Dialog {
 		dialog.init();
 	}
 
+	/**
+	 * Create profile input widgets
+	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
@@ -111,6 +112,9 @@ public class DefaultProfileDialog extends Dialog {
 		return composite;
 	}
 
+	/**
+	 * Handle OK button press
+	 */
 	@Override
 	protected void okPressed() {
 
@@ -146,16 +150,6 @@ public class DefaultProfileDialog extends Dialog {
 
 		editor.refresh();
 		close();
-	}
-
-	/**
-	 * Override parent method in order to use i18n button names.
-	 */
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		// create OK and Cancel buttons by default
-		createButton(parent, IDialogConstants.OK_ID, Messages.getString("OK"), true);
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("CANCEL"), false);
 	}
 
 }
