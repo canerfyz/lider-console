@@ -13,7 +13,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import tr.org.liderahenk.liderconsole.core.dialogs.PolicyMenuDialog;
 
-public class PolicyHandler extends AbstractHandler {
+public class ExecutePolicyHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

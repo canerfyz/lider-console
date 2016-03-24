@@ -106,8 +106,8 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 					if (!(selectedItem instanceof BaseDNEntry)) {
 						isEntry = true;
 						Collection<ObjectClass> classes = entry.getObjectClassDescriptions();
-						List<String> userObjClsArr = new ArrayList<String>(ConfigProvider.getInstance()
-								.getStringList(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS));
+						List<String> userObjClsArr = new ArrayList<String>(
+								ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS));
 
 						// Check if the entry belongs to a user by removing
 						// common elements from the user obj classes list.
@@ -287,33 +287,30 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 		}
 	};
 
+	/**
+	 * Event handler implementation which listens to LDAP connection status (and
+	 * thus Lider availability).
+	 */
 	private final EventHandler stateChange = new EventHandler() {
 		public void handleEvent(Event event) {
-
+			// Update source expression value
 			getSelf().fireSourceChanged(ISources.WORKBENCH, LIDER_AVAILABLE_STATE, RestSettings.isAvailable());
 
 			if (RestSettings.isAvailable()) {
-
 				IWorkbench workbench = PlatformUI.getWorkbench();
 				IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-
 				if (windows != null && windows.length > 0) {
 					IWorkbenchWindow window = windows[0];
 					window.getSelectionService().addPostSelectionListener(
 							"org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView",
 							browserSelectionListener);
-					// window.getSelectionService().addSelectionListener(
-					// "tr.org.liderahenk.liderconsole.core.views.SubBrowserView",
-					// userBrowserSelectionListener);
 				}
 			} else {
 				IWorkbench workbench = PlatformUI.getWorkbench();
 				IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-
 				if (windows != null && windows.length > 0) {
 					IWorkbenchWindow window = windows[0];
 					window.getSelectionService().removePostSelectionListener(browserSelectionListener);
-					// window.getSelectionService().removeSelectionListener(userBrowserSelectionListener);
 				}
 			}
 

@@ -30,6 +30,13 @@ import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
 
+/**
+ * This class is used to paint online/offline status images on LDAP tree while
+ * listening to XMPP events.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class TreePaintListener implements Listener {
 
 	private Boolean globalState = false;
@@ -147,9 +154,9 @@ public class TreePaintListener implements Listener {
 
 			if (originalImage != pardusAhenkImage && data instanceof IEntry) {
 				Collection<ObjectClass> classes = ((IEntry) data).getObjectClassDescriptions();
-				List<String> agentObjClsArr = new ArrayList<String>(ConfigProvider.getInstance()
-						.getStringList(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS));
-				
+				List<String> agentObjClsArr = new ArrayList<String>(
+						ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS));
+
 				// Remove common elements from the list
 				for (Iterator<String> iterator = agentObjClsArr.iterator(); iterator.hasNext();) {
 					String agentObjCls = iterator.next();

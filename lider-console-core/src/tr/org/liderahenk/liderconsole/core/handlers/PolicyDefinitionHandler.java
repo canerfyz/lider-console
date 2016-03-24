@@ -13,20 +13,21 @@ import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 
 /**
- * Handles LDAP search editor which is more user-friendly and robust
+ * Handles policy definition editor which is responsible for policy CRUD
+ * operations.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class LdapSearchHandler extends AbstractHandler {
+public class PolicyDefinitionHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		IWorkbenchPage page = window.getActivePage();
 		try {
-			page.openEditor(new DefaultEditorInput(Messages.getString("LDAP_SEARCH")),
-					LiderConstants.EDITORS.LDAP_SEARCH_EDITOR);
+			page.openEditor(new DefaultEditorInput(Messages.getString("POLICY_DEFINITION")),
+					LiderConstants.EDITORS.POLICY_DEFINITION_EDITOR);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}

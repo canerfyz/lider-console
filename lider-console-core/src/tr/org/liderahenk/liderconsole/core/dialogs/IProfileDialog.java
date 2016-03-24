@@ -6,17 +6,24 @@ import org.eclipse.swt.widgets.Composite;
 
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 
+/**
+ * Any plugin providing implementation of this interface will automatically have
+ * profile editor which has profile CRUD capabilities.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public interface IProfileDialog {
 
 	/**
-	 * This method can be used to init some objects if necessary. Triggered on
-	 * dialog instance creation.
+	 * This method can be used to initialize some objects if necessary.
+	 * Triggered on dialog instance creation.
 	 */
 	void init();
 
 	/**
-	 * This is the main method that can be used to profile specific input
-	 * widgets.
+	 * This is the main method that can be used to provide profile specific
+	 * input widgets.
 	 * 
 	 * @param profile
 	 * @param composite

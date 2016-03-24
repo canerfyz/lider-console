@@ -18,11 +18,9 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +29,6 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
-import tr.org.liderahenk.liderconsole.core.editorinput.GenericEditorInput;
-import tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
@@ -73,13 +69,11 @@ public class LdapConnectionListener implements IConnectionListener {
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						// tree.addPaintListener(paintListener);
 						tree.addListener(SWT.MeasureItem, paintListener);
 						tree.addListener(SWT.PaintItem, paintListener);
 						tree.addListener(SWT.EraseItem, paintListener);
 					}
 				});
-
 			}
 		}
 	}
@@ -115,9 +109,6 @@ public class LdapConnectionListener implements IConnectionListener {
 
 	@Override
 	public void connectionOpened(Connection conn, StudioProgressMonitor mon) {
-
-		// Open LDAP Search by default editor on startup
-		openLdapSearchEditor();
 
 		monitor = new StudioProgressMonitor(mon);
 
@@ -180,26 +171,27 @@ public class LdapConnectionListener implements IConnectionListener {
 										ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR)));
 					} else {
 						if (!"".equals(restFulAddress)) {
-							
+
 							RestSettings.setServerUrl(restFulAddress);
 							IResponse response = null;
-									
+
 							try {
 								response = TaskUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG");
 							} catch (Exception e) {
 								logger.error(e.getMessage(), e);
-								Notifier.error("Lider Sunucu", "Sunucu adresine (" + restFulAddress + ") erişilemiyor.");
+								Notifier.error("Lider Sunucu",
+										"Sunucu adresine (" + restFulAddress + ") erişilemiyor.");
 							}
-							
+
 							if (response != null) {
 								Map<String, Object> config = response.getResultMap();
 								if (config != null) {
-									// Initialise UID map before connecting to XMPP
+									// Initialise UID map before connecting to
+									// XMPP
 									// server.
 									LdapUtils.getInstance().getUidMap(conn, monitor);
 									XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
-											config.get("xmppServiceName").toString(),
-											config.get("xmppHost").toString(),
+											config.get("xmppServiceName").toString(), config.get("xmppHost").toString(),
 											new Integer(config.get("xmppPort").toString()));
 								} else {
 									// TODO messages_tr/en
@@ -231,30 +223,6 @@ public class LdapConnectionListener implements IConnectionListener {
 			new StudioConnectionJob(new CloseConnectionsRunnable(connWillBeClosed)).execute();
 		}
 
-	}
-
-	// TODO handle this via event listener
-	private void openLdapSearchEditor() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-		if (windows != null && windows.length > 0) {
-			IWorkbenchWindow window = windows[0];
-			final IWorkbenchPage activePage = window.getActivePage();
-			IPerspectiveDescriptor perspective = activePage.getPerspective();
-			if (LiderConstants.PERSPECTIVES.MAIN_PERSPECTIVE_ID.equalsIgnoreCase(perspective.getId())) {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							activePage.openEditor(new GenericEditorInput(LdapSearchEditor.ID, "Editor", "none"),
-									LdapSearchEditor.ID);
-						} catch (PartInitException e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		}
 	}
 
 	public static Connection getConnection() {

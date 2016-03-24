@@ -54,11 +54,14 @@ import tr.org.liderahenk.liderconsole.core.widgets.AttrOperator;
 import tr.org.liderahenk.liderconsole.core.widgets.AttrText;
 import tr.org.liderahenk.liderconsole.core.widgets.AttrValueText;
 
+/**
+ * New user-friendly LDAP search editor
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class LdapSearchEditor extends EditorPart {
 
-	public static final String ID = "tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor";
-
-	// Widgets
 	private ScrolledComposite sc;
 	private Composite cmpSearchCritera;
 	private Composite cmpTable;
@@ -71,8 +74,7 @@ public class LdapSearchEditor extends EditorPart {
 	private Button btnSearch;
 	private CheckboxTableViewer viewer;
 
-	private final IEventBroker eventBroker = (IEventBroker) PlatformUI
-			.getWorkbench().getService(IEventBroker.class);
+	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -83,8 +85,7 @@ public class LdapSearchEditor extends EditorPart {
 	}
 
 	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
 	}
@@ -110,8 +111,7 @@ public class LdapSearchEditor extends EditorPart {
 		Composite composite = new Composite(sc, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		composite.setBackground(Display.getCurrent().getSystemColor(
-				SWT.COLOR_WHITE));
+		composite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		composite.setBackgroundMode(SWT.INHERIT_FORCE);
 
 		sc.setContent(composite);
@@ -120,20 +120,18 @@ public class LdapSearchEditor extends EditorPart {
 
 		Label lblSearchCriteria = new Label(composite, SWT.NONE);
 		lblSearchCriteria.setText("Arama Kriteri");
-		lblSearchCriteria.setFont(JFaceResources.getFontRegistry().getBold(
-				JFaceResources.DEFAULT_FONT));
+		lblSearchCriteria.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
 
 		cmpSearchCritera = new Composite(composite, SWT.NONE);
 		cmpSearchCritera.setLayout(new GridLayout(2, false));
-		cmpSearchCritera.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false));
+		cmpSearchCritera.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		createSearchCriteria(cmpSearchCritera);
 
 		// Search criterias can be added/removed dynamically
 		btnAddCriteria = new Button(cmpSearchCritera, SWT.NONE);
-		btnAddCriteria.setImage(new Image(cmpSearchCritera.getDisplay(), this
-				.getClass().getResourceAsStream("/icons/16/add.png")));
+		btnAddCriteria.setImage(
+				new Image(cmpSearchCritera.getDisplay(), this.getClass().getResourceAsStream("/icons/16/add.png")));
 		btnAddCriteria.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -143,13 +141,11 @@ public class LdapSearchEditor extends EditorPart {
 
 		Label lblSearchScope = new Label(composite, SWT.NONE);
 		lblSearchScope.setText("Arama Kapsamı");
-		lblSearchScope.setFont(JFaceResources.getFontRegistry().getBold(
-				JFaceResources.DEFAULT_FONT));
+		lblSearchScope.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
 
 		Composite cmpSearchScope = new Composite(composite, SWT.NONE);
 		cmpSearchScope.setLayout(new GridLayout(3, false));
-		cmpSearchScope.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false));
+		cmpSearchScope.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		btnSearchAgents = new Button(cmpSearchScope, SWT.RADIO);
 		btnSearchAgents.setText("Sadece Ahenkler");
@@ -159,8 +155,7 @@ public class LdapSearchEditor extends EditorPart {
 		btnSearchUsers.setText("Sadece Kullanıcılar");
 
 		btnSearch = new Button(composite, SWT.PUSH);
-		btnSearch.setImage(new Image(parent.getDisplay(), this.getClass()
-				.getResourceAsStream("/icons/16/filter.png")));
+		btnSearch.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/filter.png")));
 		btnSearch.setText("Aramayı Başlat");
 		btnSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -194,13 +189,11 @@ public class LdapSearchEditor extends EditorPart {
 
 				ISelection selection = viewer.getSelection();
 				if (selection instanceof IStructuredSelection) {
-					Object firstElement = ((IStructuredSelection) selection)
-							.getFirstElement();
+					Object firstElement = ((IStructuredSelection) selection).getFirstElement();
 					if (firstElement instanceof SearchResult) {
 						eventBroker.send("ldap_entry_selected", firstElement);
 						// TODO sunumdan sonra silinecek
-						eventBroker.send("task_service_update_dn_list",
-								((IStructuredSelection) selection));
+						eventBroker.send("task_service_update_dn_list", ((IStructuredSelection) selection));
 					}
 				}
 			}
@@ -230,8 +223,9 @@ public class LdapSearchEditor extends EditorPart {
 
 		// TODO change countLimit to use paging (research PagedSearch in Control
 		// class)
-		List<SearchResult> result = LdapUtils.getInstance().searchAndReturnList(null,
-				filter, returningAttributes, SearchControls.SUBTREE_SCOPE, 0, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
+		List<SearchResult> result = LdapUtils.getInstance().searchAndReturnList(null, filter, returningAttributes,
+				SearchControls.SUBTREE_SCOPE, 0, LdapConnectionListener.getConnection(),
+				LdapConnectionListener.getMonitor());
 
 		if (result != null && !result.isEmpty()) {
 			recreateTable(returningAttributes);
@@ -279,11 +273,9 @@ public class LdapSearchEditor extends EditorPart {
 	 * @param viewer
 	 * @param returningAttributes
 	 */
-	private void createTableColumns(TableViewer viewer,
-			String[] returningAttributes) {
+	private void createTableColumns(TableViewer viewer, String[] returningAttributes) {
 
-		TableViewerColumn dnColumn = createTableViewerColumn(viewer, "Entry",
-				250);
+		TableViewerColumn dnColumn = createTableViewerColumn(viewer, "Entry", 250);
 		dnColumn.setLabelProvider(new LdapSearchLabelProvider());
 
 		if (returningAttributes != null) {
@@ -292,15 +284,13 @@ public class LdapSearchEditor extends EditorPart {
 					continue; // ignore objectClass, show only search
 								// parameters.
 				}
-				TableViewerColumn attrColumn = createTableViewerColumn(viewer,
-						attr, 150);
+				TableViewerColumn attrColumn = createTableViewerColumn(viewer, attr, 150);
 				attrColumn.setLabelProvider(new ColumnLabelProvider() {
 					@Override
 					public String getText(Object element) {
 						if (element instanceof SearchResult) {
 							try {
-								return ((SearchResult) element).getAttributes()
-										.get(attr).get().toString();
+								return ((SearchResult) element).getAttributes().get(attr).get().toString();
 							} catch (NamingException e) {
 								e.printStackTrace();
 							}
@@ -312,10 +302,8 @@ public class LdapSearchEditor extends EditorPart {
 		}
 	}
 
-	private TableViewerColumn createTableViewerColumn(TableViewer viewer,
-			String title, int bound) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer,
-				SWT.NONE);
+	private TableViewerColumn createTableViewerColumn(TableViewer viewer, String title, int bound) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();
 		column.setText(title);
 		column.setWidth(bound);
@@ -336,14 +324,13 @@ public class LdapSearchEditor extends EditorPart {
 		if (btnSearchUsers.getSelection()) {
 			String[] userObjClsArr = ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS);
 			for (String userObjCls : userObjClsArr) {
-				filterExpressions.add("(objectClass="
-						+ userObjCls + ")");
+				filterExpressions.add("(objectClass=" + userObjCls + ")");
 			}
 		} else if (btnSearchAgents.getSelection()) {
-			String[] agentObjClsArr = ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS);
+			String[] agentObjClsArr = ConfigProvider.getInstance()
+					.getStringArr(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS);
 			for (String agentObjCls : agentObjClsArr) {
-				filterExpressions.add("(objectClass="
-						+ agentObjCls + ")");
+				filterExpressions.add("(objectClass=" + agentObjCls + ")");
 			}
 		}
 
@@ -355,22 +342,14 @@ public class LdapSearchEditor extends EditorPart {
 					if (gChildren != null) {
 						for (Control gChild : gChildren) {
 							if (isValidAttributeValue(gChild)
-									&& isValidAttribute(((AttrValueText) gChild)
-											.getRelatedAttrText())) {
-								AttrText rAttrText = ((AttrValueText) gChild)
-										.getRelatedAttrText();
-								AttrOperator rAttrOperator = ((AttrValueText) gChild)
-										.getRelatedAttrOperator();
+									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrText())) {
+								AttrText rAttrText = ((AttrValueText) gChild).getRelatedAttrText();
+								AttrOperator rAttrOperator = ((AttrValueText) gChild).getRelatedAttrOperator();
 
 								StringBuilder expression = new StringBuilder();
-								expression
-										.append("(")
-										.append(rAttrText.getText())
-										.append(rAttrOperator
-												.getItem(rAttrOperator
-														.getSelectionIndex()))
-										.append(((AttrValueText) gChild)
-												.getText()).append(")");
+								expression.append("(").append(rAttrText.getText())
+										.append(rAttrOperator.getItem(rAttrOperator.getSelectionIndex()))
+										.append(((AttrValueText) gChild).getText()).append(")");
 								filterExpressions.add(expression.toString());
 							}
 						}
@@ -410,8 +389,7 @@ public class LdapSearchEditor extends EditorPart {
 					if (gChildren != null) {
 						for (Control gChild : gChildren) {
 							if (isValidAttribute(gChild)) {
-								returningAttributes.add(((AttrText) gChild)
-										.getText());
+								returningAttributes.add(((AttrText) gChild).getText());
 							}
 						}
 					}
@@ -427,8 +405,7 @@ public class LdapSearchEditor extends EditorPart {
 	 * @return
 	 */
 	private boolean isValidAttribute(Control child) {
-		return child instanceof AttrText
-				&& ((AttrText) child).getText() != null
+		return child instanceof AttrText && ((AttrText) child).getText() != null
 				&& !((AttrText) child).getText().isEmpty();
 	}
 
@@ -437,8 +414,7 @@ public class LdapSearchEditor extends EditorPart {
 	 * @return
 	 */
 	private boolean isValidAttributeValue(Control child) {
-		return child instanceof AttrValueText
-				&& ((AttrValueText) child).getText() != null
+		return child instanceof AttrValueText && ((AttrValueText) child).getText() != null
 				&& !((AttrValueText) child).getText().isEmpty();
 	}
 
@@ -449,8 +425,8 @@ public class LdapSearchEditor extends EditorPart {
 		createSearchCriteria(parent);
 
 		Button btnRemoveGroup = new Button(parent, SWT.NONE);
-		btnRemoveGroup.setImage(new Image(parent.getDisplay(), this.getClass()
-				.getResourceAsStream("/icons/remove.png")));
+		btnRemoveGroup
+				.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/remove.png")));
 		btnRemoveGroup.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -469,23 +445,19 @@ public class LdapSearchEditor extends EditorPart {
 
 		Group grpSearchCriteria = new Group(parent, SWT.NONE);
 		grpSearchCriteria.setLayout(new GridLayout(3, false));
-		grpSearchCriteria.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false));
+		grpSearchCriteria.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		txtAttribute = new AttrText(grpSearchCriteria, SWT.NONE);
 		txtAttribute.setToolTipText("Öznitelik");
-		txtAttribute
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtAttribute.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		cmbOperator = new AttrOperator(grpSearchCriteria, SWT.DROP_DOWN
-				| SWT.READ_ONLY);
+		cmbOperator = new AttrOperator(grpSearchCriteria, SWT.DROP_DOWN | SWT.READ_ONLY);
 		cmbOperator.setItems(new String[] { "=", "<", ">", "!=" });
 		cmbOperator.select(0);
 
 		txtAttrValue = new AttrValueText(grpSearchCriteria, SWT.NONE);
 		txtAttrValue.setToolTipText("Değer");
-		txtAttrValue
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtAttrValue.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 	}
 
 	protected void handleRemoveGroupButton(SelectionEvent e) {
