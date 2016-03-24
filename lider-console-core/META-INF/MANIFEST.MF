@@ -34,7 +34,6 @@ Require-Bundle: org.eclipse.osgi,
  org.igniterealtime.smack.tcp,
  javax.inject,
  org.slf4j.api,
- org.apache.commons.logging,
  org.codehaus.jackson.core,
  org.codehaus.jackson.mapper
 Bundle-ClassPath: conf/,

@@ -189,6 +189,7 @@ public class XMPPClient {
 			try {
 				connection.login(username, password);
 				logger.debug("Successfully logged in to XMPP server: {}", username);
+				eventBroker.post(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, "");
 			} catch (XMPPException e) {
 				logger.error(e.getMessage(), e);
 			} catch (SmackException e) {
@@ -255,13 +256,13 @@ public class XMPPClient {
 											: LdapUtils.getInstance().findDnByUid(uid,
 													LdapConnectionListener.getConnection(),
 													LdapConnectionListener.getMonitor());
-									if (!dn.equals("")) {
+									if (!"".equals(dn)) {
 										if (presence.getType() == Type.available) {
 											onlineUsers.add(jid.substring(0, jid.indexOf('@')));
-											eventBroker.send(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
+											eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 										} else if (presence.getType() == Type.unavailable) {
 											onlineUsers.remove(jid.substring(0, jid.indexOf('@')));
-											eventBroker.send(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
+											eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 										}
 									}
 								} catch (Exception e) {
@@ -434,13 +435,16 @@ public class XMPPClient {
 				String dn = uidMap.containsKey(jid) ? uidMap.get(jid)
 						: LdapUtils.getInstance().findDnByUid(jid, LdapConnectionListener.getConnection(),
 								LdapConnectionListener.getMonitor());
-				if (dn != null && !dn.isEmpty()) {
+				if (!"".equals(dn)) {
 					if (presence.getType() == Type.available) {
 						eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 					} else if (presence.getType() == Type.unavailable) {
 						eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 					}
 				}
+				
+				logger.warn("Actual roster presence for {} changed to {}", roster.getPresence(jid).getFrom(),
+						roster.getPresence(jid).toString());
 			}
 		}
 
@@ -453,7 +457,7 @@ public class XMPPClient {
 				String dn = uidMap.containsKey(jid) ? uidMap.get(jid)
 						: LdapUtils.getInstance().findDnByUid(jid, LdapConnectionListener.getConnection(),
 								LdapConnectionListener.getMonitor());
-				if (dn != null && !dn.isEmpty()) {
+				if (!"".equals(dn)) {
 					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 				}
 			}
@@ -468,7 +472,7 @@ public class XMPPClient {
 			String dn = uidMap.containsKey(jid) ? uidMap.get(jid)
 					: LdapUtils.getInstance().findDnByUid(jid, LdapConnectionListener.getConnection(),
 							LdapConnectionListener.getMonitor());
-			if (dn != null && !dn.isEmpty()) {
+			if (!"".equals(dn)) {
 				if (presence.getType() == Type.available) {
 					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 				} else if (presence.getType() == Type.unavailable) {
@@ -476,7 +480,7 @@ public class XMPPClient {
 				}
 			}
 
-			logger.warn("Actual roster presence for {} => {}", roster.getPresence(jid).getFrom(),
+			logger.warn("Actual roster presence for {} changed to {}", roster.getPresence(jid).getFrom(),
 					roster.getPresence(jid).toString());
 		}
 	}

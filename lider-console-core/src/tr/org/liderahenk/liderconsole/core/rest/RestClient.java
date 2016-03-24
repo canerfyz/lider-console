@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -75,7 +76,11 @@ public class RestClient {
 	 * Define this as a global variable to overcome re-generating JSessionId for
 	 * each request.
 	 */
-	private static HttpClient httpClient = HttpClientBuilder.create().build();
+	private static HttpClient httpClient = null;
+	static {
+		RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(5000).setConnectTimeout(5000).setSocketTimeout(5000).build();
+		httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+	}
 
 	/**
 	 * Response object that is used inside progress services
