@@ -44,6 +44,9 @@ public class LiderConstants {
 	 * Configuration properties used in config.properties file
 	 */
 	public static final class CONFIG {
+		public static final String REST_SOCKET_TIMEOUT = "rest.socket.timeout";
+		public static final String REST_CONNECT_TIMEOUT = "rest.connect.timeout";
+		public static final String REST_CONN_REQUEST_TIMEOUT = "rest.connection.request.timeout";
 		public static final String REST_PROFILE_BASE_URL = "rest.profile.base.url";
 		public static final String REST_POLICY_BASE_URL = "rest.policy.base.url";
 		public static final String REST_TASK_BASE_URL = "rest.task.base.url";

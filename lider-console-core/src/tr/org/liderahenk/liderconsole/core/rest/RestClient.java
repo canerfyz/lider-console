@@ -22,6 +22,8 @@ import org.eclipse.ui.progress.IProgressService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
+import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
@@ -78,7 +80,12 @@ public class RestClient {
 	 */
 	private static HttpClient httpClient = null;
 	static {
-		RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(5000).setConnectTimeout(5000).setSocketTimeout(5000).build();
+		RequestConfig config = RequestConfig.custom()
+				.setConnectionRequestTimeout(
+						ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.REST_CONN_REQUEST_TIMEOUT))
+				.setConnectTimeout(ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.REST_CONNECT_TIMEOUT))
+				.setSocketTimeout(ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.REST_SOCKET_TIMEOUT))
+				.build();
 		httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
 	}
 
