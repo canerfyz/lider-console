@@ -13,6 +13,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
+import tr.org.liderahenk.liderconsole.core.rest.requests.ProfileExecutionRequest;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ProfileRequest;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -27,7 +28,33 @@ public class ProfileUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProfileUtils.class);
 
-	// TODO execute method!
+	/**
+	 * Send POST request to server in order to execute profile (Profile does not
+	 * really executed at this step, it is just saved as a Policy record with
+	 * one profile. The policies are actually executed on related user login).
+	 * 
+	 * @param profile
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean execute(ProfileExecutionRequest profile) throws Exception {
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/execute");
+		logger.debug("Sending request: {} to URL: {}", new Object[] { profile, url.toString() });
+
+		// Send POST request to server
+		IResponse response = RestClient.post(profile, url.toString());
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK) {
+			Notifier.success(null, Messages.getString("PROFILE_EXECUTED"));
+			return true;
+		}
+
+		Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+		return false;
+	}
 
 	/**
 	 * Send POST request to server in order to save specified profile.
@@ -185,12 +212,12 @@ public class ProfileUtils {
 		logger.debug("Sending request to URL: {}", url.toString());
 
 		IResponse response = RestClient.get(url.toString());
-		
+
 		if (response != null && response.getStatus() == RestResponseStatus.OK) {
 			Notifier.error(null, Messages.getString("RECORD_DELETED"));
 			return true;
 		}
-		
+
 		Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
 		return false;
 	}

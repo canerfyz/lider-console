@@ -118,6 +118,13 @@ public class ProfileRequest implements IRequest {
 	}
 
 	@Override
+	public String toString() {
+		return "ProfileRequest [pluginName=" + pluginName + ", pluginVersion=" + pluginVersion + ", id=" + id
+				+ ", label=" + label + ", description=" + description + ", overridable=" + overridable + ", active="
+				+ active + "]";
+	}
+
+	@Override
 	public String toJson() throws Exception {
 		return new ObjectMapper().writeValueAsString(this);
 	}

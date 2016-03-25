@@ -11,11 +11,10 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
-import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
+import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyExecutionRequest;
 import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyRequest;
-import tr.org.liderahenk.liderconsole.core.rest.requests.ProfileRequest;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -29,7 +28,33 @@ public class PolicyUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(PolicyUtils.class);
 
-	// TODO execute method!
+	/**
+	 * Send POST request to server in order to execute policy (Policy does not
+	 * really executed at this step, it is just saved. The policies are actually
+	 * executed on related user login).
+	 * 
+	 * @param policy
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean execute(PolicyExecutionRequest policy) throws Exception {
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/execute");
+		logger.debug("Sending request: {} to URL: {}", new Object[] { policy, url.toString() });
+
+		// Send POST request to server
+		IResponse response = RestClient.post(policy, url.toString());
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK) {
+			Notifier.success(null, Messages.getString("POLICY_EXECUTED"));
+			return true;
+		}
+
+		Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+		return false;
+	}
 
 	/**
 	 * Send POST request to server in order to save specified policy.
@@ -67,7 +92,7 @@ public class PolicyUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Policy update(ProfileRequest policy) throws Exception {
+	public static Policy update(PolicyRequest policy) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
@@ -89,7 +114,7 @@ public class PolicyUtils {
 	}
 
 	/**
-	 * Send GET request to server in order to retrieve desired profiles.
+	 * Send GET request to server in order to retrieve desired policies.
 	 * 
 	 * @param pluginName
 	 * @param pluginVersion
@@ -122,7 +147,7 @@ public class PolicyUtils {
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("policies") != null) {
 			policies = new ObjectMapper().readValue(response.getResultMap().get("policies").toString(),
-					new TypeReference<List<Profile>>() {
+					new TypeReference<List<Policy>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
