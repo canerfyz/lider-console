@@ -156,7 +156,7 @@ public class LdapUtils {
 				}
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return null;
@@ -234,7 +234,7 @@ public class LdapUtils {
 				}
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return retVal;
@@ -264,7 +264,7 @@ public class LdapUtils {
 				}
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return dn;
 	}
@@ -319,7 +319,7 @@ public class LdapUtils {
 				}
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return attr;
 	}
@@ -357,7 +357,7 @@ public class LdapUtils {
 					attrValue = val.toString();
 				}
 			} catch (NamingException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 		return attrValue;
@@ -389,7 +389,7 @@ public class LdapUtils {
 					}
 				}
 			} catch (NamingException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 		return attrValues;
@@ -460,7 +460,7 @@ public class LdapUtils {
 					dnList.add(item.getName());
 				}
 			} catch (NamingException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -503,7 +503,7 @@ public class LdapUtils {
 					dnList.add(item.getName());
 				}
 			} catch (NamingException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -512,6 +512,51 @@ public class LdapUtils {
 
 	public List<String> findAgents(String dn) {
 		return findAgents(dn, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
+	}
+
+	/**
+	 * Tries to find groupOfNames DNs under the provided DN.
+	 * 
+	 * @param dn
+	 * @param conn
+	 * @param monitor
+	 * @return
+	 */
+	public List<String> findGroups(String dn, Connection conn, StudioProgressMonitor monitor) {
+
+		// Create filter expression for group object classes
+		StringBuilder filter = new StringBuilder();
+		String[] groupObjClsArr = ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.GROUP_LDAP_OBJ_CLS);
+		if (groupObjClsArr.length > 1) {
+			filter.append("(&");
+		}
+		for (String groupObjCls : groupObjClsArr) {
+			filter.append("(objectClass=").append(groupObjCls).append(")");
+		}
+		if (groupObjClsArr.length > 1) {
+			filter.append(")");
+		}
+
+		List<String> dnList = new ArrayList<String>();
+
+		StudioNamingEnumeration enumeration = search(dn, filter.toString(), new String[] { OBJECT_CLASS },
+				SearchControls.SUBTREE_SCOPE, 0, conn, monitor);
+		if (enumeration != null) {
+			try {
+				while (enumeration.hasMore()) {
+					SearchResult item = enumeration.next();
+					dnList.add(item.getName());
+				}
+			} catch (NamingException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+
+		return dnList;
+	}
+
+	public List<String> findGroups(String dn) {
+		return findGroups(dn, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
 	}
 
 	/**
@@ -548,7 +593,7 @@ public class LdapUtils {
 					retVal.add(obj.toString());
 				}
 			} catch (NamingException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 		if (values.length == 1) {
@@ -616,7 +661,7 @@ public class LdapUtils {
 				}
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -653,7 +698,7 @@ public class LdapUtils {
 				}
 			}
 		} catch (NamingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return retVal;
