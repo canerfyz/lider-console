@@ -11,6 +11,7 @@
 	<!-- CUSTOM EXTENSION POINTS -->
 	<extension-point id="tr.org.liderahenk.liderconsole.core.logger" name="%extension.point.logger" schema="schema/tr.org.liderahenk.liderconsole.core.logger.exsd"/>
 	<extension-point id="tr.org.liderahenk.liderconsole.core.profilemenu" name="%extension.point.profile.menu" schema="schema/tr.org.liderahenk.liderconsole.core.profilemenu.exsd"/>
+	<!-- Plugin may contribute to this extension point: -->
 	<extension-point id="tr.org.liderahenk.liderconsole.core.policymenu" name="%extension.point.policy.menu" schema="schema/tr.org.liderahenk.liderconsole.core.policymenu.exsd"/>
    
    <extension
