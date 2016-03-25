@@ -135,6 +135,7 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 		profile.setDescription(txtDesc.getText());
 		profile.setLabel(txtLabel.getText());
 		profile.setOverridable(btnOverridable.getSelection());
+		logger.debug("Profile request: {}", profile);
 
 		try {
 			profile.setProfileData(dialog.getProfileData());
@@ -143,12 +144,12 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 			} else {
 				ProfileUtils.add(profile);
 			}
+			editor.refresh();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
 		}
 
-		editor.refresh();
 		close();
 	}
 

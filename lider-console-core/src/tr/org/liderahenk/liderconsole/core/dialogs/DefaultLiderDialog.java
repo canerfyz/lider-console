@@ -8,12 +8,13 @@ import org.eclipse.swt.widgets.Shell;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 
 /**
- * Provides i18n button names for extending dialogs.
+ * Provides i18n button names for extending dialogs. Other dialog
+ * implementations may extend this class.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class DefaultLiderDialog extends Dialog {
+public abstract class DefaultLiderDialog extends Dialog {
 
 	protected DefaultLiderDialog(Shell parentShell) {
 		super(parentShell);
