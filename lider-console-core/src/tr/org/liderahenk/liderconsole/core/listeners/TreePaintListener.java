@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.directory.api.ldap.model.schema.ObjectClass;
@@ -60,7 +59,7 @@ public class TreePaintListener implements Listener {
 		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				String dn = (String) event.getProperty("org.eclipse.e4.data");
-				if (!"".equals(dn)) {
+				if (dn != null && !dn.isEmpty()) {
 					onlineInfo.put(dn, true);
 					try {
 						tree.redraw();
@@ -74,7 +73,7 @@ public class TreePaintListener implements Listener {
 		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				String dn = (String) event.getProperty("org.eclipse.e4.data");
-				if (!"".equals(dn)) {
+				if (dn != null && !dn.isEmpty()) {
 					onlineInfo.put(dn, false);
 					try {
 						tree.redraw();
@@ -187,14 +186,6 @@ public class TreePaintListener implements Listener {
 
 				if (onlineInfo.containsKey(dn)) {
 					Image miniIcon;
-					String t = "";
-					if (onlineInfo != null) {
-						Set<Entry<String, Boolean>> entrySet = onlineInfo.entrySet();
-						for (Entry<String, Boolean> e : entrySet) {
-							t += " | " + e.getKey() + ": " + e.getValue();
-						}
-					}
-					System.out.println("EMRE: " + t);
 					if (onlineInfo.get(dn) && globalState)
 						miniIcon = onlineImage;
 					else

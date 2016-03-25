@@ -256,7 +256,7 @@ public class XMPPClient {
 											: LdapUtils.getInstance().findDnByUid(uid,
 													LdapConnectionListener.getConnection(),
 													LdapConnectionListener.getMonitor());
-									if (!"".equals(dn)) {
+									if (dn != null && !dn.isEmpty()) {
 										if (presence.getType() == Type.available) {
 											onlineUsers.add(jid.substring(0, jid.indexOf('@')));
 											eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
@@ -435,7 +435,7 @@ public class XMPPClient {
 				String dn = uidMap.containsKey(jid) ? uidMap.get(jid)
 						: LdapUtils.getInstance().findDnByUid(jid, LdapConnectionListener.getConnection(),
 								LdapConnectionListener.getMonitor());
-				if (!"".equals(dn)) {
+				if (dn != null && !dn.isEmpty()) {
 					if (presence.getType() == Type.available) {
 						eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 					} else if (presence.getType() == Type.unavailable) {
@@ -457,7 +457,7 @@ public class XMPPClient {
 				String dn = uidMap.containsKey(jid) ? uidMap.get(jid)
 						: LdapUtils.getInstance().findDnByUid(jid, LdapConnectionListener.getConnection(),
 								LdapConnectionListener.getMonitor());
-				if (!"".equals(dn)) {
+				if (dn != null && !dn.isEmpty()) {
 					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 				}
 			}
@@ -472,7 +472,7 @@ public class XMPPClient {
 			String dn = uidMap.containsKey(jid) ? uidMap.get(jid)
 					: LdapUtils.getInstance().findDnByUid(jid, LdapConnectionListener.getConnection(),
 							LdapConnectionListener.getMonitor());
-			if (!"".equals(dn)) {
+			if (dn != null && !dn.isEmpty()) {
 				if (presence.getType() == Type.available) {
 					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 				} else if (presence.getType() == Type.unavailable) {

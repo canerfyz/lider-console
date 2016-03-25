@@ -170,7 +170,7 @@ public class LdapConnectionListener implements IConnectionListener {
 										"Lider özelliklerini kullanabilmeniz\r\niçin, bağlandığınız kullanıcının\r\n'%s' özelliği tanımlı olmalıdır.",
 										ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR)));
 					} else {
-						if (!"".equals(restFulAddress)) {
+						if (restFulAddress != null && !restFulAddress.isEmpty()) {
 
 							RestSettings.setServerUrl(restFulAddress);
 							IResponse response = null;
