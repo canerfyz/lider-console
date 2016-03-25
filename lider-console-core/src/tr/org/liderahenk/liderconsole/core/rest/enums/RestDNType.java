@@ -8,7 +8,7 @@ package tr.org.liderahenk.liderconsole.core.rest.enums;
  *
  */
 public enum RestDNType {
-	AHENK(1), USER(2), GROUP(3), ALL(4);
+	AHENK(1), USER(2), GROUP(3), ALL(4), ORGANIZATIONAL_UNIT(5);
 
 	private int id;
 
