@@ -61,6 +61,7 @@ public class LiderConstants {
 		public static final String USER_LDAP_UID_ATTR = "user.ldap.uid.attribute";
 		public static final String USER_LDAP_PRIVILEGE_ATTR = "user.ldap.privilege.attribute";
 		public static final String AGENT_LDAP_OBJ_CLS = "agent.ldap.object.classes";
+		public static final String GROUP_LDAP_OBJ_CLS = "group.ldap.object.classes";
 		public static final String LDAP_REST_ADDRESS_ATTR = "ldap.rest.address.attribute";
 	}
 
