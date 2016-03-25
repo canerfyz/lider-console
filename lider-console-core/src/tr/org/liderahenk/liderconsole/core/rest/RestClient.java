@@ -62,7 +62,8 @@ public class RestClient {
 	/**
 	 * Use only JSON for requests
 	 */
-	private static final String MIME_TYPE = "application/json";
+	private static final String ACCEPT_MIME_TYPE = "application/json";
+	private static final String CONTENT_MIME_TYPE = "application/json; charset=UTF-8";
 
 	/**
 	 * Username header
@@ -79,6 +80,7 @@ public class RestClient {
 	 * each request.
 	 */
 	private static HttpClient httpClient = null;
+
 	static {
 		RequestConfig config = RequestConfig.custom()
 				.setConnectionRequestTimeout(
@@ -117,12 +119,14 @@ public class RestClient {
 
 				try {
 					HttpPost httpPost = new HttpPost(buildUrl(url));
-					httpPost.setHeader(CONTENT_TYPE_HEADER, MIME_TYPE);
-					httpPost.setHeader(ACCEPT_HEADER, MIME_TYPE);
+					httpPost.setHeader(CONTENT_TYPE_HEADER, CONTENT_MIME_TYPE);
+					httpPost.setHeader(ACCEPT_HEADER, ACCEPT_MIME_TYPE);
 
 					// Convert IRequest instance to JSON and pass as HttpEntity
 					StringEntity entity = new StringEntity(URLEncoder.encode(request.toJson(), "UTF-8"),
 							StandardCharsets.UTF_8);
+					entity.setContentEncoding("UTF-8");
+					entity.setContentType(CONTENT_MIME_TYPE);
 					httpPost.setEntity(entity);
 
 					httpPost.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
@@ -183,8 +187,8 @@ public class RestClient {
 
 				try {
 					HttpGet httpGet = new HttpGet(buildUrl(url));
-					httpGet.setHeader(CONTENT_TYPE_HEADER, MIME_TYPE);
-					httpGet.setHeader(ACCEPT_HEADER, MIME_TYPE);
+					httpGet.setHeader(CONTENT_TYPE_HEADER, CONTENT_MIME_TYPE);
+					httpGet.setHeader(ACCEPT_HEADER, ACCEPT_MIME_TYPE);
 
 					HttpResponse httpResponse = httpClient.execute(httpGet);
 					if (httpResponse.getStatusLine().getStatusCode() != 200) {
