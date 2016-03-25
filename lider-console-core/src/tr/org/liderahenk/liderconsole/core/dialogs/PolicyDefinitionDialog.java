@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.Command;
@@ -30,6 +31,8 @@ import tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
+import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyRequest;
+import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyUtils;
 import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -53,6 +56,8 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 	private Text txtLabel;
 	private Text txtDesc;
 	private Button btnActive;
+
+	private List<Combo> comboList = null;
 
 	public PolicyDefinitionDialog(Shell parentShell, PolicyDefinitionEditor editor) {
 		super(parentShell);
@@ -105,12 +110,16 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 		btnActive.setText(Messages.getString("ACTIVE"));
 		btnActive.setSelection(selectedPolicy != null && selectedPolicy.isActive());
 		new Label(composite, SWT.NONE);
+		
+		Label lblProfiles = new Label(parent, SWT.BOLD);
+		lblProfiles.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblProfiles.setText(Messages.getString("PROFILE_DEFINITION"));
 
 		// Create child composite for policy
-		Composite childComposite = new Composite(parent, GridData.FILL);
-		childComposite.setLayout(new GridLayout(3, true));
+		Composite childComposite = new Composite(parent, SWT.BORDER);
+		childComposite.setLayout(new GridLayout(3, false));
 		childComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-
+		
 		// Find policy contributions
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry.getExtensionPoint(LiderConstants.EXTENSION_POINTS.POLICY_MENU);
@@ -122,32 +131,31 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 			// specified 'profileCommandId'
 			final ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 
+			// Init combo list. This will be used to iterate over combo widgets
+			// in order to collect selected IDs.
+			comboList = new ArrayList<Combo>();
+
 			// Iterate over each extension point provided by plugins
 			for (IConfigurationElement e : config) {
 				try {
 					// Read extension point attributes
 					String label = e.getAttribute("label");
-					String pluginName = e.getAttribute("pluginName");
-					String pluginVersion = e.getAttribute("pluginVersion");
+					final String pluginName = e.getAttribute("pluginName");
+					final String pluginVersion = e.getAttribute("pluginVersion");
 					final String profileCommandId = e.getAttribute("profileCommandId");
 
 					// Plugin label
 					Label pluginLabel = new Label(childComposite, SWT.NONE);
+					pluginLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 					pluginLabel.setText(label);
 
 					// Profiles combo
-					Combo combo = new Combo(childComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+					final Combo combo = new Combo(childComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 					combo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 					// Populate combo with active profiles
 					List<Profile> profiles = ProfileUtils.list(pluginName, pluginVersion, null, true);
-					if (profiles != null) {
-						for (int i = 0; i < profiles.size(); i++) {
-							Profile profile = profiles.get(i);
-							combo.add(profile.getLabel() + " " + profile.getCreateDate());
-							combo.setData(i + "", profile);
-						}
-						combo.select(0); // select first profile by default
-					}
+					populateCombo(combo, profiles);
+					comboList.add(combo);
 
 					// Add profile button
 					Button btnAdd = new Button(childComposite, SWT.NONE);
@@ -164,9 +172,8 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 							try {
 								command.executeWithChecks(new ExecutionEvent());
 								// Refresh profile combo
-								// TODO
-								// TODO
-								// TODO
+								List<Profile> profiles = ProfileUtils.list(pluginName, pluginVersion, null, true);
+								populateCombo(combo, profiles);
 							} catch (Exception e1) {
 								logger.error(e1.getMessage(), e1);
 							}
@@ -188,6 +195,26 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 	}
 
 	/**
+	 * Populate combo with specified profiles.
+	 * 
+	 * @param combo
+	 * @param profiles
+	 */
+	private void populateCombo(Combo combo, List<Profile> profiles) {
+		if (profiles != null) {
+			// Clear combo first!
+			combo.clearSelection();
+			combo.removeAll();
+			for (int i = 0; i < profiles.size(); i++) {
+				Profile profile = profiles.get(i);
+				combo.add(profile.getLabel() + " " + profile.getCreateDate());
+				combo.setData(i + "", profile);
+			}
+			combo.select(0); // select first profile by default
+		}
+	}
+
+	/**
 	 * Handle OK button press
 	 */
 	@Override
@@ -201,10 +228,64 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 			return;
 		}
 
-		// TODO
-		// TODO
-		// TODO
+		PolicyRequest policy = new PolicyRequest();
+		if (selectedPolicy != null && selectedPolicy.getId() != null) {
+			policy.setId(selectedPolicy.getId());
+		}
+		policy.setActive(btnActive.getSelection());
+		policy.setDescription(txtDesc.getText());
+		policy.setLabel(txtLabel.getText());
+		policy.setProfileIdList(getSelectedProfileIds());
+		logger.debug("Policy request: {}", policy);
 
+		try {
+			if (selectedPolicy != null && selectedPolicy.getId() != null) {
+				PolicyUtils.update(policy);
+			} else {
+				PolicyUtils.add(policy);
+			}
+			editor.refresh();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+		}
+
+		close();
+	}
+
+	/**
+	 * Iterave over all combo widgets and collects selected profile IDs.
+	 * 
+	 * @return selected profile ID list.
+	 */
+	private List<Long> getSelectedProfileIds() {
+		List<Long> idList = null;
+		if (comboList != null) {
+			idList = new ArrayList<Long>();
+			for (Combo combo : comboList) {
+				Long profileId = getSelectedProfileId(combo);
+				if (profileId != null) {
+					idList.add(profileId);
+				}
+			}
+		}
+		logger.debug("Selected profile IDs: {}", idList);
+		return idList;
+	}
+
+	/**
+	 * 
+	 * @param combo
+	 * @return profile ID if selected, otherwise null
+	 */
+	private Long getSelectedProfileId(Combo combo) {
+		int selectionIndex = combo.getSelectionIndex();
+		if (selectionIndex > -1 && combo.getItem(selectionIndex) != null
+				&& combo.getData(selectionIndex + "") != null) {
+			Profile profile = (Profile) combo.getData(selectionIndex + "");
+			return profile.getId();
+		}
+		return null;
 	}
 
 }

@@ -111,7 +111,6 @@ public class DefaultProfileEditor extends EditorPart {
 						editorInput.getProfileDialog());
 				dialog.create();
 				dialog.open();
-				refresh();
 			}
 
 			@Override
@@ -136,7 +135,6 @@ public class DefaultProfileEditor extends EditorPart {
 				DefaultProfileDialog dialog = new DefaultProfileDialog(composite.getShell(), getSelectedProfile(),
 						getSelf(), editorInput.getProfileDialog());
 				dialog.open();
-				refresh();
 			}
 
 			@Override
@@ -228,9 +226,7 @@ public class DefaultProfileEditor extends EditorPart {
 				ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
 				DefaultProfileDialog dialog = new DefaultProfileDialog(composite.getShell(), getSelectedProfile(),
 						getSelf(), editorInput.getProfileDialog());
-				if (dialog.open() == SWT.OK) {
-					refresh();
-				}
+				dialog.open();
 			}
 		});
 	}
@@ -320,7 +316,7 @@ public class DefaultProfileEditor extends EditorPart {
 		column.setAlignment(SWT.LEFT);
 		return viewerColumn;
 	}
-	
+
 	/**
 	 * Search profile by plugin name and version, then populate specified table
 	 * with profile records.

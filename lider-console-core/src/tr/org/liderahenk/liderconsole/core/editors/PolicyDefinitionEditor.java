@@ -107,7 +107,6 @@ public class PolicyDefinitionEditor extends EditorPart {
 						getSelf());
 				dialog.create();
 				dialog.open();
-				refresh();
 			}
 
 			@Override
@@ -131,7 +130,6 @@ public class PolicyDefinitionEditor extends EditorPart {
 				PolicyDefinitionDialog dialog = new PolicyDefinitionDialog(composite.getShell(), getSelectedPolicy(),
 						getSelf());
 				dialog.open();
-				refresh();
 			}
 
 			@Override
@@ -222,9 +220,7 @@ public class PolicyDefinitionEditor extends EditorPart {
 			public void doubleClick(DoubleClickEvent event) {
 				PolicyDefinitionDialog dialog = new PolicyDefinitionDialog(composite.getShell(), getSelectedPolicy(),
 						getSelf());
-				if (dialog.open() == SWT.OK) {
-					refresh();
-				}
+				dialog.open();
 			}
 		});
 	}
