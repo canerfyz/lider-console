@@ -128,7 +128,6 @@
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
 	          id="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
-	          icon="icons/16/ldap.png"
 	          tooltip="%command.policy.definition">
         </command>
 		<command
