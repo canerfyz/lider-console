@@ -197,7 +197,6 @@
 		<module>lider-console-rcp</module>
 		<module>lider-console-products</module>
 		<module>lider-console-core-tests</module>
-		<module>lider-console-task</module>
 	</modules>
 
 </project>
