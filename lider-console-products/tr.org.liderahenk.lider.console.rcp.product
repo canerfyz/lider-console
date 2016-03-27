@@ -46,6 +46,7 @@ Apache Software Foundation http://apache.org/
       </win>
    </launcher>
 
+
    <vm>
    </vm>
 
@@ -734,11 +735,14 @@ Public License instead of this License.  But first, please read
       <plugin id="ch.qos.logback.classic"/>
       <plugin id="ch.qos.logback.core"/>
       <plugin id="ch.qos.logback.slf4j" fragment="true"/>
+      <plugin id="com.google.guava"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
+      <plugin id="javax.servlet"/>
       <plugin id="javax.xml"/>
       <plugin id="javax.xml.stream"/>
+      <plugin id="net.sf.ehcache"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.util"/>
       <plugin id="org.apache.batik.util.gui"/>
@@ -776,15 +780,16 @@ Public License instead of this License.  But first, please read
       <plugin id="org.apache.directory.studio.valueeditors"/>
       <plugin id="org.apache.httpcomponents.httpclient"/>
       <plugin id="org.apache.httpcomponents.httpcore"/>
+      <plugin id="org.apache.log4j"/>
       <plugin id="org.apache.mina.core"/>
       <plugin id="org.apache.servicemix.bundles.antlr"/>
       <plugin id="org.apache.servicemix.bundles.dom4j"/>
-      <plugin id="org.apache.servicemix.bundles.xpp3"/>
       <plugin id="org.apache.xerces"/>
       <plugin id="org.apache.xml.resolver"/>
       <plugin id="org.apache.xml.serializer"/>
       <plugin id="org.codehaus.jackson.core"/>
       <plugin id="org.codehaus.jackson.mapper"/>
+      <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
@@ -796,18 +801,10 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.aix.ppc" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.java7" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.linux.ppc" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.solaris.sparc" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.resources"/>
-      <plugin id="org.eclipse.core.resources.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.runtime"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.core.variables"/>
@@ -830,7 +827,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.e4.ui.workbench"/>
       <plugin id="org.eclipse.e4.ui.workbench.addons.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench.renderers.swt"/>
-      <plugin id="org.eclipse.e4.ui.workbench.renderers.swt.cocoa"/>
+      <plugin id="org.eclipse.e4.ui.workbench.renderers.swt.cocoa" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.workbench.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench3"/>
       <plugin id="org.eclipse.emf.common"/>
@@ -857,6 +854,9 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.equinox.p2.metadata"/>
       <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
       <plugin id="org.eclipse.equinox.p2.operations"/>
+      <plugin id="org.eclipse.equinox.p2.publisher"/>
+      <plugin id="org.eclipse.equinox.p2.publisher.eclipse"/>
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins"/>
       <plugin id="org.eclipse.equinox.p2.repository"/>
       <plugin id="org.eclipse.equinox.p2.touchpoint.eclipse"/>
       <plugin id="org.eclipse.equinox.p2.ui"/>
@@ -864,12 +864,18 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.equinox.p2.ui.sdk.scheduler"/>
       <plugin id="org.eclipse.equinox.p2.updatechecker"/>
       <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.region" fragment="true"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.security"/>
+      <plugin id="org.eclipse.equinox.security.macosx" fragment="true"/>
       <plugin id="org.eclipse.equinox.security.ui"/>
+      <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.equinox.security.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator.manipulator"/>
+      <plugin id="org.eclipse.equinox.transforms.hook" fragment="true"/>
       <plugin id="org.eclipse.equinox.util"/>
+      <plugin id="org.eclipse.equinox.weaving.hook" fragment="true"/>
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.jem.util"/>
       <plugin id="org.eclipse.jface"/>
@@ -884,8 +890,12 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.aix.ppc" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.aix.ppc64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.hpux.ia64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.ppc" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.ppc64le" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.s390" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.s390x" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
@@ -898,6 +908,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.team.ui"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.console"/>
       <plugin id="org.eclipse.ui.editors"/>
       <plugin id="org.eclipse.ui.forms"/>
@@ -908,6 +919,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
       <plugin id="org.eclipse.wst.common.core"/>
       <plugin id="org.eclipse.wst.common.emf"/>
+      <plugin id="org.eclipse.wst.common.emfworkbench.integration"/>
       <plugin id="org.eclipse.wst.common.environment"/>
       <plugin id="org.eclipse.wst.common.frameworks"/>
       <plugin id="org.eclipse.wst.common.project.facet.core"/>
@@ -917,6 +929,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.wst.xml.core"/>
       <plugin id="org.eclipse.wst.xsd.core"/>
       <plugin id="org.eclipse.xsd"/>
+      <plugin id="org.hamcrest.core"/>
       <plugin id="org.igniterealtime.smack.core"/>
       <plugin id="org.igniterealtime.smack.extensions"/>
       <plugin id="org.igniterealtime.smack.im"/>
@@ -924,16 +937,21 @@ Public License instead of this License.  But first, please read
       <plugin id="org.igniterealtime.smack.resolver-javax"/>
       <plugin id="org.igniterealtime.smack.sasl-javax"/>
       <plugin id="org.igniterealtime.smack.tcp"/>
+      <plugin id="org.jxmpp.core"/>
+      <plugin id="org.jxmpp.util-cache"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="org.slf4j.api"/>
+      <plugin id="org.slf4j.impl.log4j12" fragment="true"/>
       <plugin id="org.tukaani.xz"/>
       <plugin id="org.w3c.css.sac"/>
       <plugin id="org.w3c.dom.events"/>
       <plugin id="org.w3c.dom.smil"/>
       <plugin id="org.w3c.dom.svg"/>
+      <plugin id="org.xmlpull"/>
       <plugin id="tr.org.liderahenk.liderconsole.core"/>
       <plugin id="tr.org.liderahenk.liderconsole.rcp"/>
+      <plugin id="xpp3"/>
    </plugins>
 
    <configurations>
@@ -941,7 +959,16 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="0" />
    </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>
