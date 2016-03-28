@@ -148,6 +148,28 @@
                id="tr.org.liderahenk.liderconsole.menus.ApplyTask"
                label="%menu.label.apply.task">
          </menu>
+         <command
+               commandId="tr.org.liderahenk.liderconsole.commands.RemoteAccess"
+               id="tr.org.liderahenk.liderconsole.commands.RemoteAccessCommand"
+               style="push"
+               tooltip="%remote.access.command">
+            <visibleWhen>
+               <and>
+                  <with
+                        variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
+                     <equals
+                           value="true">
+                     </equals>
+                  </with>
+                  <with
+                        variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isEntrySelected">
+                     <equals
+                           value="true">
+                     </equals>
+                  </with>
+               </and>
+            </visibleWhen>
+         </command>
       </menuContribution>
 	  <menuContribution
 		locationURI="popup:tr.org.liderahenk.liderconsole.menus.ApplyPolicy?after=additions">
