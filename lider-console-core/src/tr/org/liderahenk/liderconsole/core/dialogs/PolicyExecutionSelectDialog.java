@@ -34,14 +34,14 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 	private Combo cmbPolicy;
 	private Combo cmbDnType;
 
-	private Set<String> dnList;
+	private Set<String> dnSet;
 	private final String[] dnTypeArr = new String[] { "ONLY_USER", "ONLY_AGENT", "ONLY_GROUP", "ALL" };
 	private final Integer[] dnTypeValueArr = new Integer[] { RestDNType.USER.getId(), RestDNType.AHENK.getId(),
 			RestDNType.GROUP.getId(), RestDNType.ALL.getId() };
 
-	public PolicyExecutionSelectDialog(Shell parentShell, Set<String> dnList) {
+	public PolicyExecutionSelectDialog(Shell parentShell, Set<String> dnSet) {
 		super(parentShell);
-		this.dnList = dnList;
+		this.dnSet = dnSet;
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 		PolicyExecutionRequest policy = new PolicyExecutionRequest();
 		policy.setId(getSelectedPolicyId());
 		policy.setDnType(getSelectedDnType());
-		policy.setDnList(new ArrayList<String>(this.dnList));
+		policy.setDnList(new ArrayList<String>(this.dnSet));
 		logger.debug("Policy request: {}", policy);
 
 		try {
