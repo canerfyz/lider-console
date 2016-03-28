@@ -21,7 +21,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.igniterealtime.smack.tcp,
  org.slf4j.api,
  org.codehaus.jackson.core,
- org.codehaus.jackson.mapper
+ org.codehaus.jackson.mapper,
+ ch.qos.logback.classic,
+ ch.qos.logback.core
 Bundle-ClassPath: conf/,
  .
 Export-Package: tr.org.liderahenk.liderconsole.core.config,

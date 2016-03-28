@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="tr.org.liderahenk.liderconsole.rcp" uid="Lider Console Core" application="tr.org.liderahenk.liderconsole.rcp.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="tr.org.liderahenk.liderconsole.rcp" uid="Lider Console Core" id="tr.org.liderahenk.liderconsole.rcp.product" application="tr.org.liderahenk.liderconsole.rcp.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="../lider-console-rcp/icons/about.png"/>
@@ -45,7 +45,6 @@ Apache Software Foundation http://apache.org/
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -780,7 +779,6 @@ Public License instead of this License.  But first, please read
       <plugin id="org.apache.directory.studio.valueeditors"/>
       <plugin id="org.apache.httpcomponents.httpclient"/>
       <plugin id="org.apache.httpcomponents.httpcore"/>
-      <plugin id="org.apache.log4j"/>
       <plugin id="org.apache.mina.core"/>
       <plugin id="org.apache.servicemix.bundles.antlr"/>
       <plugin id="org.apache.servicemix.bundles.dom4j"/>
@@ -942,13 +940,11 @@ Public License instead of this License.  But first, please read
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="org.slf4j.api"/>
-      <plugin id="org.slf4j.impl.log4j12" fragment="true"/>
       <plugin id="org.tukaani.xz"/>
       <plugin id="org.w3c.css.sac"/>
       <plugin id="org.w3c.dom.events"/>
       <plugin id="org.w3c.dom.smil"/>
       <plugin id="org.w3c.dom.svg"/>
-      <plugin id="org.xmlpull"/>
       <plugin id="tr.org.liderahenk.liderconsole.core"/>
       <plugin id="tr.org.liderahenk.liderconsole.rcp"/>
       <plugin id="xpp3"/>
