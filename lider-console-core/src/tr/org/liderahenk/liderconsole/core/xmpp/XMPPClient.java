@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
@@ -36,8 +38,11 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.model.TaskStatus;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
  * XMPP client that is used to read presence info and get task results.
@@ -132,8 +137,7 @@ public class XMPPClient {
 		this.serviceName = serviceName;
 		this.host = host;
 		this.port = port;
-		this.maxRetryConnectionCount = ConfigProvider.getInstance()
-				.getInt(LiderConstants.CONFIG.XMPP_MAX_RETRY_CONN);
+		this.maxRetryConnectionCount = ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.XMPP_MAX_RETRY_CONN);
 		this.maxPingTimeoutCount = ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.XMPP_PING_TIMEOUT);
 		this.packetReplyTimeout = ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.XMPP_REPLAY_TIMEOUT);
 		this.pingTimeout = ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.XMPP_PING_TIMEOUT);
@@ -376,35 +380,46 @@ public class XMPPClient {
 
 	protected void postTaskStatus(String body) {
 
-		// TODO
-		// TODO
-		// TODO
-		// TODO
+		try {
+			final TaskStatus taskStatus = new ObjectMapper().readValue(body, TaskStatus.class);
 
-		// TaskStatusUpdate taskStatus = null;
-		// try {
-		// taskStatus = new ObjectMapper().readValue(body,
-		// TaskStatusUpdate.class);
-		// } catch (IOException e) {
-		// logger.error(e.getMessage(), e);
-		// }
-		//
-		// if (taskStatus != null && taskStatus.getPlugin() != null) {
-		//
-		// // Show task notification
-		// Display.getDefault().asyncExec(new Runnable() {
-		// @Override
-		// public void run() {
-		// // TODO notification elden gecirilecek
-		// // Notification.TaskNotification(taskStatus.getPlugin());
-		// // Notifier.notify("Test", "Test");
-		// }
-		// });
-		//
-		// // Notify related plug-in
-		// eventBroker.post(taskStatus.getPlugin(), body);
-		// eventBroker.post(LiderConstants.EventTopics.TASK, body);
-		// }
+			if (taskStatus != null && taskStatus.getTaskId() != null) {
+
+				// Show task notification
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						switch (taskStatus.getResponseCode()) {
+						case TASK_PROCESSED:
+							Notifier.success(null, taskStatus.getResponseMessage() != null
+									? taskStatus.getResponseMessage() : Messages.getString("TASK_PROCESSED"));
+							break;
+						case TASK_WARNING:
+							Notifier.warning(null, taskStatus.getResponseMessage() != null
+									? taskStatus.getResponseMessage() : Messages.getString("TASK_WARNING"));
+							break;
+						case TASK_ERROR:
+						case TASK_TIMEOUT:
+						case TASK_KILLED:
+							Notifier.error(null, taskStatus.getResponseMessage() != null
+									? taskStatus.getResponseMessage() : Messages.getString("TASK_ERROR"));
+							break;
+						default:
+							break;
+						}
+					}
+				});
+
+				// TODO improvement. Get plugin name from taskStatus object and
+				// use
+				// it as event topic to narrow down notified classes.
+
+				// Notify related plug-in
+				eventBroker.post(LiderConstants.EVENT_TOPICS.TASK, body);
+			}
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
 
 	}
 
@@ -442,7 +457,7 @@ public class XMPPClient {
 						eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 					}
 				}
-				
+
 				logger.warn("Actual roster presence for {} changed to {}", roster.getPresence(jid).getFrom(),
 						roster.getPresence(jid).toString());
 			}

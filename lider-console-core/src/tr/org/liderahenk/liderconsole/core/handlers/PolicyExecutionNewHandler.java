@@ -12,7 +12,7 @@ import tr.org.liderahenk.liderconsole.core.dialogs.PolicyExecutionNewDialog;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class PolicyExecutionNewHandler extends DefaultLiderHandler {
+public class PolicyExecutionNewHandler extends MultipleSelectionHandler {
 
 	@Override
 	public void executeWithDNSet(Set<String> dnSet) {

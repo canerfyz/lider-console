@@ -30,7 +30,7 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public abstract class DefaultLiderHandler extends AbstractHandler {
+public abstract class MultipleSelectionHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
