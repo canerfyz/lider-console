@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.rest.requests;
 
+import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -18,13 +19,17 @@ public class ProfileExecutionRequest implements IRequest {
 
 	private RestDNType dnType;
 
+	private Date activationDate;
+
 	public ProfileExecutionRequest() {
 	}
 
-	public ProfileExecutionRequest(Long id, List<String> dnList, RestDNType dnType) {
+	public ProfileExecutionRequest(Long id, List<String> dnList, RestDNType dnType, Date activationDate) {
+		super();
 		this.id = id;
 		this.dnList = dnList;
 		this.dnType = dnType;
+		this.activationDate = activationDate;
 	}
 
 	public Long getId() {
@@ -51,9 +56,18 @@ public class ProfileExecutionRequest implements IRequest {
 		this.dnType = dnType;
 	}
 
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
+	}
+
 	@Override
 	public String toString() {
-		return "ProfileExecutionRequest [id=" + id + ", dnList=" + dnList + ", dnType=" + dnType + "]";
+		return "ProfileExecutionRequest [id=" + id + ", dnList=" + dnList + ", dnType=" + dnType + ", activationDate="
+				+ activationDate + "]";
 	}
 
 	@Override

@@ -28,6 +28,7 @@ public class PolicyRequest implements IRequest {
 
 	public PolicyRequest(Long id, String label, String description, boolean active, List<Long> profileIdList,
 			Date timestamp) {
+		super();
 		this.id = id;
 		this.label = label;
 		this.description = description;

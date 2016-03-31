@@ -1,15 +1,21 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
@@ -33,6 +39,8 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 
 	private Combo cmbPolicy;
 	private Combo cmbDnType;
+	private DateTime dtActivationDate;
+	private Button btnEnableDate;
 
 	private Set<String> dnSet;
 	private final String[] dnTypeArr = new String[] { "ONLY_USER", "ONLY_AGENT", "ONLY_GROUP", "ALL" };
@@ -87,6 +95,34 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 		}
 		cmbDnType.select(3); // by default, select 'ALL'
 
+		Composite cmpDate = new Composite(composite, SWT.NONE);
+		cmpDate.setLayout(new GridLayout(2, false));
+		cmpDate.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+
+		// Activation date enable/disable checkbox
+		btnEnableDate = new Button(cmpDate, SWT.CHECK);
+		btnEnableDate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		btnEnableDate.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dtActivationDate.setEnabled(btnEnableDate.getSelection());
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		// Activation date label
+		Label lblActivationDate = new Label(cmpDate, SWT.NONE);
+		lblActivationDate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblActivationDate.setText(Messages.getString("ACTIVATION_DATE_LABEL"));
+
+		// Activation date
+		dtActivationDate = new DateTime(composite, SWT.CALENDAR | SWT.BORDER);
+		dtActivationDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		dtActivationDate.setEnabled(btnEnableDate.getSelection());
+
 		applyDialogFont(composite);
 		return composite;
 	}
@@ -126,6 +162,7 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 		policy.setId(getSelectedPolicyId());
 		policy.setDnType(getSelectedDnType());
 		policy.setDnList(new ArrayList<String>(this.dnSet));
+		policy.setActivationDate(btnEnableDate.getSelection() ? convertDate(dtActivationDate) : null);
 		logger.debug("Policy request: {}", policy);
 
 		try {
@@ -136,6 +173,20 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 		}
 
 		close();
+	}
+	
+	/**
+	 * Convert DateTime instance to java.util.Date instance
+	 * 
+	 * @param dtActivationDate2
+	 * @return
+	 */
+	private Date convertDate(DateTime dateTime) {
+		Calendar instance = Calendar.getInstance();
+		instance.set(Calendar.DAY_OF_MONTH, dateTime.getDay());
+		instance.set(Calendar.MONTH, dateTime.getMonth());
+		instance.set(Calendar.YEAR, dateTime.getYear());
+		return instance.getTime();
 	}
 
 	/**
