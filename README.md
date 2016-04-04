@@ -71,5 +71,4 @@ While, fortunately, many dependencies can be found as OSGI bundles in [Orbit](ht
 We also use checkstyle and findbugs plugins to do static analyzing on the changes. Run the following commands to analyze your code to check if it is compatible.
 
 `mvn clean compile -P findbugs`
-
 `mvn clean validate -P checkstyle`
