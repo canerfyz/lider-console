@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.xmpp.enums;
 
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+
 /**
  * Status code used throughout the system. These status codes can be used in
  * (XMPP or REST) all messaging mechanisms.
@@ -16,10 +18,11 @@ package tr.org.liderahenk.liderconsole.core.xmpp.enums;
  * 
  */
 public enum StatusCode {
-	
-	REGISTERED(1), REGISTERED_WITHOUT_LDAP(2), ALREADY_EXISTS(3), REGISTRATION_ERROR(4), TASK_RECEIVED(5), 
-	TASK_PROCESSED(6), TASK_WARNING(7), TASK_ERROR(8), TASK_TIMEOUT(9), TASK_KILLED(10), POLICY_RECEIVED(11), 
-	POLICY_PROCESSED(12), POLICY_WARNING(13), POLICY_ERROR(14), POLICY_TIMEOUT(15), POLICY_KILLED(16);
+
+	REGISTERED(1), REGISTERED_WITHOUT_LDAP(2), ALREADY_EXISTS(3), REGISTRATION_ERROR(4), TASK_RECEIVED(
+			5), TASK_PROCESSED(6), TASK_WARNING(7), TASK_ERROR(8), TASK_TIMEOUT(9), TASK_KILLED(10), POLICY_RECEIVED(
+					11), POLICY_PROCESSED(12), POLICY_WARNING(13), POLICY_ERROR(14), POLICY_TIMEOUT(15), POLICY_KILLED(
+							16);
 
 	private int id;
 
@@ -51,6 +54,15 @@ public enum StatusCode {
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
+	}
+
+	/**
+	 * Provide i18n message representation of the enum type.
+	 * 
+	 * @return
+	 */
+	public String getMessage() {
+		return Messages.getString(this.toString());
 	}
 
 }
