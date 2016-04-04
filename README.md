@@ -47,7 +47,7 @@ While, fortunately, many dependencies can be found as OSGI bundles in [Orbit](ht
 
 #### Easy Export
 
-1. Instead of manually exporting, just run `export-lider-console.sh` under the *scripts/* directory.
+1. Instead of manually exporting, just run `export-lider-console.sh` under the *scripts/* directory. You should sure port 8080 is unused.
 
 ## How to Setup Development Environment
 
