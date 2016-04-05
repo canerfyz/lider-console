@@ -10,12 +10,22 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -40,7 +50,16 @@ public class ExecutedTaskEditor extends EditorPart {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExecutedTaskEditor.class);
 
+	// TODO create widgets for createDateRangeStart & createDateRangeEnd
+	// parameters!
+
+	private Text txtPluginName;
+	private Text txtPluginVersion;
+	private Combo cmbStatus;
+	private Text txtSearch;
+	private Button btnSearch;
 	private TableViewer tableViewer;
+	private TableFilter tableFilter;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -73,7 +92,74 @@ public class ExecutedTaskEditor extends EditorPart {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(1, false));
 
-		// Search params
+		Composite innerComposite = new Composite(composite, SWT.NONE);
+		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		innerComposite.setLayout(new GridLayout(4, false));
+
+		// Plugin name label
+		Label lblPluginName = new Label(innerComposite, SWT.NONE);
+		lblPluginName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblPluginName.setText(Messages.getString("PLUGIN_NAME"));
+
+		// Plugin name input
+		txtPluginName = new Text(innerComposite, SWT.BORDER);
+		txtPluginName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		// Plugin version label
+		Label lblPluginVersion = new Label(innerComposite, SWT.NONE);
+		lblPluginVersion.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblPluginVersion.setText(Messages.getString("PLUGIN_VERSION"));
+
+		// Plugin version input
+		txtPluginVersion = new Text(innerComposite, SWT.BORDER);
+		txtPluginVersion.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		innerComposite = new Composite(composite, SWT.NONE);
+		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		innerComposite.setLayout(new GridLayout(3, false));
+		
+		// Status label
+		Label lblStatus = new Label(innerComposite, SWT.NONE);
+		lblStatus.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblStatus.setText(Messages.getString("STATUS"));
+		
+		// Status combo
+		cmbStatus = new Combo(innerComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		// TODO values
+		
+		btnSearch = new Button(innerComposite, SWT.PUSH);
+		btnSearch.setText(Messages.getString("SEARCH"));
+		btnSearch.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				populateTable();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		innerComposite = new Composite(composite, SWT.NONE);
+		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		innerComposite.setLayout(new GridLayout(2, false));
+
+		// Search label
+		Label lblSearch = new Label(innerComposite, SWT.NONE);
+		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
+
+		// Filter table rows
+		txtSearch = new Text(innerComposite, SWT.BORDER | SWT.SEARCH);
+		txtSearch.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtSearch.setToolTipText(Messages.getString("SEARCH_TOOLTIP"));
+		txtSearch.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				tableFilter.setSearchText(txtSearch.getText());
+				tableViewer.refresh();
+			}
+		});
 
 		createTableArea(composite);
 	}
@@ -131,6 +217,9 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
+		tableFilter = new TableFilter();
+		tableViewer.addFilter(tableFilter);
+		tableViewer.refresh();
 	}
 
 	/**
@@ -236,19 +325,46 @@ public class ExecutedTaskEditor extends EditorPart {
 	}
 
 	private void populateTable() {
-		// TODO
-		// TODO
-		// TODO
-		// TODO
-		try { // TODO add search param widgets!!!!!
-			List<ExecutedTask> tasks = TaskUtils.list(null, null, null, null, null);
+		// TODO add status param!
+		try {
+			List<ExecutedTask> tasks = TaskUtils.list(txtPluginName.getText(), txtPluginVersion.getText(), null, null,
+					null);
 			if (tasks != null) {
 				tableViewer.setInput(tasks);
+				tableViewer.refresh();
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
+	}
+
+	/**
+	 * Apply filter to table rows. (Search text can be anything - plugin name,
+	 * plugin version or command class id)
+	 *
+	 */
+	public class TableFilter extends ViewerFilter {
+
+		private String searchString;
+
+		public void setSearchText(String s) {
+			this.searchString = ".*" + s + ".*";
+		}
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (searchString == null || searchString.length() == 0) {
+				return true;
+			}
+			ExecutedTask task = (ExecutedTask) element;
+			if (task.getPluginName().matches(searchString) || task.getPluginVersion().matches(searchString)
+					|| task.getCommandClsId().matches(searchString)) {
+				return true;
+			}
+			return false;
+		}
+
 	}
 
 	/**
