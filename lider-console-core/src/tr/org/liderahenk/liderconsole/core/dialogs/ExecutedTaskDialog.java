@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -42,6 +43,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	// Widgets
 	private TableViewer tvCmdExec;
 	private TableViewer tvExecResult;
+	private Label lblResult;
 
 	public ExecutedTaskDialog(Shell parentShell, ExecutedTask task, Command command) {
 		super(parentShell);
@@ -64,7 +66,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		lblTaskDetails.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblTaskDetails.setText(Messages.getString("TASK_DETAILS"));
 
-		Composite composite = new Composite(parent, SWT.BORDER);
+		final Composite composite = new Composite(parent, SWT.BORDER);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		composite.setLayout(new GridLayout(5, false));
 
@@ -93,7 +95,8 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		btnTaskParams.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO open dialog for task parameters!
+				ExecutedTaskParamDialog dialog = new ExecutedTaskParamDialog(composite.getShell(), command);
+				dialog.open();
 			}
 
 			@Override
@@ -144,29 +147,35 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
 		gridData.horizontalSpan = 3;
+		gridData.heightHint = 250;
 		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.heightHint = 420;
 		gridData.horizontalAlignment = GridData.FILL;
 		tvCmdExec.getControl().setLayoutData(gridData);
 
-		// This composite will hold command execution results!
-		final Composite resultComposite = new Composite(composite, SWT.BORDER);
-		resultComposite.setLayout(new GridLayout(1, false));
+		// Execution results label
+		lblResult = new Label(composite, SWT.NONE);
+		lblResult.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
+		lblResult.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblResult.setText(Messages.getString("EXECUTION_RESULT_RECORDS"));
+		lblResult.setVisible(false);
+
+		createTableExecResult(composite);
 
 		// Hook up listeners
 		tvCmdExec.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				// Dispose previous results
-				disposeChildren(resultComposite);
 				// Create command execution result table
 				CommandExecution ce = getSelectedCommandExecution();
 				if (ce != null) {
-					createTableExecResult(resultComposite, ce);
+					refreshResultTable(ce);
+				} else {
+					tvExecResult.getTable().setVisible(false);
+					lblResult.setVisible(false);
 				}
 			}
 		});
+
 	}
 
 	/**
@@ -176,7 +185,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	 * 
 	 */
 	private void createColumnsCmdExec() {
-		TableViewerColumn labelColumn = createTableViewerColumn(tvCmdExec, Messages.getString("DN"), 400);
+		TableViewerColumn labelColumn = createTableViewerColumn(tvCmdExec, Messages.getString("DN"), 600);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -186,14 +195,6 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 				return Messages.getString("UNTITLED");
 			}
 		});
-	}
-
-	protected void disposeChildren(Composite composite) {
-		if (composite != null) {
-			for (Control control : composite.getChildren()) {
-				control.dispose();
-			}
-		}
 	}
 
 	private CommandExecution getSelectedCommandExecution() {
@@ -206,7 +207,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	 * 
 	 * @param composite
 	 */
-	protected void createTableExecResult(final Composite composite, final CommandExecution ce) {
+	protected void createTableExecResult(final Composite composite) {
 
 		GridData dataSearchGrid = new GridData();
 		dataSearchGrid.grabExcessHorizontalSpace = true;
@@ -226,17 +227,24 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		table.getVerticalBar().setVisible(true);
 		tvExecResult.setContentProvider(new ArrayContentProvider());
 
-		// Populate table with execution results
-		tvExecResult.setInput(ce.getCommandExecutionResults());
-
 		GridData gridData = new GridData();
-		gridData.verticalAlignment = GridData.FILL;
 		gridData.horizontalSpan = 3;
 		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.heightHint = 420;
+		gridData.grabExcessVerticalSpace = false;
+		gridData.heightHint = 100;
 		gridData.horizontalAlignment = GridData.FILL;
-		tvCmdExec.getControl().setLayoutData(gridData);
+		tvExecResult.getControl().setLayoutData(gridData);
+
+		// Initially hide table, it will be visible on execution record
+		// selection
+		tvExecResult.getTable().setVisible(false);
+	}
+
+	public void refreshResultTable(CommandExecution ce) {
+		tvExecResult.setInput(ce.getCommandExecutionResults());
+		tvExecResult.refresh();
+		tvExecResult.getTable().setVisible(true);
+		lblResult.setVisible(true);
 	}
 
 	/**
@@ -246,7 +254,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 
 		String[] titles = { Messages.getString("CREATE_DATE"), Messages.getString("RESPONSE_MESSAGE"),
 				Messages.getString("RESPONSE_CODE") };
-		int[] bounds = { 100, 400, 150 };
+		int[] bounds = { 200, 300, 200 };
 
 		TableViewerColumn createDateColumn = createTableViewerColumn(tvExecResult, titles[0], bounds[0]);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
@@ -327,8 +335,19 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 			if (t.getErrorResults() != null) {
 				msg.append(Messages.getString("ERROR_STATUS")).append(": ").append(t.getErrorResults()).append(" ");
 			}
+			return msg.toString();
 		}
 		return null;
+	}
+
+	@Override
+	protected Point getInitialSize() {
+		return new Point(800, 600);
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return false;
 	}
 
 }

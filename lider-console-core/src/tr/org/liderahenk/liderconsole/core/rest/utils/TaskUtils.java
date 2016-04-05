@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -67,15 +68,36 @@ public class TaskUtils {
 	 * @throws Exception
 	 * 
 	 */
-	public static List<ExecutedTask> list(String pluginName, String pluginVersion, Date createDateRangeStart, Date createDateRangeEnd, Integer status) throws Exception {
+	public static List<ExecutedTask> list(String pluginName, String pluginVersion, Date createDateRangeStart,
+			Date createDateRangeEnd, Integer status) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/list");
+		url.append("/list?");
+
 		// Append optional parameters
-		// TODO parameterize this request (pluginName, pluginVersion, createDate, status etc...)
+		List<String> params = new ArrayList<String>();
+		if (pluginName != null) {
+			params.add("pluginName=" + pluginName);
+		}
+		if (pluginVersion != null) {
+			params.add("pluginVersion=" + pluginVersion);
+		}
+		if (createDateRangeStart != null) {
+			params.add("createDateRangeStart=" + createDateRangeStart);
+		}
+		if (createDateRangeEnd != null) {
+			params.add("createDateRangeEnd=" + createDateRangeEnd);
+		}
+		if (status != null) {
+			params.add("status=" + status);
+		}
+		if (!params.isEmpty()) {
+			url.append(join(params, "&"));
+		}
 		logger.debug("Sending request to URL: {}", url.toString());
 
+		// Send GET request to server
 		IResponse response = RestClient.get(url.toString());
 		List<ExecutedTask> tasks = null;
 
@@ -132,6 +154,26 @@ public class TaskUtils {
 		StringBuilder url = new StringBuilder(
 				ConfigProvider.getInstance().get(LiderConstants.CONFIG.REST_TASK_BASE_URL));
 		return url;
+	}
+
+	/**
+	 * Join specified tokens using the specified separator
+	 * 
+	 * @param tokens
+	 * @param separator
+	 * @return
+	 */
+	private static String join(List<String> tokens, String separator) {
+		if (tokens != null) {
+			StringBuilder sb = new StringBuilder();
+			String sep = "";
+			for (String token : tokens) {
+				sb.append(sep).append(token);
+				sep = separator;
+			}
+			return sb.toString();
+		}
+		return null;
 	}
 
 }

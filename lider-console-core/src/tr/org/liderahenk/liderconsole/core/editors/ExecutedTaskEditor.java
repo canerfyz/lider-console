@@ -142,7 +142,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		String[] titles = { Messages.getString("PLUGIN"), Messages.getString("TASK"), Messages.getString("CREATE_DATE"),
 				Messages.getString("RECEIVED_STATUS"), Messages.getString("SUCCESS_STATUS"),
 				Messages.getString("ERROR_STATUS") };
-		int[] bounds = { 200, 200, 150, 50, 50, 50 };
+		int[] bounds = { 200, 200, 250, 100, 100, 100 };
 
 		TableViewerColumn pluginColumn = createTableViewerColumn(titles[0], bounds[0]);
 		pluginColumn.setLabelProvider(new ColumnLabelProvider() {

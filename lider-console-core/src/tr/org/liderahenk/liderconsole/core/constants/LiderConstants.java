@@ -23,6 +23,7 @@ public class LiderConstants {
 	
 	public static final class EDITORS {
 		public static final String LDAP_SEARCH_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor";
+		public static final String EXECUTED_TASK_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ExecutedTaskEditor";
 		public static final String PROFILE_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor";
 		public static final String POLICY_DEFINITION_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor";
 	}

@@ -52,6 +52,11 @@
             id="tr.org.liderahenk.liderconsole.core.commands.PolicyExecutionNew"
             name="%command.policy.execution.new">
       </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
+            name="%command.executed.task">
+      </command>
    </extension>
    
    <!-- HANDLERS -->
@@ -64,6 +69,10 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyDefinitionHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition">
+      </handler>
+	  <handler
+            class="tr.org.liderahenk.liderconsole.core.handlers.ExecutedTaskHandler"
+            commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyExecutionSelectHandler"
@@ -129,6 +138,12 @@
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
 	          id="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
 	          tooltip="%command.policy.definition">
+        </command>
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
+	          id="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
+	          icon="icons/16/task-done.png"
+	          tooltip="%command.executed.task">
         </command>
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.commands.LdapSearch"
@@ -219,6 +234,12 @@
 		    icon="icons/16/folder-open.png"
 		    id="tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor"
 		    name="%editor.policy.definition">
+	    </editor> 
+	    <editor
+		    class="tr.org.liderahenk.liderconsole.core.editors.ExecutedTaskEditor"
+		    icon="icons/16/task-done.png"
+		    id="tr.org.liderahenk.liderconsole.core.editors.ExecutedTaskEditor"
+		    name="%editor.executed.task">
 	    </editor> 
 	</extension>
 
