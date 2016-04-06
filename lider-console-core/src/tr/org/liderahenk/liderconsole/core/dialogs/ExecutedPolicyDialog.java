@@ -8,12 +8,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -26,7 +23,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecutionResult;
-import tr.org.liderahenk.liderconsole.core.model.ExecutedTask;
+import tr.org.liderahenk.liderconsole.core.model.ExecutedPolicy;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 
 /**
@@ -34,10 +31,10 @@ import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ExecutedTaskDialog extends DefaultLiderDialog {
+public class ExecutedPolicyDialog extends DefaultLiderDialog {
 
 	// Model
-	private ExecutedTask task;
+	private ExecutedPolicy policy;
 	private Command command;
 
 	// Widgets
@@ -45,9 +42,9 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	private TableViewer tvExecResult;
 	private Label lblResult;
 
-	public ExecutedTaskDialog(Shell parentShell, ExecutedTask task, Command command) {
+	public ExecutedPolicyDialog(Shell parentShell, ExecutedPolicy policy, Command command) {
 		super(parentShell);
-		this.task = task;
+		this.policy = policy;
 		this.command = command;
 	}
 
@@ -60,15 +57,15 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parent.setLayout(new GridLayout(1, false));
 
-		// Task details label
+		// Policy details label
 		Label lblTaskDetails = new Label(parent, SWT.NONE);
 		lblTaskDetails.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblTaskDetails.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblTaskDetails.setText(Messages.getString("TASK_DETAILS"));
+		lblTaskDetails.setText(Messages.getString("POLICY_DETAILS"));
 
 		final Composite composite = new Composite(parent, SWT.BORDER);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		composite.setLayout(new GridLayout(5, false));
+		composite.setLayout(new GridLayout(4, false));
 
 		// Create date label
 		Label lblCreateDate = new Label(composite, SWT.NONE);
@@ -78,7 +75,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		// Create date
 		Text txtCreateDate = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
 		txtCreateDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		txtCreateDate.setText(task.getCreateDate().toString());
+		txtCreateDate.setText(policy.getCreateDate().toString());
 
 		// Status label
 		Label lblStatus = new Label(composite, SWT.NONE);
@@ -88,27 +85,13 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		// Status
 		Text txtStatus = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
 		txtStatus.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		txtStatus.setText(generateStatusMessage(task));
-
-		Button btnTaskParams = new Button(composite, SWT.PUSH);
-		btnTaskParams.setText(Messages.getString("SHOW_TASK_PARAMETERS"));
-		btnTaskParams.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ExecutedTaskParamDialog dialog = new ExecutedTaskParamDialog(composite.getShell(), command);
-				dialog.open();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+		txtStatus.setText(generateStatusMessage(policy));
 
 		// Command executions label
 		Label lblCmdExecTable = new Label(parent, SWT.NONE);
 		lblCmdExecTable.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblCmdExecTable.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblCmdExecTable.setText(Messages.getString("TASK_COMMAND_EXECUTION_RECORDS"));
+		lblCmdExecTable.setText(Messages.getString("POLICY_COMMAND_EXECUTION_RECORDS"));
 
 		createTableCmdExec(parent);
 
@@ -156,7 +139,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		lblResult = new Label(composite, SWT.NONE);
 		lblResult.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblResult.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblResult.setText(Messages.getString("TASK_EXECUTION_RESULT_RECORDS"));
+		lblResult.setText(Messages.getString("POLICY_EXECUTION_RESULT_RECORDS"));
 		lblResult.setVisible(false);
 
 		createTableExecResult(composite);
@@ -185,7 +168,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	 * 
 	 */
 	private void createColumnsCmdExec() {
-		TableViewerColumn labelColumn = createTableViewerColumn(tvCmdExec, Messages.getString("AGENT_DN"), 600);
+		TableViewerColumn labelColumn = createTableViewerColumn(tvCmdExec, Messages.getString("DN"), 600);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -322,18 +305,18 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	 * @param t
 	 * @return
 	 */
-	private String generateStatusMessage(ExecutedTask t) {
-		if (t != null) {
+	private String generateStatusMessage(ExecutedPolicy p) {
+		if (p != null) {
 			StringBuilder msg = new StringBuilder();
-			if (t.getReceivedResults() != null) {
-				msg.append(Messages.getString("RECEIVED_STATUS")).append(": ").append(t.getReceivedResults())
+			if (p.getReceivedResults() != null) {
+				msg.append(Messages.getString("RECEIVED_STATUS")).append(": ").append(p.getReceivedResults())
 						.append(" ");
 			}
-			if (t.getSuccessResults() != null) {
-				msg.append(Messages.getString("SUCCESS_STATUS")).append(": ").append(t.getSuccessResults()).append(" ");
+			if (p.getSuccessResults() != null) {
+				msg.append(Messages.getString("SUCCESS_STATUS")).append(": ").append(p.getSuccessResults()).append(" ");
 			}
-			if (t.getErrorResults() != null) {
-				msg.append(Messages.getString("ERROR_STATUS")).append(": ").append(t.getErrorResults()).append(" ");
+			if (p.getErrorResults() != null) {
+				msg.append(Messages.getString("ERROR_STATUS")).append(": ").append(p.getErrorResults()).append(" ");
 			}
 			return msg.toString();
 		}

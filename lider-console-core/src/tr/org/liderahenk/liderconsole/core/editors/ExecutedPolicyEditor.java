@@ -33,11 +33,11 @@ import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.liderconsole.core.dialogs.ExecutedTaskDialog;
+import tr.org.liderahenk.liderconsole.core.dialogs.ExecutedPolicyDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
-import tr.org.liderahenk.liderconsole.core.model.ExecutedTask;
+import tr.org.liderahenk.liderconsole.core.model.ExecutedPolicy;
 import tr.org.liderahenk.liderconsole.core.rest.utils.CommandUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -46,12 +46,11 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ExecutedTaskEditor extends EditorPart {
+public class ExecutedPolicyEditor extends EditorPart {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExecutedTaskEditor.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExecutedPolicyEditor.class);
 
-	private Text txtPluginName;
-	private Text txtPluginVersion;
+	private Text txtLabel;
 	private DateTime dtCreateDateRangeStart;
 	private DateTime dtCreateDateRangeEnd;
 	private Button btnSearch;
@@ -86,35 +85,23 @@ public class ExecutedTaskEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+
 		Composite composite = new Composite(parent, GridData.FILL);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(1, false));
 
 		Composite innerComposite = new Composite(composite, SWT.NONE);
 		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		innerComposite.setLayout(new GridLayout(4, false));
+		innerComposite.setLayout(new GridLayout(6, false));
 
-		// Plugin name label
-		Label lblPluginName = new Label(innerComposite, SWT.NONE);
-		lblPluginName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblPluginName.setText(Messages.getString("PLUGIN_NAME"));
+		// Policy label
+		Label lblLabel = new Label(innerComposite, SWT.NONE);
+		lblLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblLabel.setText(Messages.getString("POLICY_LABEL"));
 
-		// Plugin name input
-		txtPluginName = new Text(innerComposite, SWT.BORDER);
-		txtPluginName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		// Plugin version label
-		Label lblPluginVersion = new Label(innerComposite, SWT.NONE);
-		lblPluginVersion.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblPluginVersion.setText(Messages.getString("PLUGIN_VERSION"));
-
-		// Plugin version input
-		txtPluginVersion = new Text(innerComposite, SWT.BORDER);
-		txtPluginVersion.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		innerComposite = new Composite(composite, SWT.NONE);
-		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		innerComposite.setLayout(new GridLayout(4, false));
+		// Label input
+		txtLabel = new Text(innerComposite, SWT.BORDER);
+		txtLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		// Create date label
 		Label lblCreateDateRange = new Label(innerComposite, SWT.NONE);
@@ -191,7 +178,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		table.getVerticalBar().setVisible(true);
 		tableViewer.setContentProvider(new ArrayContentProvider());
 
-		// Populate table with tasks
+		// Populate table with policies
 		populateTable();
 
 		GridData gridData = new GridData();
@@ -208,9 +195,9 @@ public class ExecutedTaskEditor extends EditorPart {
 			public void doubleClick(DoubleClickEvent event) {
 				// Query task details and populate dialog with it.
 				try {
-					ExecutedTask task = getSelectedTask();
-					Command command = CommandUtils.getTaskCommand(task.getId());
-					ExecutedTaskDialog dialog = new ExecutedTaskDialog(composite.getShell(), task, command);
+					ExecutedPolicy policy = getSelectedPolicy();
+					Command command = CommandUtils.getPolicyCommand(policy.getId());
+					ExecutedPolicyDialog dialog = new ExecutedPolicyDialog(composite.getShell(), policy, command);
 					dialog.open();
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
@@ -230,77 +217,67 @@ public class ExecutedTaskEditor extends EditorPart {
 	 */
 	private void createTableColumns() {
 
-		String[] titles = { Messages.getString("PLUGIN"), Messages.getString("TASK"), Messages.getString("CREATE_DATE"),
+		String[] titles = { Messages.getString("LABEL"), Messages.getString("CREATE_DATE"),
 				Messages.getString("RECEIVED_STATUS"), Messages.getString("SUCCESS_STATUS"),
 				Messages.getString("ERROR_STATUS") };
-		int[] bounds = { 200, 200, 250, 100, 100, 100 };
+		int[] bounds = { 200, 250, 100, 100, 100 };
 
-		TableViewerColumn pluginColumn = createTableViewerColumn(titles[0], bounds[0]);
-		pluginColumn.setLabelProvider(new ColumnLabelProvider() {
+		TableViewerColumn labelColumn = createTableViewerColumn(titles[0], bounds[0]);
+		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getPluginName() + " - "
-							+ ((ExecutedTask) element).getPluginVersion();
+				if (element instanceof ExecutedPolicy) {
+					return ((ExecutedPolicy) element).getLabel();
 				}
 				return Messages.getString("UNTITLED");
 			}
 		});
 
-		TableViewerColumn taskColumn = createTableViewerColumn(titles[1], bounds[1]);
-		taskColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getCommandClsId();
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-
-		TableViewerColumn createDateColumn = createTableViewerColumn(titles[2], bounds[2]);
+		TableViewerColumn createDateColumn = createTableViewerColumn(titles[1], bounds[1]);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getCreateDate() != null
-							? ((ExecutedTask) element).getCreateDate().toString() : Messages.getString("UNTITLED");
+				if (element instanceof ExecutedPolicy) {
+					return ((ExecutedPolicy) element).getCreateDate() != null
+							? ((ExecutedPolicy) element).getCreateDate().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
 		});
 
-		TableViewerColumn receivedColumn = createTableViewerColumn(titles[3], bounds[3]);
+		TableViewerColumn receivedColumn = createTableViewerColumn(titles[2], bounds[2]);
 		receivedColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getReceivedResults() != null
-							? ((ExecutedTask) element).getReceivedResults().toString() : Messages.getString("UNTITLED");
+				if (element instanceof ExecutedPolicy) {
+					return ((ExecutedPolicy) element).getReceivedResults() != null
+							? ((ExecutedPolicy) element).getReceivedResults().toString()
+							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
 		});
 
-		TableViewerColumn successColumn = createTableViewerColumn(titles[4], bounds[4]);
+		TableViewerColumn successColumn = createTableViewerColumn(titles[3], bounds[3]);
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getSuccessResults() != null
-							? ((ExecutedTask) element).getSuccessResults().toString() : Messages.getString("UNTITLED");
+				if (element instanceof ExecutedPolicy) {
+					return ((ExecutedPolicy) element).getSuccessResults() != null
+							? ((ExecutedPolicy) element).getSuccessResults().toString()
+							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
 		});
 
-		TableViewerColumn errorColumn = createTableViewerColumn(titles[5], bounds[5]);
+		TableViewerColumn errorColumn = createTableViewerColumn(titles[4], bounds[4]);
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getErrorResults() != null
-							? ((ExecutedTask) element).getErrorResults().toString() : Messages.getString("UNTITLED");
+				if (element instanceof ExecutedPolicy) {
+					return ((ExecutedPolicy) element).getErrorResults() != null
+							? ((ExecutedPolicy) element).getErrorResults().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -329,10 +306,9 @@ public class ExecutedTaskEditor extends EditorPart {
 	private void populateTable() {
 		// TODO add status and date params!
 		try {
-			List<ExecutedTask> tasks = CommandUtils.listExecutedTasks(txtPluginName.getText(),
-					txtPluginVersion.getText(), null, null, null);
-			if (tasks != null) {
-				tableViewer.setInput(tasks);
+			List<ExecutedPolicy> policies = CommandUtils.listExecutedPolicies(txtLabel.getText(), null, null, null);
+			if (policies != null) {
+				tableViewer.setInput(policies);
 				tableViewer.refresh();
 			}
 		} catch (Exception e) {
@@ -342,8 +318,7 @@ public class ExecutedTaskEditor extends EditorPart {
 	}
 
 	/**
-	 * Apply filter to table rows. (Search text can be anything - plugin name,
-	 * plugin version or command class id)
+	 * Apply filter to table rows. (Search text can be policy label)
 	 *
 	 */
 	public class TableFilter extends ViewerFilter {
@@ -359,9 +334,8 @@ public class ExecutedTaskEditor extends EditorPart {
 			if (searchString == null || searchString.length() == 0) {
 				return true;
 			}
-			ExecutedTask task = (ExecutedTask) element;
-			if (task.getPluginName().matches(searchString) || task.getPluginVersion().matches(searchString)
-					|| task.getCommandClsId().matches(searchString)) {
+			ExecutedPolicy policy = (ExecutedPolicy) element;
+			if (policy.getLabel().matches(searchString)) {
 				return true;
 			}
 			return false;
@@ -371,20 +345,20 @@ public class ExecutedTaskEditor extends EditorPart {
 
 	/**
 	 * 
-	 * @return selected task record, null otherwise.
+	 * @return selected policy record, null otherwise.
 	 */
-	protected ExecutedTask getSelectedTask() {
-		ExecutedTask task = null;
+	protected ExecutedPolicy getSelectedPolicy() {
+		ExecutedPolicy policy = null;
 		IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-		if (selection != null && selection.getFirstElement() instanceof ExecutedTask) {
-			task = (ExecutedTask) selection.getFirstElement();
+		if (selection != null && selection.getFirstElement() instanceof ExecutedPolicy) {
+			policy = (ExecutedPolicy) selection.getFirstElement();
 		}
-		return task;
+		return policy;
 	}
 
 	@Override
 	public void setFocus() {
-		txtPluginName.setFocus();
+		txtLabel.setFocus();
 	}
 
 }

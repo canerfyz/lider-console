@@ -119,7 +119,7 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 		lblActivationDate.setText(Messages.getString("ACTIVATION_DATE_LABEL"));
 
 		// Activation date
-		dtActivationDate = new DateTime(composite, SWT.CALENDAR | SWT.BORDER);
+		dtActivationDate = new DateTime(composite, SWT.DROP_DOWN | SWT.BORDER);
 		dtActivationDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		dtActivationDate.setEnabled(btnEnableDate.getSelection());
 

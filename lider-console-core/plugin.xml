@@ -57,6 +57,11 @@
             id="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
             name="%command.executed.task">
       </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.core.commands.ExecutedPolicy"
+            name="%command.executed.policy">
+      </command>
    </extension>
    
    <!-- HANDLERS -->
@@ -73,6 +78,10 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.ExecutedTaskHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask">
+      </handler>
+	  <handler
+            class="tr.org.liderahenk.liderconsole.core.handlers.ExecutedPolicyHandler"
+            commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedPolicy">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyExecutionSelectHandler"
@@ -144,6 +153,12 @@
 	          id="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
 	          icon="icons/16/task-done.png"
 	          tooltip="%command.executed.task">
+        </command>
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedPolicy"
+	          id="tr.org.liderahenk.liderconsole.core.commands.ExecutedPolicy"
+	          icon="icons/16/task-done.png"
+	          tooltip="%command.executed.policy">
         </command>
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.commands.LdapSearch"
@@ -240,6 +255,12 @@
 		    icon="icons/16/task-done.png"
 		    id="tr.org.liderahenk.liderconsole.core.editors.ExecutedTaskEditor"
 		    name="%editor.executed.task">
+	    </editor> 
+	    <editor
+		    class="tr.org.liderahenk.liderconsole.core.editors.ExecutedPolicyEditor"
+		    icon="icons/16/task-done.png"
+		    id="tr.org.liderahenk.liderconsole.core.editors.ExecutedPolicyEditor"
+		    name="%editor.executed.policy">
 	    </editor> 
 	</extension>
 

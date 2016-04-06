@@ -6,24 +6,20 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
- * This is a specialized class which is used to list executed tasks with some
+ * This is a specialized class which is used to list executed policies with some
  * additional info.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExecutedTask implements Serializable {
+public class ExecutedPolicy implements Serializable {
 
-	private static final long serialVersionUID = -4158646812377132719L;
+	private static final long serialVersionUID = 6837143297810499571L;
 
 	private Long id;
 
-	private String pluginName;
-
-	private String pluginVersion;
-
-	private String commandClsId;
+	private String label;
 
 	private Date createDate;
 
@@ -41,28 +37,12 @@ public class ExecutedTask implements Serializable {
 		this.id = id;
 	}
 
-	public String getPluginName() {
-		return pluginName;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setPluginName(String pluginName) {
-		this.pluginName = pluginName;
-	}
-
-	public String getPluginVersion() {
-		return pluginVersion;
-	}
-
-	public void setPluginVersion(String pluginVersion) {
-		this.pluginVersion = pluginVersion;
-	}
-
-	public String getCommandClsId() {
-		return commandClsId;
-	}
-
-	public void setCommandClsId(String commandClsId) {
-		this.commandClsId = commandClsId;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public Date getCreateDate() {
