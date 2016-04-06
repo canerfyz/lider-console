@@ -129,7 +129,7 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 
 			// Command service will be used to trigger handler class related to
 			// specified 'profileCommandId'
-			final ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
+			final ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 
 			// Init combo list. This will be used to iterate over combo widgets
 			// in order to collect selected IDs.
