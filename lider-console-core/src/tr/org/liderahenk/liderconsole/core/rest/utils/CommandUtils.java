@@ -53,10 +53,10 @@ public class CommandUtils {
 			params.add("pluginVersion=" + pluginVersion);
 		}
 		if (createDateRangeStart != null) {
-			params.add("createDateRangeStart=" + createDateRangeStart);
+			params.add("createDateRangeStart=" + createDateRangeStart.getTime());
 		}
 		if (createDateRangeEnd != null) {
-			params.add("createDateRangeEnd=" + createDateRangeEnd);
+			params.add("createDateRangeEnd=" + createDateRangeEnd.getTime());
 		}
 		if (status != null) {
 			params.add("status=" + status);
@@ -135,10 +135,10 @@ public class CommandUtils {
 			params.add("label=" + label);
 		}
 		if (createDateRangeStart != null) {
-			params.add("createDateRangeStart=" + createDateRangeStart);
+			params.add("createDateRangeStart=" + createDateRangeStart.getTime());
 		}
 		if (createDateRangeEnd != null) {
-			params.add("createDateRangeEnd=" + createDateRangeEnd);
+			params.add("createDateRangeEnd=" + createDateRangeEnd.getTime());
 		}
 		if (status != null) {
 			params.add("status=" + status);

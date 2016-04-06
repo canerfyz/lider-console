@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -121,7 +123,7 @@ public class ExecutedPolicyEditor extends EditorPart {
 		btnSearch.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				populateTable();
+				populateTable(true);
 			}
 
 			@Override
@@ -179,7 +181,7 @@ public class ExecutedPolicyEditor extends EditorPart {
 		tableViewer.setContentProvider(new ArrayContentProvider());
 
 		// Populate table with policies
-		populateTable();
+		populateTable(false);
 
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
@@ -303,10 +305,16 @@ public class ExecutedPolicyEditor extends EditorPart {
 		return viewerColumn;
 	}
 
-	private void populateTable() {
-		// TODO add status and date params!
+	private void populateTable(boolean useParams) {
+		// TODO add status param!
 		try {
-			List<ExecutedPolicy> policies = CommandUtils.listExecutedPolicies(txtLabel.getText(), null, null, null);
+			List<ExecutedPolicy> policies = null;
+			if (useParams) {
+				policies = CommandUtils.listExecutedPolicies(txtLabel.getText(), convertDate(dtCreateDateRangeStart),
+						convertDate(dtCreateDateRangeEnd), null);
+			} else {
+				policies = CommandUtils.listExecutedPolicies(null, null, null, null);
+			}
 			if (policies != null) {
 				tableViewer.setInput(policies);
 				tableViewer.refresh();
@@ -315,6 +323,23 @@ public class ExecutedPolicyEditor extends EditorPart {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
+	}
+
+	/**
+	 * Convert DateTime instance to java.util.Date instance
+	 * 
+	 * @param dtActivationDate2
+	 * @return
+	 */
+	private Date convertDate(DateTime dateTime) {
+		if (dateTime.getDay() != 0 || dateTime.getMonth() != 0 || dateTime.getYear() != 0) {
+			Calendar instance = Calendar.getInstance();
+			instance.set(Calendar.DAY_OF_MONTH, dateTime.getDay());
+			instance.set(Calendar.MONTH, dateTime.getMonth());
+			instance.set(Calendar.YEAR, dateTime.getYear());
+			return instance.getTime();
+		}
+		return null;
 	}
 
 	/**

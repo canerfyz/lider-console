@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -134,7 +136,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		btnSearch.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				populateTable();
+				populateTable(true);
 			}
 
 			@Override
@@ -192,7 +194,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		tableViewer.setContentProvider(new ArrayContentProvider());
 
 		// Populate table with tasks
-		populateTable();
+		populateTable(false);
 
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
@@ -326,11 +328,16 @@ public class ExecutedTaskEditor extends EditorPart {
 		return viewerColumn;
 	}
 
-	private void populateTable() {
-		// TODO add status and date params!
+	private void populateTable(boolean useParams) {
+		// TODO add status param!
 		try {
-			List<ExecutedTask> tasks = CommandUtils.listExecutedTasks(txtPluginName.getText(),
-					txtPluginVersion.getText(), null, null, null);
+			List<ExecutedTask> tasks = null;
+			if (useParams) {
+				tasks = CommandUtils.listExecutedTasks(txtPluginName.getText(), txtPluginVersion.getText(),
+						convertDate(dtCreateDateRangeStart), convertDate(dtCreateDateRangeEnd), null);
+			} else {
+				tasks = CommandUtils.listExecutedTasks(null, null, null, null, null);
+			}
 			if (tasks != null) {
 				tableViewer.setInput(tasks);
 				tableViewer.refresh();
@@ -339,6 +346,23 @@ public class ExecutedTaskEditor extends EditorPart {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
+	}
+
+	/**
+	 * Convert DateTime instance to java.util.Date instance
+	 * 
+	 * @param dtActivationDate2
+	 * @return
+	 */
+	private Date convertDate(DateTime dateTime) {
+		if (dateTime.getDay() != 0 || dateTime.getMonth() != 0 || dateTime.getYear() != 0) {
+			Calendar instance = Calendar.getInstance();
+			instance.set(Calendar.DAY_OF_MONTH, dateTime.getDay());
+			instance.set(Calendar.MONTH, dateTime.getMonth());
+			instance.set(Calendar.YEAR, dateTime.getYear());
+			return instance.getTime();
+		}
+		return null;
 	}
 
 	/**
