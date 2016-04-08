@@ -108,7 +108,7 @@ public class DefaultProfileEditor extends EditorPart {
 			public void widgetSelected(SelectionEvent e) {
 				ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
 				DefaultProfileDialog dialog = new DefaultProfileDialog(Display.getDefault().getActiveShell(), getSelf(),
-						editorInput.getProfileDialog());
+						editorInput);
 				dialog.create();
 				dialog.open();
 			}
@@ -133,7 +133,7 @@ public class DefaultProfileEditor extends EditorPart {
 				}
 				ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
 				DefaultProfileDialog dialog = new DefaultProfileDialog(composite.getShell(), getSelectedProfile(),
-						getSelf(), editorInput.getProfileDialog());
+						getSelf(), editorInput);
 				dialog.open();
 			}
 
@@ -225,7 +225,7 @@ public class DefaultProfileEditor extends EditorPart {
 			public void doubleClick(DoubleClickEvent event) {
 				ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
 				DefaultProfileDialog dialog = new DefaultProfileDialog(composite.getShell(), getSelectedProfile(),
-						getSelf(), editorInput.getProfileDialog());
+						getSelf(), editorInput);
 				dialog.open();
 			}
 		});
