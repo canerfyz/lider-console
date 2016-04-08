@@ -368,7 +368,7 @@ public class XMPPClient {
 					String from = message.getFrom();
 					String body = message.getBody();
 					logger.debug("Received message from: {}", from);
-					logger.debug("Received message body : {}", message.getBody());
+					logger.debug("Received message body: {}", message.getBody());
 
 					if (null != body && !body.isEmpty()) {
 						postTaskStatus(body);

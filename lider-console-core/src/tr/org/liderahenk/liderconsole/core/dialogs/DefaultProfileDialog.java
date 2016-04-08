@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.liderconsole.core.editorinput.ProfileEditorInput;
 import tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
@@ -33,27 +34,29 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 
 	private Profile selectedProfile;
 	private DefaultProfileEditor editor;
-	private IProfileDialog dialog;
+	private ProfileEditorInput editorInput;
 
 	private Text txtLabel;
 	private Text txtDesc;
 	private Button btnActive;
 	private Button btnOverridable;
+	
+	// TODO IMPROVEMENT do not pass editor instance! find another way to refresh editor table
 
 	public DefaultProfileDialog(Shell parentShell, Profile selectedProfile, DefaultProfileEditor editor,
-			IProfileDialog dialog) {
+			ProfileEditorInput editorInput) {
 		super(parentShell);
 		this.selectedProfile = selectedProfile;
 		this.editor = editor;
-		this.dialog = dialog;
-		dialog.init();
+		this.editorInput = editorInput;
+		editorInput.getProfileDialog().init();
 	}
 
-	public DefaultProfileDialog(Shell parentShell, DefaultProfileEditor editor, IProfileDialog dialog) {
+	public DefaultProfileDialog(Shell parentShell, DefaultProfileEditor editor, ProfileEditorInput editorInput) {
 		super(parentShell);
 		this.editor = editor;
-		this.dialog = dialog;
-		dialog.init();
+		this.editorInput = editorInput;
+		editorInput.getProfileDialog().init();
 	}
 
 	/**
@@ -106,7 +109,7 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 		childComposite.setLayout(new GridLayout(1, false));
 
 		// Trigger plugin provided implementation
-		dialog.createDialogArea(childComposite, selectedProfile);
+		editorInput.getProfileDialog().createDialogArea(childComposite, selectedProfile);
 
 		applyDialogFont(composite);
 		return composite;
@@ -128,6 +131,8 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 
 		// Populate profile instance
 		ProfileRequest profile = new ProfileRequest();
+		profile.setPluginName(editorInput.getPluginName());
+		profile.setPluginVersion(editorInput.getPluginVersion());
 		if (selectedProfile != null && selectedProfile.getId() != null) {
 			profile.setId(selectedProfile.getId());
 		}
@@ -138,7 +143,7 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 		logger.debug("Profile request: {}", profile);
 
 		try {
-			profile.setProfileData(dialog.getProfileData());
+			profile.setProfileData(editorInput.getProfileDialog().getProfileData());
 			if (selectedProfile != null && selectedProfile.getId() != null) {
 				ProfileUtils.update(profile);
 			} else {
