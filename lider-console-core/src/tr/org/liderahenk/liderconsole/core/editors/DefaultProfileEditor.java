@@ -55,6 +55,7 @@ public class DefaultProfileEditor extends EditorPart {
 	private Button btnAddProfile;
 	private Button btnEditProfile;
 	private Button btnDeleteProfile;
+	private Button btnRefreshProfile;
 
 	private Profile selectedProfile;
 
@@ -85,11 +86,10 @@ public class DefaultProfileEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		Composite composite = new Composite(parent, GridData.FILL);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		composite.setLayout(new GridLayout(3, false));
-		createButtonsArea(composite);
-		createTableArea(composite);
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		parent.setLayout(new GridLayout(1, false));
+		createButtonsArea(parent);
+		createTableArea(parent);
 	}
 
 	/**
@@ -97,7 +97,12 @@ public class DefaultProfileEditor extends EditorPart {
 	 * 
 	 * @param composite
 	 */
-	private void createButtonsArea(final Composite composite) {
+	private void createButtonsArea(final Composite parent) {
+
+		final Composite composite = new Composite(parent, GridData.FILL);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		composite.setLayout(new GridLayout(4, false));
+
 		btnAddProfile = new Button(composite, SWT.NONE);
 		btnAddProfile.setText(Messages.getString("ADD"));
 		btnAddProfile.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -157,10 +162,27 @@ public class DefaultProfileEditor extends EditorPart {
 				}
 				try {
 					ProfileUtils.delete(getSelectedProfile().getId());
+					refresh();
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
 					Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
 				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		btnRefreshProfile = new Button(composite, SWT.NONE);
+		btnRefreshProfile.setText(Messages.getString("REFRESH"));
+		btnRefreshProfile.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
+		btnRefreshProfile.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnRefreshProfile.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				refresh();
 			}
 
 			@Override
@@ -172,15 +194,15 @@ public class DefaultProfileEditor extends EditorPart {
 	/**
 	 * Create main widget of the editor - table viewer.
 	 * 
-	 * @param composite
+	 * @param parent
 	 */
-	private void createTableArea(final Composite composite) {
+	private void createTableArea(final Composite parent) {
 
 		GridData dataSearchGrid = new GridData();
 		dataSearchGrid.grabExcessHorizontalSpace = true;
 		dataSearchGrid.horizontalAlignment = GridData.FILL;
 
-		tableViewer = new TableViewer(composite,
+		tableViewer = new TableViewer(parent,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 
 		// Create table columns
@@ -224,7 +246,7 @@ public class DefaultProfileEditor extends EditorPart {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
-				DefaultProfileDialog dialog = new DefaultProfileDialog(composite.getShell(), getSelectedProfile(),
+				DefaultProfileDialog dialog = new DefaultProfileDialog(parent.getShell(), getSelectedProfile(),
 						getSelf(), editorInput);
 				dialog.open();
 			}

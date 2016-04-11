@@ -35,7 +35,6 @@ import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyUtils;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -52,6 +51,7 @@ public class PolicyDefinitionEditor extends EditorPart {
 	private Button btnAddPolicy;
 	private Button btnEditPolicy;
 	private Button btnDeletePolicy;
+	private Button btnRefreshPolicy;
 
 	private Policy selectedPolicy;
 
@@ -82,11 +82,10 @@ public class PolicyDefinitionEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		Composite composite = new Composite(parent, GridData.FILL);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		composite.setLayout(new GridLayout(3, false));
-		createButtonsArea(composite);
-		createTableArea(composite);
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		parent.setLayout(new GridLayout(1, false));
+		createButtonsArea(parent);
+		createTableArea(parent);
 	}
 
 	/**
@@ -94,7 +93,12 @@ public class PolicyDefinitionEditor extends EditorPart {
 	 * 
 	 * @param composite
 	 */
-	private void createButtonsArea(final Composite composite) {
+	private void createButtonsArea(final Composite parent) {
+
+		final Composite composite = new Composite(parent, GridData.FILL);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		composite.setLayout(new GridLayout(4, false));
+
 		btnAddPolicy = new Button(composite, SWT.NONE);
 		btnAddPolicy.setText(Messages.getString("ADD"));
 		btnAddPolicy.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -151,11 +155,28 @@ public class PolicyDefinitionEditor extends EditorPart {
 					return;
 				}
 				try {
-					ProfileUtils.delete(getSelectedPolicy().getId());
+					PolicyUtils.delete(getSelectedPolicy().getId());
+					refresh();
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
 					Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
 				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		btnRefreshPolicy = new Button(composite, SWT.NONE);
+		btnRefreshPolicy.setText(Messages.getString("REFRESH"));
+		btnRefreshPolicy.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
+		btnRefreshPolicy.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnRefreshPolicy.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				refresh();
 			}
 
 			@Override
@@ -167,15 +188,15 @@ public class PolicyDefinitionEditor extends EditorPart {
 	/**
 	 * Create main widget of the editor - table viewer.
 	 * 
-	 * @param composite
+	 * @param parent
 	 */
-	private void createTableArea(final Composite composite) {
+	private void createTableArea(final Composite parent) {
 
 		GridData dataSearchGrid = new GridData();
 		dataSearchGrid.grabExcessHorizontalSpace = true;
 		dataSearchGrid.horizontalAlignment = GridData.FILL;
 
-		tableViewer = new TableViewer(composite,
+		tableViewer = new TableViewer(parent,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 
 		// Create table columns
@@ -189,7 +210,7 @@ public class PolicyDefinitionEditor extends EditorPart {
 		table.getVerticalBar().setVisible(true);
 		tableViewer.setContentProvider(new ArrayContentProvider());
 
-		// Populate table with profiles
+		// Populate table with policies
 		populateTable();
 
 		GridData gridData = new GridData();
@@ -218,7 +239,7 @@ public class PolicyDefinitionEditor extends EditorPart {
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				PolicyDefinitionDialog dialog = new PolicyDefinitionDialog(composite.getShell(), getSelectedPolicy(),
+				PolicyDefinitionDialog dialog = new PolicyDefinitionDialog(parent.getShell(), getSelectedPolicy(),
 						getSelf());
 				dialog.open();
 			}
@@ -313,7 +334,7 @@ public class PolicyDefinitionEditor extends EditorPart {
 
 	/**
 	 * Search policy by plugin name and version, then populate specified table
-	 * with profile records.
+	 * with policy records.
 	 * 
 	 */
 	private void populateTable() {
