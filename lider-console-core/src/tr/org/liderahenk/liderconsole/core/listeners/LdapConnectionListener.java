@@ -81,14 +81,7 @@ public class LdapConnectionListener implements IConnectionListener {
 	@Override
 	public void connectionClosed(Connection conn, StudioProgressMonitor mon) {
 
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-
-		if (windows != null && windows.length > 0) {
-			IWorkbenchWindow window = windows[0];
-			IWorkbenchPage activePage = window.getActivePage();
-			activePage.closeAllEditors(false);
-		}
+		closeAllEditors();
 
 		XMPPClient.getInstance().disconnect();
 
@@ -105,6 +98,28 @@ public class LdapConnectionListener implements IConnectionListener {
 			monitor = null;
 		}
 
+	}
+
+	/**
+	 * Close all opened editors in a safe manner.
+	 */
+	private void closeAllEditors() {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					IWorkbench workbench = PlatformUI.getWorkbench();
+					IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+					if (windows != null && windows.length > 0) {
+						IWorkbenchWindow window = windows[0];
+						IWorkbenchPage activePage = window.getActivePage();
+						activePage.closeAllEditors(false);
+					}
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		});
 	}
 
 	@Override
