@@ -2,6 +2,7 @@ package tr.org.liderahenk.liderconsole.core.dialogs;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +51,12 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 	public DefaultTaskDialog(Shell parentShell, Set<String> dnSet) {
 		super(parentShell);
 		this.dnSet = dnSet;
+	}
+
+	public DefaultTaskDialog(Shell parentShell, String dn) {
+		super(parentShell);
+		this.dnSet = new HashSet<String>();
+		dnSet.add(dn);
 	}
 
 	/**
@@ -160,8 +167,8 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 					// TODO confirm box
 					try {
 						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), RestDNType.AHENK,
-								getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(), dialog.getCronExpression(),
-								new Date());
+								getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(),
+								dialog.getCronExpression(), new Date());
 						TaskUtils.execute(task);
 					} catch (Exception e1) {
 						logger.error(e1.getMessage(), e1);
