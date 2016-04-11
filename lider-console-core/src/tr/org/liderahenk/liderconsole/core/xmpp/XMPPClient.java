@@ -359,12 +359,11 @@ public class XMPPClient {
 			chat.addMessageListener(new ChatMessageListener() {
 				@Override
 				public void processMessage(Chat chat, Message message) {
-					// All messages from agents are type normal
+					// All messages from Lider are type normal
 					if (!Message.Type.normal.equals(message.getType())) {
-						logger.debug("Not a chat message type, will not notify subscribers:  {}", message.getBody());
+						logger.warn("Not a normal message type, will not notify subscribers:  {}", message.getBody());
 						return;
 					}
-
 					String from = message.getFrom();
 					String body = message.getBody();
 					logger.debug("Received message from: {}", from);
