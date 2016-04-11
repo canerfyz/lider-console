@@ -157,8 +157,16 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 					if (dialog.open() != Window.OK) {
 						return;
 					}
-					// TODO confirm
-					// TODO send
+					// TODO confirm box
+					try {
+						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), RestDNType.AHENK,
+								getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(), dialog.getCronExpression(),
+								new Date());
+						TaskUtils.execute(task);
+					} catch (Exception e1) {
+						logger.error(e1.getMessage(), e1);
+						Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+					}
 				}
 			}
 

@@ -377,4 +377,8 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 		super.okPressed();
 	}
 
+	public String getCronExpression() {
+		return crontabExpr.getCrontabStr();
+	}
+
 }
