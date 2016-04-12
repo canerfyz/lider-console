@@ -60,7 +60,7 @@ public class ResponseDataDialog extends DefaultLiderTitleAreaDialog {
 		ContentType contentType = result.getContentType();
 
 		if (responseData == null || responseData.length == 0) {
-			Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
+			Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
 			txtParams.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			txtParams.setText(Messages.getString("RESPONSE_DATA_EMPTY"));
 		}
@@ -70,7 +70,7 @@ public class ResponseDataDialog extends DefaultLiderTitleAreaDialog {
 				String msg = mapper.defaultPrettyPrintingWriter().writeValueAsString(mapper.readValue(responseData, 0,
 						responseData.length, new TypeReference<HashMap<String, Object>>() {
 						}));
-				Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
+				Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
 				txtParams.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				txtParams.setText(msg);
 			} catch (JsonGenerationException e) {
@@ -83,7 +83,7 @@ public class ResponseDataDialog extends DefaultLiderTitleAreaDialog {
 				e.printStackTrace();
 			}
 		} else if (ContentType.TEXT_PLAIN == contentType || ContentType.TEXT_HTML == contentType) {
-			Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
+			Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
 			txtParams.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			txtParams.setText(new String(responseData));
 		} else if (ContentType.IMAGE_JPEG == contentType || ContentType.IMAGE_PNG == contentType) {
