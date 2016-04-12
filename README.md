@@ -1,74 +1,56 @@
 # lider-console
 
-lider-console is the GUI for Lider Ahenk project built as an Eclipse application. It also contains core functionalities (such as REST client, LDAP client), and provides an API for other plug-ins.
+**Lider Ahenk** is an open source project which provides solutions to manage, monitor and audit unlimited number of different systems and users on a network.
 
-## Prerequisites
+lider-console is the administration console of Lider Ahenk project built as an Eclipse RCP application. It also contains core functionalities (such as REST client, LDAP client), and provides an API for other plug-ins.
 
-### JDK7
+## Documentation
 
-- Download and install [JDK7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
+* See how to [setup development environment](https://github.com/Pardus-Kurumsal/lider-console/wiki/01.-Setup-Development-Environment)
+* Learn how to [build & run](https://github.com/Pardus-Kurumsal/lider-console/wiki/02.-Building-&-Running) Lider Console.
+* Export [Lider Console](https://github.com/Pardus-Kurumsal/lider-console/wiki/03.-Exporting-Lider-Console) as custom RCP application.
 
-### Git
+## Contribution
 
-- Documentation about installing and configuring git can be found [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [here](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup)
-- Git [home](http://git-scm.com/) (download, docs)
+We encourage contributions to the project. To contribute:
 
-### Maven 3
+* Fork the project and create a new bug or feature branch.
+* Make your commits with clean, understandable comments
+* Perform a pull request
 
-- Get [Maven 3](http://maven.apache.org/install.html) (Specifically, at least **version 3.1.1** is needed to use static code analyzers and maven-tycho plugin!).
-- Maven [home](https://maven.apache.org/) (download, docs)
+## Other Lider Ahenk Projects
 
-## Project Directory Layout
+* [Lider](https://github.com/Pardus-Kurumsal/lider): Business layer running on Karaf container.
+* [Ahenk](https://github.com/Pardus-Kurumsal/ahenk): Agent service running on remote machines.
+* [Lider Ahenk Installer](https://github.com/Pardus-Kurumsal/lider-ahenk-installer): Installation wizard for Ahenk and Lider (and also its LDAP, database, XMPP servers).
+* [Lider Ahenk Archetype](https://github.com/Pardus-Kurumsal/lider-ahenk-archetype): Maven archetype for easy plugin development.
 
-    lider-console/
-      lider-console-core/           --> core functionalities and API for other plug-ins
-      lider-console-dependencies/   --> (non-OSGI) third party dependencies
-      lider-console-products/       --> product file which is used for automated export
-      lider-console-rcp/            --> base RCP application
-      lider-console-core-tests/     --> test cases for core plugin
-      lider-console-task/           --> task plugin which is responsible for sending tasks and displaying results
-      scripts/                      --> helper scripts (such as automated product export)
-      findbugs/                     --> configuration files for findbugs plugin
-      checkstyle/                   --> configuration files for checkstyle plugin
+## Changelog
 
-## Exporting Lider Console Product
+See [changelog](https://github.com/Pardus-Kurumsal/lider/wiki/Changelog) to learn what we have been up to.
 
-lider-console depends on [Tycho](https://eclipse.org/tycho/) to export its products for multiple operating systems. However in OSGI environment (and naturally for Tycho) in order to use a dependency, the dependency must be an OSGI bundle and it must reside in a P2 update site.
+## Roadmap
 
-While, fortunately, many dependencies can be found as OSGI bundles in [Orbit](http://www.eclipse.org/orbit/) repositories, some of them has to be converted to OSGI bundles. To overcome this problem, we use [p2-maven-plugin](https://github.com/reficio/p2-maven-plugin/) to convert third party (non-OSGI) jar files to OSGI bundles and create a P2 update site.
+#### Today
 
-#### Manual Export
+* 30+ plugins
+* Linux agent service written in Python
+* Administration console built as Eclipse RCP
+* Open sourced, easy to access and setup, stable Lider Ahenk v1.0.0
 
-1. Change directory to *lider-console-dependencies/* and run `mvn clean p2:site` to (re)generate third party dependencies. This step will convert **non-OSGI** third party jar files to OSGI bundles.
-2. After dependency generation, run `mvn jetty:run` to start jetty server. This will allow Tycho to consume dependencies from the server (localhost) since Tycho can't use local repositories yet.
-3. Head back to project directory and run `mvn clean verify` to export Lider Console product.
+#### 2016
 
-> **Tip:** It is not recommended to use the `mvn clean install` command, instead you should use `mvn clean verify`. If you would use the install option, the build result would be installed in your local Maven repository and this can lead to build problems.
+* Scalable infrastructure suitable for million+ users & systems
+* 10+ new plugins (such as file distribution via torrent, remote installation)
+* New reporting module & dashboard
 
-#### Easy Export
+#### 2017
 
-1. Instead of manually exporting, just run `export-lider-console.sh` under the *scripts/* directory. You should sure port 8080 is unused.
+* Agents for Windows and mobile platforms
+* Platform-independent administration console
+* Inventory scan & management
+* Printer management
 
-## How to Setup Development Environment
+## License
 
-1. Install [Eclipse](https://eclipse.org/downloads/) version >=4.4 (Luna or Mars).
-2. [Orbit](http://www.eclipse.org/orbit/) repository is needed to handle OSGI dependencies.
-  1. First, we need to find the correct Orbit repository belonging to installed Eclipse version from [Orbit downloads site](http://download.eclipse.org/tools/orbit/downloads/).
-  2. Then we need to add this URL to Eclipse via 'Help --> Install New Software --> Add'.
-  3. Finally, required bundles can be installed. (At the moment, only *gson* and *apache httpcomponents* are required but you can always install all bundles just in case.)
-  4. Restart Eclipse after successfull installation.
-3. Clone lider-console project by running `git clone https://github.com/Pardus-Kurumsal/lider-console.git`.
-4. Change directory to *lider-console-dependencies/* and run `mvn clean p2:site` to generate third party dependencies. This command will generate OSGI bundles under *lider-console-dependencies/target/repository/* directory.
-5. Import the project into Eclipse as 'Existing Maven Projects'.
-6. Go to 'Help --> Install New Software --> Add', enter http://directory.apache.org/studio/update as location and select Apache Directory Studio in the list, then install selected bundles.
-7. Again, go to 'Help --> Install New Software --> Add' and add generated third party dependencies (Step 4) by adding *lider-console-dependencies/target/repository/* directory as local repository, finally select and install all bundles.
-8. Restart Eclipse and run the application as Eclipse RCP Application.
-
-> **Warning:** When the project is run for the first time, Eclipse might throw an exception. If this error occurs, go to 'Run --> Debug Configurations...' and on the 'Plugins' tab click 'Add Required Libraries' to allow Eclipse to use all required bundles.
-
-## Static Analyzers
-
-We also use checkstyle and findbugs plugins to do static analyzing on the changes. Run the following commands to analyze your code to check if it is compatible.
-
-`mvn clean compile -P findbugs`
-`mvn clean validate -P checkstyle`
+Lider Ahenk and its sub projects are licensed under the [LGPL v3](https://github.com/Pardus-Kurumsal/lider-console/blob/master/LICENSE).
