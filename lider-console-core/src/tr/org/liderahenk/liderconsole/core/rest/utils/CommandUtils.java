@@ -187,7 +187,7 @@ public class CommandUtils {
 		List<Command> commands = null;
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
-				&& response.getResultMap().get("command") != null) {
+				&& response.getResultMap().get("commands") != null) {
 			commands = new ObjectMapper().readValue(response.getResultMap().get("commands").toString(),
 					new TypeReference<List<Command>>() {
 					});

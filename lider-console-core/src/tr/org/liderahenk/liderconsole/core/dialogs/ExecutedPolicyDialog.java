@@ -172,7 +172,7 @@ public class ExecutedPolicyDialog extends DefaultLiderDialog {
 	 * @param commands
 	 * @return
 	 */
-	private CommandExecution getCommandExecutions(List<Command> commands) {
+	private List<CommandExecution> getCommandExecutions(List<Command> commands) {
 		if (commands != null) {
 			List<CommandExecution> executions = new ArrayList<CommandExecution>();
 			for (Command cmd : commands) {
@@ -180,6 +180,7 @@ public class ExecutedPolicyDialog extends DefaultLiderDialog {
 					executions.addAll(cmd.getCommandExecutions());
 				}
 			}
+			return executions;
 		}
 		return null;
 	}
