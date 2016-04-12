@@ -182,7 +182,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 			}
 		});
 		// Close
-		createButton(parent, IDialogConstants.CLOSE_ID, Messages.getString("CLOSE"), true);
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("CANCEL"), true);
 	}
 
 	/**
