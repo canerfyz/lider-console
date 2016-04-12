@@ -198,8 +198,8 @@ public class ExecutedPolicyEditor extends EditorPart {
 				// Query task details and populate dialog with it.
 				try {
 					ExecutedPolicy policy = getSelectedPolicy();
-					Command command = CommandUtils.getPolicyCommand(policy.getId());
-					ExecutedPolicyDialog dialog = new ExecutedPolicyDialog(composite.getShell(), policy, command);
+					List<Command> commands = CommandUtils.getPolicyCommands(policy.getId());
+					ExecutedPolicyDialog dialog = new ExecutedPolicyDialog(composite.getShell(), policy, commands);
 					dialog.open();
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);

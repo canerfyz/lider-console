@@ -1,5 +1,8 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -37,17 +40,17 @@ public class ExecutedPolicyDialog extends DefaultLiderDialog {
 
 	// Model
 	private ExecutedPolicy policy;
-	private Command command;
+	private List<Command> commands;
 
 	// Widgets
 	private TableViewer tvCmdExec;
 	private TableViewer tvExecResult;
 	private Label lblResult;
 
-	public ExecutedPolicyDialog(Shell parentShell, ExecutedPolicy policy, Command command) {
+	public ExecutedPolicyDialog(Shell parentShell, ExecutedPolicy policy, List<Command> commands) {
 		super(parentShell);
 		this.policy = policy;
-		this.command = command;
+		this.commands = commands;
 	}
 
 	/**
@@ -127,7 +130,7 @@ public class ExecutedPolicyDialog extends DefaultLiderDialog {
 		tvCmdExec.setContentProvider(new ArrayContentProvider());
 
 		// Populate table with command executions
-		tvCmdExec.setInput(command.getCommandExecutions());
+		tvCmdExec.setInput(getCommandExecutions(commands));
 
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
@@ -161,6 +164,24 @@ public class ExecutedPolicyDialog extends DefaultLiderDialog {
 			}
 		});
 
+	}
+
+	/**
+	 * Aggregate all command executions in a collection
+	 * 
+	 * @param commands
+	 * @return
+	 */
+	private CommandExecution getCommandExecutions(List<Command> commands) {
+		if (commands != null) {
+			List<CommandExecution> executions = new ArrayList<CommandExecution>();
+			for (Command cmd : commands) {
+				if (cmd.getCommandExecutions() != null) {
+					executions.addAll(cmd.getCommandExecutions());
+				}
+			}
+		}
+		return null;
 	}
 
 	/**

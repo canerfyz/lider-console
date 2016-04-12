@@ -173,7 +173,7 @@ public class CommandUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Command getPolicyCommand(Long policyId) throws Exception {
+	public static List<Command> getPolicyCommands(Long policyId) throws Exception {
 		if (policyId == null) {
 			throw new IllegalArgumentException("ID was null.");
 		}
@@ -184,17 +184,19 @@ public class CommandUtils {
 		logger.debug("Sending request to URL: {}", url.toString());
 
 		IResponse response = RestClient.get(url.toString());
-		Command command = null;
+		List<Command> commands = null;
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("command") != null) {
-			command = new ObjectMapper().readValue(response.getResultMap().get("command").toString(), Command.class);
+			commands = new ObjectMapper().readValue(response.getResultMap().get("commands").toString(),
+					new TypeReference<List<Command>>() {
+					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
 
-		return command;
+		return commands;
 	}
 
 	/**
