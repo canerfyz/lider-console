@@ -2,6 +2,8 @@ package tr.org.liderahenk.liderconsole.core.dialogs;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -221,6 +223,17 @@ public class ExecutedPolicyDialog extends DefaultLiderDialog {
 		// Initially hide table, it will be visible on execution record
 		// selection
 		tvExecResult.getTable().setVisible(false);
+		// On double click, display response data
+		tvExecResult.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				CommandExecutionResult result = (CommandExecutionResult) selection.getFirstElement();
+				ResponseDataDialog dialog = new ResponseDataDialog(composite.getShell(), result);
+				dialog.create();
+				dialog.open();
+			}
+		});
 	}
 
 	public void refreshResultTable(CommandExecution ce) {
