@@ -41,7 +41,6 @@ Export-Package: tr.org.liderahenk.liderconsole.core.config,
  tr.org.liderahenk.liderconsole.core.rest.utils,
  tr.org.liderahenk.liderconsole.core.utils,
  tr.org.liderahenk.liderconsole.core.widgets,
- tr.org.liderahenk.liderconsole.core.widgets.notifier,
  tr.org.liderahenk.liderconsole.core.xmpp
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Agem Bilişim
