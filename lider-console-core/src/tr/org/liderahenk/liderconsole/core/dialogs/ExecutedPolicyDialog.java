@@ -100,7 +100,6 @@ public class ExecutedPolicyDialog extends DefaultLiderDialog {
 
 		createTableCmdExec(parent);
 
-		applyDialogFont(composite);
 		return composite;
 	}
 
