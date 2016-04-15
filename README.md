@@ -9,7 +9,7 @@ lider-console is the administration console of Lider Ahenk project built as an E
 * See [Lider Console](https://github.com/Pardus-Kurumsal/lider-console/wiki) wiki to get started!
 * See how to [setup development environment](https://github.com/Pardus-Kurumsal/lider-console/wiki/01.-Setup-Development-Environment)
 * Learn how to [build & run](https://github.com/Pardus-Kurumsal/lider-console/wiki/02.-Building-&-Running) Lider Console.
-* Export [Lider Console](https://github.com/Pardus-Kurumsal/lider-console/wiki/03.-Exporting-Lider-Console) as custom RCP application.
+* [Export Lider Console](https://github.com/Pardus-Kurumsal/lider-console/wiki/03.-Exporting-Lider-Console) as custom RCP application.
 
 ## Contribution
 
