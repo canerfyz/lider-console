@@ -245,6 +245,11 @@
 		    name="%editor.profile.definition">
 	    </editor>
 	    <editor
+		    class="tr.org.liderahenk.liderconsole.core.editors.PluginEditor"
+		    id="tr.org.liderahenk.liderconsole.core.editors.PluginEditor"
+		    name="%editor.plugin">
+	    </editor>
+	    <editor
 		    class="tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor"
 		    icon="icons/16/folder-open.png"
 		    id="tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor"
