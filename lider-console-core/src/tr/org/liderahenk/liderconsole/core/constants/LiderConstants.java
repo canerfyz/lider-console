@@ -20,12 +20,13 @@ public class LiderConstants {
 	public static final class VIEWS {
 		public static final String BROWSER_VIEW = "org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView";
 	}
-	
+
 	public static final class EDITORS {
 		public static final String LDAP_SEARCH_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.LdapSearchEditor";
 		public static final String EXECUTED_TASK_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ExecutedTaskEditor";
 		public static final String EXECUTED_POLICY_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ExecutedPolicyEditor";
 		public static final String PROFILE_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor";
+		public static final String PLUGIN_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.PluginEditor";
 		public static final String POLICY_DEFINITION_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor";
 	}
 
@@ -52,6 +53,7 @@ public class LiderConstants {
 		public static final String REST_CONNECT_TIMEOUT = "rest.connect.timeout";
 		public static final String REST_CONN_REQUEST_TIMEOUT = "rest.connection.request.timeout";
 		public static final String REST_PROFILE_BASE_URL = "rest.profile.base.url";
+		public static final String REST_PLUGIN_BASE_URL = "rest.plugin.base.url";
 		public static final String REST_POLICY_BASE_URL = "rest.policy.base.url";
 		public static final String REST_TASK_BASE_URL = "rest.task.base.url";
 		public static final String REST_COMMAND_BASE_URL = "rest.command.base.url";
