@@ -11,6 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -44,9 +45,14 @@ public class ResponseDataDialog extends DefaultLiderTitleAreaDialog {
 	public void create() {
 		super.create();
 		setTitle(Messages.getString("COMMAND_EXECUTION_RESULT"));
-		setMessage((result.getResponseMessage() != null ? result.getResponseMessage() + " " : "")
-				+ (result.getCreateDate() != null ? result.getCreateDate() + " " : "")
-				+ result.getResponseCode().getMessage(), IMessageProvider.INFORMATION);
+		setMessage(
+				(result.getResponseMessage() != null ? result.getResponseMessage()
+						+ " "
+						: "")
+						+ (result.getCreateDate() != null ? result.getCreateDate()
+								+ " "
+								: "") + result.getResponseCode().getMessage(),
+				IMessageProvider.INFORMATION);
 	}
 
 	@Override
@@ -60,18 +66,28 @@ public class ResponseDataDialog extends DefaultLiderTitleAreaDialog {
 		ContentType contentType = result.getContentType();
 
 		if (responseData == null || responseData.length == 0) {
-			Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
-			txtParams.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY
+					| SWT.MULTI | SWT.V_SCROLL);
+			txtParams
+					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			txtParams.setText(Messages.getString("RESPONSE_DATA_EMPTY"));
 		}
 		if (ContentType.APPLICATION_JSON == contentType) {
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-				String msg = mapper.defaultPrettyPrintingWriter().writeValueAsString(mapper.readValue(responseData, 0,
-						responseData.length, new TypeReference<HashMap<String, Object>>() {
-						}));
-				Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
-				txtParams.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+				String msg = mapper
+						.defaultPrettyPrintingWriter()
+						.writeValueAsString(
+								mapper.readValue(
+										responseData,
+										0,
+										responseData.length,
+										new TypeReference<HashMap<String, Object>>() {
+										}));
+				Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY
+						| SWT.MULTI | SWT.V_SCROLL);
+				txtParams.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+						true));
 				txtParams.setText(msg);
 			} catch (JsonGenerationException e) {
 				e.printStackTrace();
@@ -82,17 +98,43 @@ public class ResponseDataDialog extends DefaultLiderTitleAreaDialog {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} else if (ContentType.TEXT_PLAIN == contentType || ContentType.TEXT_HTML == contentType) {
-			Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
-			txtParams.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		} else if (ContentType.TEXT_PLAIN == contentType
+				|| ContentType.TEXT_HTML == contentType) {
+			Text txtParams = new Text(composite, SWT.BORDER | SWT.READ_ONLY
+					| SWT.MULTI | SWT.V_SCROLL);
+			txtParams
+					.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			txtParams.setText(new String(responseData));
-		} else if (ContentType.IMAGE_JPEG == contentType || ContentType.IMAGE_PNG == contentType) {
-			Label lblImage = new Label(composite.getShell(), SWT.BORDER);
+		} else if (ContentType.IMAGE_JPEG == contentType
+				|| ContentType.IMAGE_PNG == contentType) {
+			Label lblImage = new Label(composite, SWT.BORDER);
 			lblImage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			lblImage.setImage(new Image(Display.getDefault(), new ByteArrayInputStream(responseData)));
+			lblImage.setImage(createImage(responseData));
 		}
 		// TODO display file contents!
 		return composite;
+	}
+
+	/**
+	 * Create image from given response data, resize if necessary.
+	 * 
+	 * @param responseData
+	 * @return
+	 */
+	private Image createImage(byte[] responseData) {
+		int width = 300;
+		int height = 200;
+		Image image = new Image(Display.getDefault(), new ByteArrayInputStream(
+				responseData));
+		Image scaled = new Image(Display.getDefault(), width, height);
+		GC gc = new GC(scaled);
+		gc.setAntialias(SWT.ON);
+		gc.setInterpolation(SWT.HIGH);
+		gc.drawImage(image, 0, 0, image.getBounds().width,
+				image.getBounds().height, 0, 0, width, height);
+		gc.dispose();
+		image.dispose();
+		return scaled;
 	}
 
 }
