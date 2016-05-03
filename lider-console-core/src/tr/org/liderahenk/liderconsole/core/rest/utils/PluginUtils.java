@@ -37,10 +37,6 @@ public class PluginUtils {
 	 * @throws Exception
 	 */
 	public static List<Plugin> list(String name, String version) throws Exception {
-		if ((name == null || name.isEmpty()) && (version == null || version.isEmpty())) {
-			throw new IllegalArgumentException("Plugin name was null.");
-		}
-
 		// Build URL
 		StringBuilder url = getBaseUrl();
 		url.append("/list?name=").append(name).append("&version=").append(version);
