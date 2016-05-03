@@ -107,10 +107,6 @@ public class InstalledPluginsEditor extends EditorPart {
 	 */
 	private void createTableArea(final Composite composite) {
 
-		GridData dataSearchGrid = new GridData();
-		dataSearchGrid.grabExcessHorizontalSpace = true;
-		dataSearchGrid.horizontalAlignment = GridData.FILL;
-
 		tableViewer = new TableViewer(composite,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 
@@ -127,6 +123,15 @@ public class InstalledPluginsEditor extends EditorPart {
 
 		// Populate table with plugins
 		populateTable();
+		
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.horizontalSpan = 3;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.heightHint = 420;
+		gridData.horizontalAlignment = GridData.FILL;
+		tableViewer.getControl().setLayoutData(gridData);
 
 		tableFilter = new TableFilter();
 		tableViewer.addFilter(tableFilter);
@@ -143,7 +148,7 @@ public class InstalledPluginsEditor extends EditorPart {
 				Messages.getString("DESCRIPTION"), Messages.getString("CREATE_DATE"),
 				Messages.getString("MACHINE_ORIENTED_PLUGIN"), Messages.getString("USER_ORIENTED_PLUGIN"),
 				Messages.getString("POLICY_PLUGIN") };
-		int[] bounds = { 200, 150, 150, 150, 50, 50, 50 };
+		int[] bounds = { 200, 150, 100, 150, 100, 100, 100 };
 
 		TableViewerColumn pluginNameColumn = createTableViewerColumn(titles[0], bounds[0]);
 		pluginNameColumn.setLabelProvider(new ColumnLabelProvider() {
