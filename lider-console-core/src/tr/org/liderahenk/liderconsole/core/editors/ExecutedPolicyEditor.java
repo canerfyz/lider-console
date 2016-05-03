@@ -162,10 +162,6 @@ public class ExecutedPolicyEditor extends EditorPart {
 	 */
 	private void createTableArea(final Composite composite) {
 
-		GridData dataSearchGrid = new GridData();
-		dataSearchGrid.grabExcessHorizontalSpace = true;
-		dataSearchGrid.horizontalAlignment = GridData.FILL;
-
 		tableViewer = new TableViewer(composite,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 

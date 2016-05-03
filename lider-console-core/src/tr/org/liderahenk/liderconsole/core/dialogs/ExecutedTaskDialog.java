@@ -125,10 +125,6 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	 */
 	private void createTableCmdExec(final Composite composite) {
 
-		GridData dataSearchGrid = new GridData();
-		dataSearchGrid.grabExcessHorizontalSpace = true;
-		dataSearchGrid.horizontalAlignment = GridData.FILL;
-
 		tvCmdExec = new TableViewer(composite,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 
@@ -210,10 +206,6 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	 * @param composite
 	 */
 	protected void createTableExecResult(final Composite composite) {
-
-		GridData dataSearchGrid = new GridData();
-		dataSearchGrid.grabExcessHorizontalSpace = true;
-		dataSearchGrid.horizontalAlignment = GridData.FILL;
 
 		tvExecResult = new TableViewer(composite,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);

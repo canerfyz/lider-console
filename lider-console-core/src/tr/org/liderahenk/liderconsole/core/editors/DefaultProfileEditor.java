@@ -198,10 +198,6 @@ public class DefaultProfileEditor extends EditorPart {
 	 */
 	private void createTableArea(final Composite parent) {
 
-		GridData dataSearchGrid = new GridData();
-		dataSearchGrid.grabExcessHorizontalSpace = true;
-		dataSearchGrid.horizontalAlignment = GridData.FILL;
-
 		tableViewer = new TableViewer(parent,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 
