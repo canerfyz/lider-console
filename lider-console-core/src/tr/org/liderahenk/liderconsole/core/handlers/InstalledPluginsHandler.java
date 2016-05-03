@@ -18,7 +18,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class PluginHandler extends AbstractHandler {
+public class InstalledPluginsHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -26,7 +26,7 @@ public class PluginHandler extends AbstractHandler {
 		IWorkbenchPage page = window.getActivePage();
 		try {
 			page.openEditor(new DefaultEditorInput(Messages.getString("PLUGINS")),
-					LiderConstants.EDITORS.PLUGIN_EDITOR);
+					LiderConstants.EDITORS.INSTALLED_PLUGINS_EDITOR);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}

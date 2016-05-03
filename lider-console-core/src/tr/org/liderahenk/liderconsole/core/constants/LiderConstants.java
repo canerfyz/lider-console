@@ -26,7 +26,7 @@ public class LiderConstants {
 		public static final String EXECUTED_TASK_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ExecutedTaskEditor";
 		public static final String EXECUTED_POLICY_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ExecutedPolicyEditor";
 		public static final String PROFILE_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor";
-		public static final String PLUGIN_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.PluginEditor";
+		public static final String INSTALLED_PLUGINS_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.InstalledPluginsEditor";
 		public static final String POLICY_DEFINITION_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor";
 	}
 

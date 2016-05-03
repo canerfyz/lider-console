@@ -37,9 +37,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class PluginEditor extends EditorPart {
+public class InstalledPluginsEditor extends EditorPart {
 
-	private static final Logger logger = LoggerFactory.getLogger(PluginEditor.class);
+	private static final Logger logger = LoggerFactory.getLogger(InstalledPluginsEditor.class);
 
 	private Text txtSearch;
 	private TableViewer tableViewer;
