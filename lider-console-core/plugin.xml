@@ -39,6 +39,11 @@
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.commands.InstalledPlugins"            
+            name="%command.installed.plugins">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
             name="%command.policy.definition">
       </command>
@@ -70,6 +75,10 @@
       <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.LdapSearchHandler"
             commandId="tr.org.liderahenk.liderconsole.commands.LdapSearch">
+      </handler>
+      <handler
+            class="tr.org.liderahenk.liderconsole.core.handlers.InstalledPluginsHandler"
+            commandId="tr.org.liderahenk.liderconsole.commands.InstalledPlugins">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyDefinitionHandler"
@@ -166,6 +175,12 @@
 	          icon="icons/16/ldap.png"
 	          tooltip="%command.ldap.search">
         </command>
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.commands.InstalledPlugins"
+	          id="tr.org.liderahenk.liderconsole.commands.InstalledPlugins"
+	          icon="icons/16/server.png"
+	          tooltip="%command.installed.plugins">
+        </command>
 	  </menuContribution>
       <menuContribution
             locationURI="popup:org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView?after=additions">
@@ -245,9 +260,9 @@
 		    name="%editor.profile.definition">
 	    </editor>
 	    <editor
-		    class="tr.org.liderahenk.liderconsole.core.editors.PluginEditor"
-		    id="tr.org.liderahenk.liderconsole.core.editors.PluginEditor"
-		    name="%editor.plugin">
+		    class="tr.org.liderahenk.liderconsole.core.editors.InstalledPluginsEditor"
+		    id="tr.org.liderahenk.liderconsole.core.editors.InstalledPluginsEditor"
+		    name="%editor.installed.plugins">
 	    </editor>
 	    <editor
 		    class="tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor"
