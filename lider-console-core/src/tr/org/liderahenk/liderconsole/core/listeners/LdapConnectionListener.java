@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
+import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
@@ -126,6 +129,8 @@ public class LdapConnectionListener implements IConnectionListener {
 	public void connectionOpened(Connection conn, StudioProgressMonitor mon) {
 
 		monitor = new StudioProgressMonitor(mon);
+
+		openLdapSearchEditor();
 
 		Connection connWillBeClosed = LdapConnectionListener.conn;
 		LdapConnectionListener.conn = conn;
@@ -238,6 +243,27 @@ public class LdapConnectionListener implements IConnectionListener {
 			new StudioConnectionJob(new CloseConnectionsRunnable(connWillBeClosed)).execute();
 		}
 
+	}
+
+	private void openLdapSearchEditor() {
+		// Open LDAP Search by default editor on startup
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+		if (windows != null && windows.length > 0) {
+			IWorkbenchWindow window = windows[0];
+			final IWorkbenchPage activePage = window.getActivePage();
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						activePage.openEditor(new DefaultEditorInput(Messages.getString("LDAP_SEARCH")),
+								LiderConstants.EDITORS.LDAP_SEARCH_EDITOR);
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
 	}
 
 	public static Connection getConnection() {
