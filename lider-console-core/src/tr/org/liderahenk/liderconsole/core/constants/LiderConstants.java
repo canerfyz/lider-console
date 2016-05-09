@@ -28,6 +28,7 @@ public class LiderConstants {
 		public static final String PROFILE_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor";
 		public static final String INSTALLED_PLUGINS_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.InstalledPluginsEditor";
 		public static final String POLICY_DEFINITION_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor";
+		public static final String REPORT_TEMPLATE_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ReportTemplateEditor";
 	}
 
 	public static final class EXTENSION_POINTS {
@@ -55,6 +56,7 @@ public class LiderConstants {
 		public static final String REST_PROFILE_BASE_URL = "rest.profile.base.url";
 		public static final String REST_PLUGIN_BASE_URL = "rest.plugin.base.url";
 		public static final String REST_POLICY_BASE_URL = "rest.policy.base.url";
+		public static final String REST_REPORT_BASE_URL = "rest.report.base.url";
 		public static final String REST_TASK_BASE_URL = "rest.task.base.url";
 		public static final String REST_COMMAND_BASE_URL = "rest.command.base.url";
 		public static final String GUI_INITIAL_PERSPECTIVE_ID = "gui.initial.perspective.id";

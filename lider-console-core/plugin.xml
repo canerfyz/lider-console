@@ -49,6 +49,11 @@
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
+            name="%command.report.template">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.core.commands.PolicyExecutionSelect"
             name="%command.policy.execution.select">
       </command>
@@ -83,6 +88,10 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyDefinitionHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition">
+      </handler>
+	  <handler
+            class="tr.org.liderahenk.liderconsole.core.handlers.ReportTemplateHandler"
+            commandId="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.ExecutedTaskHandler"
@@ -156,6 +165,11 @@
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
 	          id="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
 	          tooltip="%command.policy.definition">
+        </command>
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
+	          id="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
+	          tooltip="%command.report.template">
         </command>
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
@@ -269,6 +283,12 @@
 		    icon="icons/16/folder-open.png"
 		    id="tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor"
 		    name="%editor.policy.definition">
+	    </editor> 
+	    <editor
+		    class="tr.org.liderahenk.liderconsole.core.editors.ReportTemplateEditor"
+		    icon="icons/16/report.png"
+		    id="tr.org.liderahenk.liderconsole.core.editors.ReportTemplateEditor"
+		    name="%editor.report.template">
 	    </editor> 
 	    <editor
 		    class="tr.org.liderahenk.liderconsole.core.editors.ExecutedTaskEditor"
