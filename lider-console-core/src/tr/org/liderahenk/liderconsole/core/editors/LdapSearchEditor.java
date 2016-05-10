@@ -426,7 +426,7 @@ public class LdapSearchEditor extends EditorPart {
 
 		Button btnRemoveGroup = new Button(parent, SWT.NONE);
 		btnRemoveGroup
-				.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/remove.png")));
+				.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/remove.png")));
 		btnRemoveGroup.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
