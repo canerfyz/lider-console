@@ -46,6 +46,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 
 	private ReportTemplate selectedTemplate;
 	private ReportTemplateParameter selectedParam;
+	private ReportTemplateColumn selectedColumn;
 	private ReportTemplateEditor editor;
 
 	private Text txtName;
@@ -58,6 +59,9 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	private Button btnAddParam;
 	private Button btnEditParam;
 	private Button btnDeleteParam;
+	private Button btnAddCol;
+	private Button btnEditCol;
+	private Button btnDeleteCol;
 
 	public ReportTemplateDialog(Shell parentShell, ReportTemplateEditor editor) {
 		super(parentShell);
@@ -180,7 +184,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		lblTemplateCols.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblTemplateCols.setText(Messages.getString("TEMPLATE_COLUMNS"));
 
-		// TODO table
+		createButtonsForCols(parent);
+		createTableForCols(parent);
 
 		applyDialogFont(parent);
 		return parent;
@@ -223,7 +228,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (null == getSelectedParam()) {
-					Notifier.warning(null, Messages.getString("PLEASE_SELECT_ITEM"));
+					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
 					return;
 				}
 				ReportTemplateParamDialog dialog = new ReportTemplateParamDialog(composite.getShell(),
@@ -245,13 +250,13 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (null == getSelectedParam()) {
-					Notifier.warning(null, Messages.getString("PLEASE_SELECT_ITEM"));
+					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
 					return;
 				}
 				@SuppressWarnings("unchecked")
-				List<ReportTemplateParameter> items = (List<ReportTemplateParameter>) tvParam.getInput();
-				items.remove(tvParam.getTable().getSelectionIndex());
-				tvParam.setInput(items);
+				List<ReportTemplateParameter> params = (List<ReportTemplateParameter>) tvParam.getInput();
+				params.remove(tvParam.getTable().getSelectionIndex());
+				tvParam.setInput(params);
 				tvParam.refresh();
 			}
 
@@ -355,6 +360,199 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		});
 	}
 
+	private void populateTableWithParams() {
+		if (selectedTemplate != null && selectedTemplate.getTemplateParams() != null
+				&& !selectedTemplate.getTemplateParams().isEmpty()) {
+			tvParam.setInput(selectedTemplate.getTemplateParams());
+			tvParam.refresh();
+		}
+	}
+
+	/**
+	 * Create add, edit, delete buttons for the template columns table
+	 * 
+	 * @param parent
+	 */
+	private void createButtonsForCols(Composite parent) {
+		final Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(3, false));
+
+		btnAddCol = new Button(composite, SWT.NONE);
+		btnAddCol.setText(Messages.getString("ADD"));
+		btnAddCol.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnAddCol.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/add.png"));
+		btnAddCol.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ReportTemplateColumnDialog dialog = new ReportTemplateColumnDialog(
+						Display.getDefault().getActiveShell(), tvCol);
+				dialog.create();
+				dialog.open();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		btnEditCol = new Button(composite, SWT.NONE);
+		btnEditCol.setText(Messages.getString("EDIT"));
+		btnEditCol.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/edit.png"));
+		btnEditCol.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnEditCol.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (null == getSelectedParam()) {
+					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
+					return;
+				}
+				ReportTemplateColumnDialog dialog = new ReportTemplateColumnDialog(composite.getShell(),
+						getSelectedColumn(), tvCol);
+				dialog.open();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		btnDeleteCol = new Button(composite, SWT.NONE);
+		btnDeleteCol.setText(Messages.getString("DELETE"));
+		btnDeleteCol.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/delete.png"));
+		btnDeleteCol.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnDeleteCol.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (null == getSelectedParam()) {
+					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
+					return;
+				}
+				@SuppressWarnings("unchecked")
+				List<ReportTemplateColumn> columns = (List<ReportTemplateColumn>) tvCol.getInput();
+				columns.remove(tvCol.getTable().getSelectionIndex());
+				tvCol.setInput(columns);
+				tvCol.refresh();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+	}
+
+	private void createTableForCols(final Composite parent) {
+		tvCol = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+
+		// Create table columns
+		createTableColumnsForCols();
+
+		// Configure table layout
+		final Table table = tvCol.getTable();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		table.getVerticalBar().setEnabled(true);
+		table.getVerticalBar().setVisible(true);
+		tvCol.setContentProvider(new ArrayContentProvider());
+
+		populateTableWithCols();
+
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.horizontalSpan = 3;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.heightHint = 140;
+		gridData.horizontalAlignment = GridData.FILL;
+		tvCol.getControl().setLayoutData(gridData);
+
+		// Hook up listeners
+		tvCol.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) tvCol.getSelection();
+				Object firstElement = selection.getFirstElement();
+				firstElement = (ReportTemplateColumn) firstElement;
+				if (firstElement instanceof ReportTemplateColumn) {
+					setSelectedColumn((ReportTemplateColumn) firstElement);
+				}
+				btnEditParam.setEnabled(true);
+				btnDeleteParam.setEnabled(true);
+			}
+		});
+		tvCol.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				ReportTemplateColumnDialog dialog = new ReportTemplateColumnDialog(parent.getShell(),
+						getSelectedColumn(), tvCol);
+				dialog.open();
+			}
+		});
+	}
+
+	private void createTableColumnsForCols() {
+
+		String[] titles = { Messages.getString("COLUMN_ORDER"), Messages.getString("COLUMN_NAME"),
+				Messages.getString("WIDTH"), Messages.getString("VISIBLE") };
+		int[] bounds = { 200, 200, 200, 50 };
+
+		TableViewerColumn orderColumn = createTableViewerColumn(tvCol, titles[0], bounds[0]);
+		orderColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ReportTemplateColumn) {
+					return ((ReportTemplateColumn) element).getColumnOrder().toString();
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn nameColumn = createTableViewerColumn(tvCol, titles[1], bounds[1]);
+		nameColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ReportTemplateColumn) {
+					return ((ReportTemplateColumn) element).getName();
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn widthColumn = createTableViewerColumn(tvCol, titles[2], bounds[2]);
+		widthColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ReportTemplateColumn) {
+					return ((ReportTemplateColumn) element).getWidth() != null
+							? ((ReportTemplateColumn) element).getWidth().toString() : "";
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn visibleColumn = createTableViewerColumn(tvCol, titles[3], bounds[3]);
+		visibleColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ReportTemplateColumn) {
+					return ((ReportTemplateColumn) element).isVisible() ? Messages.getString("YES")
+							: Messages.getString("NO");
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+	}
+
+	private void populateTableWithCols() {
+		if (selectedTemplate != null && selectedTemplate.getTemplateColumns() != null
+				&& !selectedTemplate.getTemplateColumns().isEmpty()) {
+			tvParam.setInput(selectedTemplate.getTemplateColumns());
+			tvParam.refresh();
+		}
+	}
+
 	/**
 	 * Create new table viewer column instance.
 	 * 
@@ -371,14 +569,6 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		column.setMoveable(false);
 		column.setAlignment(SWT.LEFT);
 		return viewerColumn;
-	}
-
-	private void populateTableWithParams() {
-		if (selectedTemplate != null && selectedTemplate.getTemplateParams() != null
-				&& !selectedTemplate.getTemplateParams().isEmpty()) {
-			tvParam.setInput(selectedTemplate.getTemplateParams());
-			tvParam.refresh();
-		}
 	}
 
 	/**
@@ -450,6 +640,14 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 
 	public void setSelectedParam(ReportTemplateParameter selectedParam) {
 		this.selectedParam = selectedParam;
+	}
+
+	public ReportTemplateColumn getSelectedColumn() {
+		return selectedColumn;
+	}
+
+	public void setSelectedColumn(ReportTemplateColumn selectedColumn) {
+		this.selectedColumn = selectedColumn;
 	}
 
 }

@@ -45,7 +45,7 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle(Messages.getString(""));
+		setTitle(Messages.getString("TEMPLATE_PARAMETER"));
 	}
 
 	@Override
@@ -55,6 +55,7 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(2, false));
 
+		// Key
 		Label lblKey = new Label(composite, SWT.NONE);
 		lblKey.setText(Messages.getString("PARAM_KEY"));
 
@@ -64,6 +65,7 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 			txtKey.setText(parameter.getKey());
 		}
 
+		// Label
 		Label lblLabel = new Label(composite, SWT.NONE);
 		lblLabel.setText(Messages.getString("PARAM_LABEL"));
 
@@ -73,6 +75,7 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 			txtLabel.setText(parameter.getLabel());
 		}
 
+		// Type
 		Label lblType = new Label(composite, SWT.NONE);
 		lblType.setText(Messages.getString("PARAM_TYPE"));
 
