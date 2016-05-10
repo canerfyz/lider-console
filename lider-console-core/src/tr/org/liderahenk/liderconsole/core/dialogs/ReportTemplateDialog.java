@@ -1,6 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -318,7 +319,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ReportTemplateParameter) {
-					return ((ReportTemplateParameter) element).getType().toString();
+					return Messages.getString(
+							((ReportTemplateParameter) element).getType().toString().toUpperCase(Locale.ENGLISH));
 				}
 				return Messages.getString("UNTITLED");
 			}

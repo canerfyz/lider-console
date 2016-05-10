@@ -1,5 +1,9 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -11,8 +15,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import tr.org.liderahenk.liderconsole.core.enums.ParameterType;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplateParameter;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 
@@ -70,9 +76,71 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 		Label lblType = new Label(composite, SWT.NONE);
 		lblType.setText(Messages.getString("PARAM_TYPE"));
 
-		// COMBO!!!
+		cmbType = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		ParameterType[] values = ParameterType.values();
+		for (int i = 0; i < values.length; i++) {
+			String i18n = Messages.getString(values[i].toString().toUpperCase(Locale.ENGLISH));
+			cmbType.add(i18n);
+			cmbType.setData(i18n, values[i]);
+			if (parameter != null && parameter.getType() != null && parameter.getType() == values[i]) {
+				cmbType.select(i);
+			}
+		}
 
 		return composite;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void okPressed() {
+
+		setReturnCode(OK);
+
+		if (txtKey.getText().isEmpty() || txtLabel.getText().isEmpty() || cmbType.getSelectionIndex() < 0) {
+			Notifier.error(null, Messages.getString("FILL_AT_LEAST_ONE_FIELD"));
+			return;
+		}
+
+		boolean editMode = true;
+		if (parameter == null) {
+			parameter = new ReportTemplateParameter();
+			editMode = false;
+		}
+		// Set values
+		parameter.setKey(txtKey.getText());
+		parameter.setLabel(txtLabel.getText());
+		parameter.setType(getSelectedType());
+
+		// Get previous parameters...
+		List<ReportTemplateParameter> params = (List<ReportTemplateParameter>) tableViewer.getInput();
+		if (params == null) {
+			params = new ArrayList<ReportTemplateParameter>();
+		}
+
+		if (editMode) {
+			int index = tableViewer.getTable().getSelectionIndex();
+			if (index > -1) {
+				// Override previous param!
+				params.set(index, parameter);
+			}
+		} else {
+			// New parameter!
+			params.add(parameter);
+		}
+
+		tableViewer.setInput(params);
+		tableViewer.refresh();
+
+		close();
+	}
+
+	private ParameterType getSelectedType() {
+		int selectionIndex = cmbType.getSelectionIndex();
+		if (selectionIndex > -1 && cmbType.getItem(selectionIndex) != null
+				&& cmbType.getData(cmbType.getItem(selectionIndex)) != null) {
+			return (ParameterType) cmbType.getData(cmbType.getItem(selectionIndex));
+		}
+		return null;
 	}
 
 }
