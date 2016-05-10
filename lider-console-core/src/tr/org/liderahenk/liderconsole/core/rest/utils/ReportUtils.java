@@ -28,6 +28,32 @@ public class ReportUtils {
 	private static final Logger logger = LoggerFactory.getLogger(ReportUtils.class);
 
 	/**
+	 * Send POST request to server in order to validate template.
+	 * 
+	 * @param template
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean validate(ReportTemplateRequest template) throws Exception {
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/validate");
+		logger.debug("Sending request: {} to URL: {}", new Object[] { template, url.toString() });
+
+		// Send POST request to server
+		IResponse response = RestClient.post(template, url.toString());
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK) {
+			Notifier.error(null, Messages.getString("RECORD_VALIDATED"));
+			return true;
+		}
+
+		Notifier.error(null, Messages.getString("ERROR_ON_VALIDATION"));
+		return false;
+	}
+
+	/**
 	 * Send POST request to server in order to save specified template.
 	 * 
 	 * @param template

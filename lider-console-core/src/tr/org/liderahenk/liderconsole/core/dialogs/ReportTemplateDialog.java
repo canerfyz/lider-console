@@ -115,6 +115,34 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			txtQuery.setText(selectedTemplate.getQuery());
 		}
 
+		// Validate
+		new Label(composite, SWT.NONE);
+		Button btnValidate = new Button(composite, SWT.PUSH);
+		btnValidate.setText(Messages.getString("VALIDATE_TEMPLATE"));
+		btnValidate.addSelectionListener(new SelectionListener() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!validateQuery()) {
+					return;
+				}
+				ReportTemplateRequest temp = new ReportTemplateRequest();
+				temp.setQuery(txtQuery.getText());
+				temp.setTemplateParams((List<ReportTemplateParameter>) tvParam.getInput());
+				logger.debug("Template request: {}", temp);
+				try {
+					ReportUtils.validate(temp);
+				} catch (Exception e1) {
+					logger.error(e1.getMessage(), e1);
+					Notifier.error(null, Messages.getString("ERROR_ON_VALIDATION"));
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
 		// Template Parameters
 		Label lblTemplateParams = new Label(parent, SWT.NONE);
 		lblTemplateParams.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
@@ -362,13 +390,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 
 		setReturnCode(OK);
 
-		// Check if name is empty
-		if (txtName.getText().isEmpty()) {
-			Notifier.warning(null, Messages.getString("FILL_REPORT_NAME_FIELD"));
-			return;
-		}
-		if (txtQuery.getText().isEmpty()) {
-			Notifier.warning(null, Messages.getString("FILL_REPORT_QUERY_FIELD"));
+		if (!validate()) {
 			return;
 		}
 
@@ -398,6 +420,28 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		}
 
 		close();
+	}
+
+	/**
+	 * 
+	 * @return true if report name and query fields are not empty, false
+	 *         otherwise.
+	 */
+	private boolean validate() {
+		if (txtName.getText().isEmpty()) {
+			Notifier.warning(null, Messages.getString("FILL_REPORT_NAME_FIELD"));
+			return false;
+		}
+		return validateQuery();
+	}
+
+	protected boolean validateQuery() {
+		if (txtQuery.getText().isEmpty()) {
+			Notifier.warning(null, Messages.getString("FILL_REPORT_QUERY_FIELD"));
+			return false;
+		}
+		// TODO check params!
+		return true;
 	}
 
 	public ReportTemplateParameter getSelectedParam() {
