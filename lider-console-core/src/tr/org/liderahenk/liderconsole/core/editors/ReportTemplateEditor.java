@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.dialogs.ReportGenerationDialog;
 import tr.org.liderahenk.liderconsole.core.dialogs.ReportTemplateDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
@@ -52,6 +53,7 @@ public class ReportTemplateEditor extends EditorPart {
 	private Button btnEditTemplate;
 	private Button btnDeleteTemplate;
 	private Button btnRefreshTemplate;
+	private Button btnGenerateReport;
 
 	private ReportTemplate selectedTemplate;
 
@@ -177,6 +179,27 @@ public class ReportTemplateEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				refresh();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		btnGenerateReport = new Button(composite, SWT.NONE);
+		btnGenerateReport.setText(Messages.getString("GENERATE_REPORT"));
+		btnGenerateReport.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/report.png"));
+		btnGenerateReport.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnGenerateReport.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (null == getSelectedTemplate()) {
+					Notifier.warning(null, Messages.getString("PLEASE_SELECT_POLICY"));
+					return;
+				}
+				ReportGenerationDialog dialog = new ReportGenerationDialog(composite.getShell(), getSelectedTemplate());
+				dialog.open();
 			}
 
 			@Override

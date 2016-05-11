@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -13,6 +14,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplate;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
+import tr.org.liderahenk.liderconsole.core.rest.requests.ReportGenerationRequest;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ReportTemplateRequest;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -26,6 +28,36 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 public class ReportUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReportUtils.class);
+
+	/**
+	 * Send POST request to server in order to generate report
+	 * 
+	 * @param report
+	 * @return
+	 */
+	public static List<LinkedHashMap<String, String>> generate(ReportGenerationRequest report) throws Exception {
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/generate");
+		logger.debug("Sending request: {} to URL: {}", new Object[] { report, url.toString() });
+
+		// Send POST request to server
+		IResponse response = RestClient.post(report, url.toString());
+		List<LinkedHashMap<String, String>> resultList = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("report") != null) {
+			resultList = new ObjectMapper().readValue(response.getResultMap().get("report").toString(),
+					new TypeReference<List<LinkedHashMap<String, String>>>() {
+					});
+			Notifier.success(null, Messages.getString("REPORT_GENERATED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+		}
+
+		return resultList;
+	}
 
 	/**
 	 * Send POST request to server in order to validate template.
