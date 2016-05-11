@@ -99,7 +99,7 @@ public class ReportTemplateEditor extends EditorPart {
 
 		final Composite composite = new Composite(parent, GridData.FILL);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		composite.setLayout(new GridLayout(4, false));
+		composite.setLayout(new GridLayout(5, false));
 
 		btnAddTemplate = new Button(composite, SWT.NONE);
 		btnAddTemplate.setText(Messages.getString("ADD"));
@@ -170,27 +170,12 @@ public class ReportTemplateEditor extends EditorPart {
 			}
 		});
 
-		btnRefreshTemplate = new Button(composite, SWT.NONE);
-		btnRefreshTemplate.setText(Messages.getString("REFRESH"));
-		btnRefreshTemplate.setImage(
-				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
-		btnRefreshTemplate.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		btnRefreshTemplate.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				refresh();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
 		btnGenerateReport = new Button(composite, SWT.NONE);
 		btnGenerateReport.setText(Messages.getString("GENERATE_REPORT"));
 		btnGenerateReport.setImage(
 				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/report.png"));
 		btnGenerateReport.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnGenerateReport.setEnabled(false);
 		btnGenerateReport.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -200,6 +185,22 @@ public class ReportTemplateEditor extends EditorPart {
 				}
 				ReportGenerationDialog dialog = new ReportGenerationDialog(composite.getShell(), getSelectedTemplate());
 				dialog.open();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		btnRefreshTemplate = new Button(composite, SWT.NONE);
+		btnRefreshTemplate.setText(Messages.getString("REFRESH"));
+		btnRefreshTemplate.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
+		btnRefreshTemplate.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnRefreshTemplate.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				refresh();
 			}
 
 			@Override
@@ -253,6 +254,7 @@ public class ReportTemplateEditor extends EditorPart {
 				}
 				btnEditTemplate.setEnabled(true);
 				btnDeleteTemplate.setEnabled(true);
+				btnGenerateReport.setEnabled(true);
 			}
 		});
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -273,7 +275,7 @@ public class ReportTemplateEditor extends EditorPart {
 
 		String[] titles = { Messages.getString("REPORT_NAME"), Messages.getString("DESCRIPTION"),
 				Messages.getString("CREATE_DATE"), Messages.getString("MODIFY_DATE") };
-		int[] bounds = { 100, 400, 150, 150 };
+		int[] bounds = { 250, 400, 150, 150 };
 
 		TableViewerColumn labelColumn = createTableViewerColumn(titles[0], bounds[0]);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
