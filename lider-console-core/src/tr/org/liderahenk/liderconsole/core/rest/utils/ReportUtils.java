@@ -45,7 +45,7 @@ public class ReportUtils {
 		IResponse response = RestClient.post(template, url.toString());
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK) {
-			Notifier.error(null, Messages.getString("RECORD_VALIDATED"));
+			Notifier.success(null, Messages.getString("RECORD_VALIDATED"));
 			return true;
 		}
 

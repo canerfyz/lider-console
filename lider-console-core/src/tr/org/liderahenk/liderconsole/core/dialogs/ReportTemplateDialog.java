@@ -496,7 +496,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 
 		String[] titles = { Messages.getString("COLUMN_ORDER"), Messages.getString("COLUMN_NAME"),
 				Messages.getString("WIDTH"), Messages.getString("VISIBLE") };
-		int[] bounds = { 200, 200, 200, 50 };
+		int[] bounds = { 100, 250, 100, 100 };
 
 		TableViewerColumn orderColumn = createTableViewerColumn(tvCol, titles[0], bounds[0]);
 		orderColumn.setLabelProvider(new ColumnLabelProvider() {
