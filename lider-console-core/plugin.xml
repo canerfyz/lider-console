@@ -169,6 +169,7 @@
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
 	          id="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
+	          icon="icons/16/report.png"
 	          tooltip="%command.report.template">
         </command>
 		<command
