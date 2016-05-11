@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###
-# This script exports the Lider Console product for Linux (x32, x64), Windows (x32, x64) and MacOSX.
+# This script builds the project and exports the Lider Console product for Linux (x32, x64), Windows (x32, x64) and MacOSX.
 #
 # Exported products can be found under /tmp/lider-console
 ###
@@ -21,7 +21,7 @@ mvn jetty:run &
 J_PID=$!
 echo "Started server."
 
-# While server is running, start Tycho
+# Build project
 echo "Building lider-console project..."
 cd "$PRJ_ROOT_PATH"
 mvn clean install -DskipTests
@@ -35,10 +35,11 @@ echo "Server shut down."
 EXPORT_PATH=/tmp/lider-console
 echo "Export path: $EXPORT_PATH"
 
+# Copy resulting files
 echo "Copying exported lider-console products to $EXPORT_PATH..."
 mkdir -p "$EXPORT_PATH"
 cp -rf "$PRJ_ROOT_PATH"/lider-console-products/target/products/. "$EXPORT_PATH"
 echo "Copied exported lider-console products."
 
 echo "Built finished successfully!"
-echo "Products can be found under: $EXPORT_PATH"
+echo "Files can be found under: $EXPORT_PATH"
