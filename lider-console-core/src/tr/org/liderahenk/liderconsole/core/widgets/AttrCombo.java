@@ -1,19 +1,19 @@
 package tr.org.liderahenk.liderconsole.core.widgets;
 
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * @author Emre Akkaya <emre.akkaya@agem.com.tr>
  *
  */
-public class AttrText extends Text {
+public class AttrCombo extends Combo {
 
 	/**
 	 * @param parent
 	 * @param style
 	 */
-	public AttrText(Composite parent, int style) {
+	public AttrCombo(Composite parent, int style) {
 		super(parent, style);
 	}
 

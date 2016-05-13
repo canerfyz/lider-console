@@ -18,12 +18,12 @@ public class AttrValueText extends Text {
 		super(parent, style);
 	}
 	
-	public AttrText getRelatedAttrText() {
+	public AttrCombo getRelatedAttrText() {
 		Control[] children = this.getParent().getChildren();
 		if (children != null) {
 			for (Control child : children) {
-				if (child instanceof AttrText) {
-					return (AttrText) child;
+				if (child instanceof AttrCombo) {
+					return (AttrCombo) child;
 				}
 			}
 		}
