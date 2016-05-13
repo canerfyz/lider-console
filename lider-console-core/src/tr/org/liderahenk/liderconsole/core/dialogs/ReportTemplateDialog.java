@@ -165,7 +165,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 
 		txtReportHeader = new Text(composite, SWT.BORDER);
 		txtReportHeader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		if (selectedTemplate != null) {
+		if (selectedTemplate != null && selectedTemplate.getReportHeader() != null) {
 			txtReportHeader.setText(selectedTemplate.getReportHeader());
 		}
 
@@ -175,7 +175,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 
 		txtReportFooter = new Text(composite, SWT.BORDER);
 		txtReportFooter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		if (selectedTemplate != null) {
+		if (selectedTemplate != null && selectedTemplate.getReportFooter() != null) {
 			txtReportFooter.setText(selectedTemplate.getReportFooter());
 		}
 
