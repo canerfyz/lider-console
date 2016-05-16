@@ -66,7 +66,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		// TODO use scrolled composite!!!
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parent.setLayout(new GridLayout(1, false));
-		
+
 		// Report parameters label
 		Label lblParam = new Label(parent, SWT.NONE);
 		lblParam.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
@@ -148,12 +148,32 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		}
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param tableViewer
+	 * @param list
+	 *            a collection of report fields
+	 */
 	private void createTableColumns(TableViewer tableViewer, List<LinkedHashMap<String, String>> list) {
 
 		List<ReportTemplateColumn> columns = selectedTemplate.getTemplateColumns();
 		if (columns != null && !columns.isEmpty()) {
-			for (ReportTemplateColumn column : columns) {
-
+			for (final ReportTemplateColumn c : columns) {
+				TableViewerColumn column = createTableViewerColumn(tableViewer, c.getName(),
+						c.getWidth() != null ? c.getWidth() : DEFAULT_COLUMN_WIDTH);
+				column.setLabelProvider(new ColumnLabelProvider() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public String getText(Object element) {
+						if (element instanceof LinkedHashMap) {
+							LinkedHashMap<String, String> curRow = (LinkedHashMap<String, String>) element;
+							ArrayList<String> temp = new ArrayList<String>(curRow.values());
+							return temp.get(c.getColumnOrder());
+						}
+						return Messages.getString("UNTITLED");
+					}
+				});
 			}
 		} else {
 			// No column defined in the template, we should display all the
@@ -161,9 +181,9 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 			LinkedHashMap<String, String> row = list.get(0);
 			ArrayList<String> temp = new ArrayList<String>(row.keySet());
 			for (int i = 0; i < temp.size(); i++) {
-				TableViewerColumn labelColumn = createTableViewerColumn(tableViewer, temp.get(i), DEFAULT_COLUMN_WIDTH);
+				TableViewerColumn column = createTableViewerColumn(tableViewer, temp.get(i), DEFAULT_COLUMN_WIDTH);
 				final int j = i;
-				labelColumn.setLabelProvider(new ColumnLabelProvider() {
+				column.setLabelProvider(new ColumnLabelProvider() {
 					@SuppressWarnings("unchecked")
 					@Override
 					public String getText(Object element) {
