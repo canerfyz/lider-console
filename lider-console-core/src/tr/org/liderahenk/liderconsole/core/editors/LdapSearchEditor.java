@@ -2,6 +2,7 @@ package tr.org.liderahenk.liderconsole.core.editors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.naming.directory.SearchControls;
@@ -15,9 +16,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -54,7 +53,7 @@ import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
-import tr.org.liderahenk.liderconsole.core.widgets.AttrCombo;
+import tr.org.liderahenk.liderconsole.core.widgets.AttrNameCombo;
 import tr.org.liderahenk.liderconsole.core.widgets.AttrOperator;
 import tr.org.liderahenk.liderconsole.core.widgets.AttrValueText;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -65,6 +64,7 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+// TODO en-tr message must be corrected/added!
 public class LdapSearchEditor extends EditorPart {
 
 	private static Logger logger = LoggerFactory.getLogger(LdapSearchEditor.class);
@@ -72,7 +72,7 @@ public class LdapSearchEditor extends EditorPart {
 	private ScrolledComposite sc;
 	private Composite cmpSearchCritera;
 	private Composite cmpTable;
-	private AttrCombo cmbAttribute;
+	private AttrNameCombo cmbAttribute;
 	private AttrOperator cmbOperator;
 	private AttrValueText txtAttrValue;
 	private Button btnAddCriteria;
@@ -80,7 +80,16 @@ public class LdapSearchEditor extends EditorPart {
 	private Button btnSearchUsers;
 	private Button btnSearch;
 	private CheckboxTableViewer viewer;
-	private String[] comboItems;
+
+	/**
+	 * LDAP attributes
+	 */
+	private List<String> attributes;
+
+	/**
+	 * Agent properties
+	 */
+	private Map<String, String> properties;
 
 	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 
@@ -107,8 +116,10 @@ public class LdapSearchEditor extends EditorPart {
 	private void queryComboItems() {
 		try {
 			IResponse response = TaskUtils.execute("LIDER-PERSISTENCE", "1.0.0", "GET-LDAP-SEARCH-ATTR");
-			List<String> attributes = (List<String>) response.getResultMap().get("attributes");
-			comboItems = attributes.toArray(new String[attributes.size()]);
+			// LDAP search attributes (such as uid, liderPrivilege)
+			attributes = (List<String>) response.getResultMap().get("attributes");
+			// Agent properties (such as hostname, ipAddresses, os)
+			properties = (Map<String, String>) response.getResultMap().get("properties");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
@@ -184,7 +195,7 @@ public class LdapSearchEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				eventBroker.send("ldap_entry_selected", null);
-				doLdapSearch();
+				doSearch();
 			}
 		});
 
@@ -198,14 +209,6 @@ public class LdapSearchEditor extends EditorPart {
 		viewer = CheckboxTableViewer.newCheckList(cmpTable, SWT.FULL_SELECTION);
 		getSite().setSelectionProvider(viewer);
 
-		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				// TODO dialogda detay getir
-				System.out.println(event);
-			}
-		});
 		viewer.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -220,6 +223,7 @@ public class LdapSearchEditor extends EditorPart {
 			}
 		});
 
+		viewer.setContentProvider(new ArrayContentProvider());
 		final Table table = viewer.getTable();
 		table.setHeaderVisible(false);
 		table.setLinesVisible(true);
@@ -237,24 +241,36 @@ public class LdapSearchEditor extends EditorPart {
 	 * the table
 	 * 
 	 */
-	protected void doLdapSearch() {
+	protected void doSearch() {
 
-		String[] returningAttributes = findReturningAttributes();
 		String filter = computeFilterClause();
+		String[] returningAttributes = findReturningAttributes();
 
-		// TODO change countLimit to use paging (research PagedSearch in Control
-		// class)
+		// First, do LDAP search
 		List<SearchResult> result = LdapUtils.getInstance().searchAndReturnList(null, filter, returningAttributes,
 				SearchControls.SUBTREE_SCOPE, 0, LdapConnectionListener.getConnection(),
 				LdapConnectionListener.getMonitor());
-
 		if (result != null && !result.isEmpty()) {
+			// Then, filter these results by agent properties
+			Map<String, String> propFilter = computePropertyFilter();
+			if (propFilter != null && !propFilter.isEmpty()) {
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				// TODO
+				
+			}
 			recreateTable(returningAttributes);
 			viewer.setInput(result);
 			redraw();
 		} else {
 			emptyTable(returningAttributes);
 		}
+	}
+
+	private Map<String, String> computePropertyFilter() {
+		return null;
 	}
 
 	/**
@@ -363,8 +379,8 @@ public class LdapSearchEditor extends EditorPart {
 					if (gChildren != null) {
 						for (Control gChild : gChildren) {
 							if (isValidAttributeValue(gChild)
-									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrText())) {
-								AttrCombo rAttrText = ((AttrValueText) gChild).getRelatedAttrText();
+									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrCombo())) {
+								AttrNameCombo rAttrText = ((AttrValueText) gChild).getRelatedAttrCombo();
 								AttrOperator rAttrOperator = ((AttrValueText) gChild).getRelatedAttrOperator();
 
 								StringBuilder expression = new StringBuilder();
@@ -410,7 +426,7 @@ public class LdapSearchEditor extends EditorPart {
 					if (gChildren != null) {
 						for (Control gChild : gChildren) {
 							if (isValidAttribute(gChild)) {
-								returningAttributes.add(((AttrCombo) gChild).getText());
+								returningAttributes.add(((AttrNameCombo) gChild).getText());
 							}
 						}
 					}
@@ -423,16 +439,18 @@ public class LdapSearchEditor extends EditorPart {
 
 	/**
 	 * @param relatedAttrText
-	 * @return
+	 * @return true if attribute value is not empty or null and it is a LDAP
+	 *         search attribute (not agent property), false otherwise.
 	 */
 	private boolean isValidAttribute(Control child) {
-		return child instanceof AttrCombo && ((AttrCombo) child).getText() != null
-				&& !((AttrCombo) child).getText().isEmpty();
+		return child instanceof AttrNameCombo && ((AttrNameCombo) child).getText() != null
+				&& !((AttrNameCombo) child).getText().isEmpty()
+				&& attributes.contains(((AttrNameCombo) child).getText());
 	}
 
 	/**
 	 * @param child
-	 * @return
+	 * @return true if attribute name is not null or empty
 	 */
 	private boolean isValidAttributeValue(Control child) {
 		return child instanceof AttrValueText && ((AttrValueText) child).getText() != null
@@ -468,18 +486,42 @@ public class LdapSearchEditor extends EditorPart {
 		grpSearchCriteria.setLayout(new GridLayout(3, false));
 		grpSearchCriteria.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		cmbAttribute = new AttrCombo(grpSearchCriteria, SWT.BORDER | SWT.DROP_DOWN);
+		cmbAttribute = new AttrNameCombo(grpSearchCriteria, SWT.BORDER | SWT.DROP_DOWN);
 		cmbAttribute.setToolTipText("Öznitelik");
 		cmbAttribute.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		cmbAttribute.setItems(comboItems);
+		cmbAttribute.setItems(generateComboItems());
+		cmbAttribute.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				AttrNameCombo c = (AttrNameCombo) e.getSource();
+				if (properties != null && properties.get(c.getText()) != null) {
+					c.getRelatedAttrValue().setAutoCompleteProposals(properties.get(c.getText()).split(","));
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 
 		cmbOperator = new AttrOperator(grpSearchCriteria, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
 		cmbOperator.setItems(new String[] { "=", "<", ">", "!=" });
 		cmbOperator.select(0);
 
-		txtAttrValue = new AttrValueText(grpSearchCriteria, SWT.BORDER);
+		txtAttrValue = new AttrValueText(grpSearchCriteria, SWT.BORDER | SWT.DROP_DOWN);
 		txtAttrValue.setToolTipText("Değer");
 		txtAttrValue.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+	}
+
+	private String[] generateComboItems() {
+		List<String> items = new ArrayList<String>();
+		if (attributes != null) {
+			items.addAll(attributes);
+		}
+		if (properties != null) {
+			items.addAll(new ArrayList<String>(properties.keySet()));
+		}
+		return items.toArray(new String[items.size()]);
 	}
 
 	protected void handleRemoveGroupButton(SelectionEvent e) {
