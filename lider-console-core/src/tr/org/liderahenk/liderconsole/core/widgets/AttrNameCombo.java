@@ -2,19 +2,32 @@ package tr.org.liderahenk.liderconsole.core.widgets;
 
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * @author Emre Akkaya <emre.akkaya@agem.com.tr>
  *
  */
-public class AttrCombo extends Combo {
+public class AttrNameCombo extends Combo {
 
 	/**
 	 * @param parent
 	 * @param style
 	 */
-	public AttrCombo(Composite parent, int style) {
+	public AttrNameCombo(Composite parent, int style) {
 		super(parent, style);
+	}
+
+	public AttrValueText getRelatedAttrValue() {
+		Control[] children = this.getParent().getChildren();
+		if (children != null) {
+			for (Control child : children) {
+				if (child instanceof AttrValueText) {
+					return (AttrValueText) child;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override

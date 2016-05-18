@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.widgets;
 
+import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -10,26 +12,29 @@ import org.eclipse.swt.widgets.Text;
  */
 public class AttrValueText extends Text {
 
+	private AutoCompleteField acf;
+
 	/**
 	 * @param parent
 	 * @param style
 	 */
 	public AttrValueText(Composite parent, int style) {
 		super(parent, style);
+		acf = new AutoCompleteField(this, new TextContentAdapter(), new String[] {});
 	}
-	
-	public AttrCombo getRelatedAttrText() {
+
+	public AttrNameCombo getRelatedAttrCombo() {
 		Control[] children = this.getParent().getChildren();
 		if (children != null) {
 			for (Control child : children) {
-				if (child instanceof AttrCombo) {
-					return (AttrCombo) child;
+				if (child instanceof AttrNameCombo) {
+					return (AttrNameCombo) child;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	public AttrOperator getRelatedAttrOperator() {
 		Control[] children = this.getParent().getChildren();
 		if (children != null) {
@@ -40,6 +45,10 @@ public class AttrValueText extends Text {
 			}
 		}
 		return null;
+	}
+
+	public void setAutoCompleteProposals(String[] proposals) {
+		this.acf.setProposals(proposals);
 	}
 
 	@Override
