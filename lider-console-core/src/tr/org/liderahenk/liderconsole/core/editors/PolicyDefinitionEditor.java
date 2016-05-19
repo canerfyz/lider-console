@@ -11,7 +11,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -19,6 +23,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -46,6 +52,8 @@ public class PolicyDefinitionEditor extends EditorPart {
 	private static final Logger logger = LoggerFactory.getLogger(PolicyDefinitionEditor.class);
 
 	private TableViewer tableViewer;
+	private TableFilter tableFilter;
+	private Text txtSearch;
 	private Button btnAddPolicy;
 	private Button btnEditPolicy;
 	private Button btnDeletePolicy;
@@ -190,6 +198,8 @@ public class PolicyDefinitionEditor extends EditorPart {
 	 */
 	private void createTableArea(final Composite parent) {
 
+		createTableFilterArea(parent);
+
 		tableViewer = SWTResourceManager.createTableViewer(parent);
 		createTableColumns();
 		populateTable();
@@ -215,6 +225,61 @@ public class PolicyDefinitionEditor extends EditorPart {
 				dialog.open();
 			}
 		});
+
+		tableFilter = new TableFilter();
+		tableViewer.addFilter(tableFilter);
+		tableViewer.refresh();
+	}
+
+	/**
+	 * Create table filter area
+	 * 
+	 * @param parent
+	 */
+	private void createTableFilterArea(Composite parent) {
+		Composite filterContainer = new Composite(parent, SWT.NONE);
+		filterContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		filterContainer.setLayout(new GridLayout(2, false));
+
+		// Search label
+		Label lblSearch = new Label(filterContainer, SWT.NONE);
+		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
+
+		// Filter table rows
+		txtSearch = new Text(filterContainer, SWT.BORDER | SWT.SEARCH);
+		txtSearch.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtSearch.setToolTipText(Messages.getString("SEARCH_POLICY_TOOLTIP"));
+		txtSearch.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				tableFilter.setSearchText(txtSearch.getText());
+				tableViewer.refresh();
+			}
+		});
+	}
+
+	/**
+	 * Apply filter to table rows. (Search text can be policy label or
+	 * description)
+	 *
+	 */
+	public class TableFilter extends ViewerFilter {
+
+		private String searchString;
+
+		public void setSearchText(String s) {
+			this.searchString = ".*" + s + ".*";
+		}
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (searchString == null || searchString.length() == 0) {
+				return true;
+			}
+			Policy policy = (Policy) element;
+			return policy.getLabel().matches(searchString) || policy.getDescription().matches(searchString);
+		}
 	}
 
 	/**

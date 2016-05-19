@@ -31,6 +31,7 @@ import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
+ * Editor class for displaying plugins installed on Lider.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
@@ -73,28 +74,6 @@ public class InstalledPluginsEditor extends EditorPart {
 		Composite composite = new Composite(parent, GridData.FILL);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(1, false));
-
-		Composite innerComposite = new Composite(composite, SWT.NONE);
-		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		innerComposite.setLayout(new GridLayout(2, false));
-
-		// Search label
-		Label lblSearch = new Label(innerComposite, SWT.NONE);
-		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
-
-		// Filter table rows
-		txtSearch = new Text(innerComposite, SWT.BORDER | SWT.SEARCH);
-		txtSearch.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		txtSearch.setToolTipText(Messages.getString("SEARCH_TOOLTIP"));
-		txtSearch.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				tableFilter.setSearchText(txtSearch.getText());
-				tableViewer.refresh();
-			}
-		});
-
 		createTableArea(composite);
 	}
 
@@ -105,6 +84,8 @@ public class InstalledPluginsEditor extends EditorPart {
 	 */
 	private void createTableArea(final Composite parent) {
 
+		createTableFilterArea(parent);
+
 		tableViewer = SWTResourceManager.createTableViewer(parent);
 		createTableColumns();
 		populateTable();
@@ -112,6 +93,56 @@ public class InstalledPluginsEditor extends EditorPart {
 		tableFilter = new TableFilter();
 		tableViewer.addFilter(tableFilter);
 		tableViewer.refresh();
+	}
+
+	/**
+	 * Create table filter area
+	 * 
+	 * @param parent
+	 */
+	private void createTableFilterArea(Composite parent) {
+		Composite filterContainer = new Composite(parent, SWT.NONE);
+		filterContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		filterContainer.setLayout(new GridLayout(2, false));
+
+		// Search label
+		Label lblSearch = new Label(filterContainer, SWT.NONE);
+		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
+
+		// Filter table rows
+		txtSearch = new Text(filterContainer, SWT.BORDER | SWT.SEARCH);
+		txtSearch.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtSearch.setToolTipText(Messages.getString("SEARCH_PLUGIN_TOOLTIP"));
+		txtSearch.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				tableFilter.setSearchText(txtSearch.getText());
+				tableViewer.refresh();
+			}
+		});
+	}
+
+	/**
+	 * Apply filter to table rows. (Search text can be plugin name or version)
+	 *
+	 */
+	public class TableFilter extends ViewerFilter {
+
+		private String searchString;
+
+		public void setSearchText(String s) {
+			this.searchString = ".*" + s + ".*";
+		}
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (searchString == null || searchString.length() == 0) {
+				return true;
+			}
+			Plugin plugin = (Plugin) element;
+			return plugin.getName().matches(searchString) || plugin.getVersion().matches(searchString);
+		}
 	}
 
 	/**
@@ -200,7 +231,7 @@ public class InstalledPluginsEditor extends EditorPart {
 			}
 		});
 
-		// Policy plugin	
+		// Policy plugin
 		TableViewerColumn policyPluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("POLICY_PLUGIN"), 100);
 		policyPluginColumn.setLabelProvider(new ColumnLabelProvider() {
@@ -213,31 +244,6 @@ public class InstalledPluginsEditor extends EditorPart {
 			}
 		});
 
-	}
-
-	/**
-	 * Apply filter to table rows. (Search text can be plugin name or version)
-	 *
-	 */
-	public class TableFilter extends ViewerFilter {
-
-		private String searchString;
-
-		public void setSearchText(String s) {
-			this.searchString = ".*" + s + ".*";
-		}
-
-		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (searchString == null || searchString.length() == 0) {
-				return true;
-			}
-			Plugin plugin = (Plugin) element;
-			if (plugin.getName().matches(searchString) || plugin.getVersion().matches(searchString)) {
-				return true;
-			}
-			return false;
-		}
 	}
 
 	/**

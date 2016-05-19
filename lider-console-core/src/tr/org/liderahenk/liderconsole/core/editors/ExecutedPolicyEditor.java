@@ -51,13 +51,13 @@ public class ExecutedPolicyEditor extends EditorPart {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExecutedPolicyEditor.class);
 
+	private TableViewer tableViewer;
+	private TableFilter tableFilter;
+	private Text txtSearch;
 	private Text txtLabel;
 	private DateTime dtCreateDateRangeStart;
 	private DateTime dtCreateDateRangeEnd;
 	private Button btnSearch;
-	private Text txtSearch;
-	private TableViewer tableViewer;
-	private TableFilter tableFilter;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -130,27 +130,6 @@ public class ExecutedPolicyEditor extends EditorPart {
 			}
 		});
 
-		innerComposite = new Composite(composite, SWT.NONE);
-		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		innerComposite.setLayout(new GridLayout(2, false));
-
-		// Search label
-		Label lblSearch = new Label(innerComposite, SWT.NONE);
-		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
-
-		// Filter table rows
-		txtSearch = new Text(innerComposite, SWT.BORDER | SWT.SEARCH);
-		txtSearch.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		txtSearch.setToolTipText(Messages.getString("SEARCH_TOOLTIP"));
-		txtSearch.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				tableFilter.setSearchText(txtSearch.getText());
-				tableViewer.refresh();
-			}
-		});
-
 		createTableArea(composite);
 	}
 
@@ -160,6 +139,8 @@ public class ExecutedPolicyEditor extends EditorPart {
 	 * @param composite
 	 */
 	private void createTableArea(final Composite parent) {
+
+		createTableFilterArea(parent);
 
 		tableViewer = SWTResourceManager.createTableViewer(parent);
 		createTableColumns();
@@ -185,6 +166,60 @@ public class ExecutedPolicyEditor extends EditorPart {
 		tableFilter = new TableFilter();
 		tableViewer.addFilter(tableFilter);
 		tableViewer.refresh();
+	}
+
+	/**
+	 * Create table filter area
+	 * 
+	 * @param parent
+	 */
+	private void createTableFilterArea(Composite parent) {
+		Composite filterContainer = new Composite(parent, SWT.NONE);
+		filterContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		filterContainer.setLayout(new GridLayout(2, false));
+
+		// Search label
+		Label lblSearch = new Label(filterContainer, SWT.NONE);
+		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
+
+		// Filter table rows
+		txtSearch = new Text(filterContainer, SWT.BORDER | SWT.SEARCH);
+		txtSearch.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtSearch.setToolTipText(Messages.getString("SEARCH_EXEC_POLICY_TOOLTIP"));
+		txtSearch.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				tableFilter.setSearchText(txtSearch.getText());
+				tableViewer.refresh();
+			}
+		});
+	}
+
+	/**
+	 * Apply filter to table rows. (Search text can be policy label)
+	 *
+	 */
+	public class TableFilter extends ViewerFilter {
+
+		private String searchString;
+
+		public void setSearchText(String s) {
+			this.searchString = ".*" + s + ".*";
+		}
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (searchString == null || searchString.length() == 0) {
+				return true;
+			}
+			ExecutedPolicy policy = (ExecutedPolicy) element;
+			if (policy.getLabel().matches(searchString)) {
+				return true;
+			}
+			return false;
+		}
+
 	}
 
 	/**
@@ -311,32 +346,6 @@ public class ExecutedPolicyEditor extends EditorPart {
 			return instance.getTime();
 		}
 		return null;
-	}
-
-	/**
-	 * Apply filter to table rows. (Search text can be policy label)
-	 *
-	 */
-	public class TableFilter extends ViewerFilter {
-
-		private String searchString;
-
-		public void setSearchText(String s) {
-			this.searchString = ".*" + s + ".*";
-		}
-
-		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (searchString == null || searchString.length() == 0) {
-				return true;
-			}
-			ExecutedPolicy policy = (ExecutedPolicy) element;
-			if (policy.getLabel().matches(searchString)) {
-				return true;
-			}
-			return false;
-		}
-
 	}
 
 	/**
