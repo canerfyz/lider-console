@@ -31,8 +31,8 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
-import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
-import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 
 /**
  * LiderSourceProvider provides expressions that can be used to restrict the

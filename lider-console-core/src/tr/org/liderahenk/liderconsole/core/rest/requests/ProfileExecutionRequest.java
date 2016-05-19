@@ -6,7 +6,7 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import tr.org.liderahenk.liderconsole.core.rest.enums.RestDNType;
+import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProfileExecutionRequest implements IRequest {
@@ -17,14 +17,14 @@ public class ProfileExecutionRequest implements IRequest {
 
 	private List<String> dnList;
 
-	private RestDNType dnType;
+	private DNType dnType;
 
 	private Date activationDate;
 
 	public ProfileExecutionRequest() {
 	}
 
-	public ProfileExecutionRequest(Long id, List<String> dnList, RestDNType dnType, Date activationDate) {
+	public ProfileExecutionRequest(Long id, List<String> dnList, DNType dnType, Date activationDate) {
 		super();
 		this.id = id;
 		this.dnList = dnList;
@@ -48,11 +48,11 @@ public class ProfileExecutionRequest implements IRequest {
 		this.dnList = dnList;
 	}
 
-	public RestDNType getDnType() {
+	public DNType getDnType() {
 		return dnType;
 	}
 
-	public void setDnType(RestDNType dnType) {
+	public void setDnType(DNType dnType) {
 		this.dnType = dnType;
 	}
 

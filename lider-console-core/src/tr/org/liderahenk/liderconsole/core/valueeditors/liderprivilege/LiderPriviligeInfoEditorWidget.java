@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
-import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
 
 
 /**

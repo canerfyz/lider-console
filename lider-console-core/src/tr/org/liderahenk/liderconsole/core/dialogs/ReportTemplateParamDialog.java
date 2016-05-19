@@ -15,8 +15,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import tr.org.liderahenk.liderconsole.core.enums.ParameterType;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.model.ParameterType;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplateParameter;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 

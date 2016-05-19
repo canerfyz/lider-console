@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
-import tr.org.liderahenk.liderconsole.core.rest.enums.RestDNType;
 import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyExecutionRequest;
 import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -44,8 +44,8 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 
 	private Set<String> dnSet;
 	private final String[] dnTypeArr = new String[] { "ONLY_USER", "ONLY_AGENT", "ONLY_GROUP", "ALL" };
-	private final Integer[] dnTypeValueArr = new Integer[] { RestDNType.USER.getId(), RestDNType.AHENK.getId(),
-			RestDNType.GROUP.getId(), RestDNType.ALL.getId() };
+	private final Integer[] dnTypeValueArr = new Integer[] { DNType.USER.getId(), DNType.AHENK.getId(),
+			DNType.GROUP.getId(), DNType.ALL.getId() };
 
 	public PolicyExecutionSelectDialog(Shell parentShell, Set<String> dnSet) {
 		super(parentShell);
@@ -207,14 +207,14 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 	 * 
 	 * @return DN type if selected, otherwise 'ALL'
 	 */
-	private RestDNType getSelectedDnType() {
+	private DNType getSelectedDnType() {
 		int selectionIndex = cmbDnType.getSelectionIndex();
 		if (selectionIndex > -1 && cmbDnType.getItem(selectionIndex) != null
 				&& cmbDnType.getData(selectionIndex + "") != null) {
 			Integer id = (Integer) cmbDnType.getData(selectionIndex + "");
-			return RestDNType.getType(id);
+			return DNType.getType(id);
 		}
-		return RestDNType.ALL;
+		return DNType.ALL;
 	}
 
 }

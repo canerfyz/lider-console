@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import tr.org.liderahenk.liderconsole.core.rest.enums.RestDNType;
+import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommandExecution implements Serializable {
@@ -15,7 +15,7 @@ public class CommandExecution implements Serializable {
 
 	private Long id;
 
-	private RestDNType dnType;
+	private DNType dnType;
 
 	private String dn;
 
@@ -31,11 +31,11 @@ public class CommandExecution implements Serializable {
 		this.id = id;
 	}
 
-	public RestDNType getDnType() {
+	public DNType getDnType() {
 		return dnType;
 	}
 
-	public void setDnType(RestDNType dnType) {
+	public void setDnType(DNType dnType) {
 		this.dnType = dnType;
 	}
 

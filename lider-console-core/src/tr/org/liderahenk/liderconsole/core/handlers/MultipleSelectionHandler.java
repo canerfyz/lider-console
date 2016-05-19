@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
-import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
+import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**

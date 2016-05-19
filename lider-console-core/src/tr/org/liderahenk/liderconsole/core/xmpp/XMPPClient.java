@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
-import tr.org.liderahenk.liderconsole.core.ldap.LdapUtils;
-import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.model.TaskStatus;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 

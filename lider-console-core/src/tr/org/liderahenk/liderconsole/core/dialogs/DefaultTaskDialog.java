@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
-import tr.org.liderahenk.liderconsole.core.rest.enums.RestDNType;
+import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.rest.requests.TaskRequest;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
@@ -133,7 +133,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 				if (validateBeforeExecution()) {
 					// TODO confirm box
 					try {
-						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), RestDNType.AHENK,
+						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
 								getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(), null,
 								new Date());
 						TaskUtils.execute(task);
@@ -166,7 +166,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 					}
 					// TODO confirm box
 					try {
-						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), RestDNType.AHENK,
+						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
 								getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(),
 								dialog.getCronExpression(), new Date());
 						TaskUtils.execute(task);

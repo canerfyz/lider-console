@@ -1,4 +1,4 @@
-package tr.org.liderahenk.liderconsole.core.enums;
+package tr.org.liderahenk.liderconsole.core.model;
 
 public enum ParameterType {
 	STRING(1), DATE(2), NUMBER(3);

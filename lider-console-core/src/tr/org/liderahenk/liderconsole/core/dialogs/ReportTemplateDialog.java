@@ -111,8 +111,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		Label lblQuery = new Label(composite, SWT.NONE);
 		lblQuery.setText(Messages.getString("REPORT_QUERY"));
 
-		txtQuery = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		txtQuery = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		data.heightHint = 80;
 		txtQuery.setLayoutData(data);
 		if (selectedTemplate != null) {

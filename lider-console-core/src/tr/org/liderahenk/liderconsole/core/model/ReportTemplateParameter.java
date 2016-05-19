@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import tr.org.liderahenk.liderconsole.core.enums.ParameterType;
-
 /**
  * This class represents a report parameter defined in a report template.
  * 

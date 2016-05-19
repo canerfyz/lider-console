@@ -63,7 +63,6 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
-		// TODO use scrolled composite!!!
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parent.setLayout(new GridLayout(1, false));
 
