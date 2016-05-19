@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -25,8 +24,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -41,6 +38,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.ExecutedTask;
 import tr.org.liderahenk.liderconsole.core.rest.utils.CommandUtils;
+import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -173,33 +171,11 @@ public class ExecutedTaskEditor extends EditorPart {
 	 * 
 	 * @param composite
 	 */
-	private void createTableArea(final Composite composite) {
+	private void createTableArea(final Composite parent) {
 
-		tableViewer = new TableViewer(composite,
-				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-
-		// Create table columns
+		tableViewer = SWTResourceManager.createTableViewer(parent);
 		createTableColumns();
-
-		// Configure table layout
-		final Table table = tableViewer.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.getVerticalBar().setEnabled(true);
-		table.getVerticalBar().setVisible(true);
-		tableViewer.setContentProvider(new ArrayContentProvider());
-
-		// Populate table with tasks
 		populateTable(false);
-
-		GridData gridData = new GridData();
-		gridData.verticalAlignment = GridData.FILL;
-		gridData.horizontalSpan = 3;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.heightHint = 420;
-		gridData.horizontalAlignment = GridData.FILL;
-		tableViewer.getControl().setLayoutData(gridData);
 
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
@@ -208,7 +184,7 @@ public class ExecutedTaskEditor extends EditorPart {
 				try {
 					ExecutedTask task = getSelectedTask();
 					Command command = CommandUtils.getTaskCommand(task.getId());
-					ExecutedTaskDialog dialog = new ExecutedTaskDialog(composite.getShell(), task, command);
+					ExecutedTaskDialog dialog = new ExecutedTaskDialog(parent.getShell(), task, command);
 					dialog.open();
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
@@ -233,7 +209,7 @@ public class ExecutedTaskEditor extends EditorPart {
 				Messages.getString("ERROR_STATUS") };
 		int[] bounds = { 200, 200, 250, 100, 100, 100 };
 
-		TableViewerColumn pluginColumn = createTableViewerColumn(titles[0], bounds[0]);
+		TableViewerColumn pluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[0], bounds[0]);
 		pluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -245,7 +221,7 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn taskColumn = createTableViewerColumn(titles[1], bounds[1]);
+		TableViewerColumn taskColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[1], bounds[1]);
 		taskColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -256,7 +232,8 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn createDateColumn = createTableViewerColumn(titles[2], bounds[2]);
+		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[2],
+				bounds[2]);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -268,7 +245,8 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn receivedColumn = createTableViewerColumn(titles[3], bounds[3]);
+		TableViewerColumn receivedColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[3],
+				bounds[3]);
 		receivedColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -280,7 +258,7 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn successColumn = createTableViewerColumn(titles[4], bounds[4]);
+		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[4], bounds[4]);
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -292,7 +270,7 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn errorColumn = createTableViewerColumn(titles[5], bounds[5]);
+		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[5], bounds[5]);
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -304,24 +282,6 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-	}
-
-	/**
-	 * Create new table viewer column instance.
-	 * 
-	 * @param title
-	 * @param bound
-	 * @return
-	 */
-	private TableViewerColumn createTableViewerColumn(String title, int bound) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		final TableColumn column = viewerColumn.getColumn();
-		column.setText(title);
-		column.setWidth(bound);
-		column.setResizable(true);
-		column.setMoveable(false);
-		column.setAlignment(SWT.LEFT);
-		return viewerColumn;
 	}
 
 	private void populateTable(boolean useParams) {

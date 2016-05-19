@@ -3,7 +3,6 @@ package tr.org.liderahenk.liderconsole.core.editors;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -20,8 +19,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -198,31 +195,9 @@ public class DefaultProfileEditor extends EditorPart {
 	 */
 	private void createTableArea(final Composite parent) {
 
-		tableViewer = new TableViewer(parent,
-				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-
-		// Create table columns
+		tableViewer = SWTResourceManager.createTableViewer(parent);
 		createTableColumns();
-
-		// Configure table layout
-		final Table table = tableViewer.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.getVerticalBar().setEnabled(true);
-		table.getVerticalBar().setVisible(true);
-		tableViewer.setContentProvider(new ArrayContentProvider());
-
-		// Populate table with profiles
 		populateTable();
-
-		GridData gridData = new GridData();
-		gridData.verticalAlignment = GridData.FILL;
-		gridData.horizontalSpan = 3;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.heightHint = 420;
-		gridData.horizontalAlignment = GridData.FILL;
-		tableViewer.getControl().setLayoutData(gridData);
 
 		// Hook up listeners
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -259,7 +234,7 @@ public class DefaultProfileEditor extends EditorPart {
 				Messages.getString("CREATE_DATE"), Messages.getString("MODIFY_DATE"), Messages.getString("ACTIVE") };
 		int[] bounds = { 100, 400, 150, 150, 10 };
 
-		TableViewerColumn labelColumn = createTableViewerColumn(titles[0], bounds[0]);
+		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[0], bounds[0]);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -270,7 +245,7 @@ public class DefaultProfileEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn descColumn = createTableViewerColumn(titles[1], bounds[1]);
+		TableViewerColumn descColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[1], bounds[1]);
 		descColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -281,7 +256,8 @@ public class DefaultProfileEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn createDateColumn = createTableViewerColumn(titles[2], bounds[2]);
+		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[2],
+				bounds[2]);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -293,7 +269,8 @@ public class DefaultProfileEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn modifyDateColumn = createTableViewerColumn(titles[3], bounds[3]);
+		TableViewerColumn modifyDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[3],
+				bounds[3]);
 		modifyDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -305,7 +282,7 @@ public class DefaultProfileEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn activeColumn = createTableViewerColumn(titles[4], bounds[4]);
+		TableViewerColumn activeColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[4], bounds[4]);
 		activeColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -315,24 +292,6 @@ public class DefaultProfileEditor extends EditorPart {
 				return Messages.getString("UNTITLED");
 			}
 		});
-	}
-
-	/**
-	 * Create new table viewer column instance.
-	 * 
-	 * @param title
-	 * @param bound
-	 * @return
-	 */
-	private TableViewerColumn createTableViewerColumn(String title, int bound) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-		final TableColumn column = viewerColumn.getColumn();
-		column.setText(title);
-		column.setWidth(bound);
-		column.setResizable(true);
-		column.setMoveable(false);
-		column.setAlignment(SWT.LEFT);
-		return viewerColumn;
 	}
 
 	/**
