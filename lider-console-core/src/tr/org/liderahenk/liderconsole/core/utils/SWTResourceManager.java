@@ -107,6 +107,24 @@ public class SWTResourceManager {
 	}
 
 	/**
+	 * Convenience method for error color code
+	 * 
+	 * @return color used for error status
+	 */
+	public static Color getErrorColor() {
+		return getColor(new RGB(247, 93, 89));
+	}
+
+	/**
+	 * Convenience method for success color code
+	 * 
+	 * @return color used for success status
+	 */
+	public static Color getSuccessColor() {
+		return getColor(new RGB(153, 198, 142));
+	}
+
+	/**
 	 * Returns a {@link Color} given its RGB value.
 	 * 
 	 * @param rgb
