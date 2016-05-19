@@ -21,6 +21,9 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -41,6 +44,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +165,7 @@ public class SWTResourceManager {
 			stream.close();
 		}
 	}
-	
+
 	/**
 	 * Loads an image and create a SWT Image corresponding to this file
 	 *
@@ -173,7 +178,8 @@ public class SWTResourceManager {
 		if (new File(fileName).exists()) {
 			return new Image(Display.getCurrent(), fileName);
 		} else {
-			return new Image(Display.getCurrent(), SWTResourceManager.class.getClassLoader().getResourceAsStream(fileName));
+			return new Image(Display.getCurrent(),
+					SWTResourceManager.class.getClassLoader().getResourceAsStream(fileName));
 		}
 	}
 
@@ -460,7 +466,7 @@ public class SWTResourceManager {
 		}
 		return font;
 	}
-	
+
 	/**
 	 * Apply a very basic pseudo-HTML formating to a text stored in a StyledText
 	 * widget. Supported tags are <b>, <i>, <u> , <COLOR>, <backgroundcolor>,
@@ -537,6 +543,7 @@ public class SWTResourceManager {
 		}
 		return cursor;
 	}
+
 	/**
 	 * Dispose all of the cached cursors.
 	 */
@@ -546,7 +553,7 @@ public class SWTResourceManager {
 		}
 		m_idToCursorMap.clear();
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////////
 	//
 	// Widgets
@@ -560,6 +567,7 @@ public class SWTResourceManager {
 	public static Text createText(Composite parent) {
 		return createText(parent, new GridData(GridData.FILL, GridData.FILL, true, true));
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -569,6 +577,7 @@ public class SWTResourceManager {
 	public static Text createText(Composite parent, Object layoutData) {
 		return createText(parent, layoutData, SWT.NONE | SWT.BORDER | SWT.SINGLE);
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -577,6 +586,7 @@ public class SWTResourceManager {
 	public static Text createPasswordText(Composite parent) {
 		return createPasswordText(parent, new GridData(GridData.FILL, GridData.FILL, true, true));
 	}
+
 	/**
 	 * 
 	 * This method creates a text with given style. (e.g. for style parameter:
@@ -595,6 +605,7 @@ public class SWTResourceManager {
 		t.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		return t;
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -608,6 +619,7 @@ public class SWTResourceManager {
 		t.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		return t;
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -618,6 +630,7 @@ public class SWTResourceManager {
 		return createComposite(parent, new GridLayout(numColumns, false),
 				new GridData(GridData.FILL, GridData.FILL, true, true));
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -632,6 +645,7 @@ public class SWTResourceManager {
 		c.setBackground(getApplicationBackground());
 		return c;
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -642,6 +656,7 @@ public class SWTResourceManager {
 		return createGroup(parent, new GridLayout(numColumns, false),
 				new GridData(GridData.FILL, GridData.FILL, true, true));
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -656,6 +671,7 @@ public class SWTResourceManager {
 		g.setBackground(getApplicationBackground());
 		return g;
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -665,6 +681,7 @@ public class SWTResourceManager {
 	public static Button createButton(Composite parent, int buttonType) {
 		return createButton(parent, buttonType, "");
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -678,6 +695,7 @@ public class SWTResourceManager {
 		b.setBackground(getApplicationBackground());
 		return b;
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -686,6 +704,7 @@ public class SWTResourceManager {
 	public static Label createLabel(Composite parent) {
 		return createLabel(parent, "");
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -698,6 +717,7 @@ public class SWTResourceManager {
 		l.setBackground(getApplicationBackground());
 		return l;
 	}
+
 	/**
 	 * 
 	 * @param parent
@@ -711,6 +731,68 @@ public class SWTResourceManager {
 		l.setBackground(getApplicationBackground());
 		return l;
 	}
+
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	public static TableViewer createTableViewer(final Composite parent) {
+		TableViewer tableViewer = new TableViewer(parent,
+				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		// Configure table properties
+		final Table table = tableViewer.getTable();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		table.getVerticalBar().setEnabled(true);
+		table.getVerticalBar().setVisible(true);
+		// Set content provider
+		tableViewer.setContentProvider(new ArrayContentProvider());
+		// Configure table layout
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.horizontalSpan = 3;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		gridData.heightHint = 420;
+		gridData.horizontalAlignment = GridData.FILL;
+		tableViewer.getControl().setLayoutData(gridData);
+		return tableViewer;
+	}
+
+	/**
+	 * Create new table viewer column instance.
+	 * 
+	 * @param tableViewer
+	 * @param title
+	 * @param width
+	 * @param alignment
+	 * @return
+	 */
+	public static TableViewerColumn createTableViewerColumn(TableViewer tableViewer, String title, int width,
+			int alignment) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		final TableColumn column = viewerColumn.getColumn();
+		column.setText(title);
+		column.setWidth(width);
+		column.setResizable(true);
+		column.setMoveable(true);
+		column.setAlignment(alignment);
+		return viewerColumn;
+	}
+
+	/**
+	 * Convenience method for table viewer column
+	 * 
+	 * @param tableViewer
+	 * @param title
+	 * @param width
+	 * @return
+	 */
+	public static TableViewerColumn createTableViewerColumn(TableViewer tableViewer, String title, int width) {
+		return createTableViewerColumn(tableViewer, title, width, SWT.CENTER);
+	}
+
 	/**
 	 * 
 	 * @return
@@ -735,7 +817,7 @@ public class SWTResourceManager {
 		disposeFonts();
 		disposeCursors();
 	}
-	
+
 	/**
 	 * Dispose safely any SWT resource
 	 *
