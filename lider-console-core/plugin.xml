@@ -309,9 +309,9 @@
    	<extension
          point="org.apache.directory.studio.connectionlistener">
       <connectionListener
-            class="tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener"
+            class="tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener"
             description="LDAP Connection Listener"
-            id="tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener"
+            id="tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener"
             name="LDAP Connection Listener">
       </connectionListener>
 	</extension>
