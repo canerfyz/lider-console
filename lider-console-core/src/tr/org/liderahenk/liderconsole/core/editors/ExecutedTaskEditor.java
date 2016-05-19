@@ -18,6 +18,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -204,12 +205,9 @@ public class ExecutedTaskEditor extends EditorPart {
 	 */
 	private void createTableColumns() {
 
-		String[] titles = { Messages.getString("PLUGIN"), Messages.getString("TASK"), Messages.getString("CREATE_DATE"),
-				Messages.getString("RECEIVED_STATUS"), Messages.getString("SUCCESS_STATUS"),
-				Messages.getString("ERROR_STATUS") };
-		int[] bounds = { 200, 200, 250, 100, 100, 100 };
-
-		TableViewerColumn pluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[0], bounds[0]);
+		// Plugin
+		TableViewerColumn pluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("PLUGIN"), 200);
 		pluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -221,7 +219,9 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn taskColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[1], bounds[1]);
+		// Task
+		TableViewerColumn taskColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("TASK"), 200);
 		taskColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -232,8 +232,9 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[2],
-				bounds[2]);
+		// Create date
+		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("CREATE_DATE"), 250);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -245,8 +246,9 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn receivedColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[3],
-				bounds[3]);
+		// Received status
+		TableViewerColumn receivedColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("RECEIVED_STATUS"), 100);
 		receivedColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -258,7 +260,9 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[4], bounds[4]);
+		// Success status
+		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("SUCCESS_STATUS"), 100);
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -268,9 +272,16 @@ public class ExecutedTaskEditor extends EditorPart {
 				}
 				return Messages.getString("UNTITLED");
 			}
+
+			@Override
+			public Color getBackground(Object element) {
+				return SWTResourceManager.getSuccessColor();
+			}
 		});
 
-		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[5], bounds[5]);
+		// Error status
+		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("ERROR_STATUS"), 100);
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -279,6 +290,11 @@ public class ExecutedTaskEditor extends EditorPart {
 							? ((ExecutedTask) element).getErrorResults().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
+			}
+
+			@Override
+			public Color getBackground(Object element) {
+				return SWTResourceManager.getErrorColor();
 			}
 		});
 

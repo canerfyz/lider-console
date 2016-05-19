@@ -224,7 +224,6 @@ public class ReportTemplateEditor extends EditorPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 				Object firstElement = selection.getFirstElement();
-				firstElement = (ReportTemplate) firstElement;
 				if (firstElement instanceof ReportTemplate) {
 					setSelectedTemplate((ReportTemplate) firstElement);
 				}
@@ -249,11 +248,9 @@ public class ReportTemplateEditor extends EditorPart {
 	 */
 	private void createTableColumns() {
 
-		String[] titles = { Messages.getString("REPORT_NAME"), Messages.getString("DESCRIPTION"),
-				Messages.getString("CREATE_DATE"), Messages.getString("MODIFY_DATE") };
-		int[] bounds = { 250, 400, 150, 150 };
-
-		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[0], bounds[0]);
+		// Report name
+		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("REPORT_NAME"), 250);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -264,7 +261,9 @@ public class ReportTemplateEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn descColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[1], bounds[1]);
+		// Description
+		TableViewerColumn descColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("DESCRIPTION"), 400);
 		descColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -275,8 +274,9 @@ public class ReportTemplateEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[2],
-				bounds[2]);
+		// Create date
+		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("CREATE_DATE"), 150);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -288,8 +288,9 @@ public class ReportTemplateEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn modifyDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[3],
-				bounds[3]);
+		// Modify date
+		TableViewerColumn modifyDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("MODIFY_DATE"), 150);
 		modifyDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {

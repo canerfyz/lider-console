@@ -200,7 +200,6 @@ public class PolicyDefinitionEditor extends EditorPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 				Object firstElement = selection.getFirstElement();
-				firstElement = (Policy) firstElement;
 				if (firstElement instanceof Policy) {
 					setSelectedPolicy((Policy) firstElement);
 				}
@@ -224,11 +223,9 @@ public class PolicyDefinitionEditor extends EditorPart {
 	 */
 	private void createTableColumns() {
 
-		String[] titles = { Messages.getString("LABEL"), Messages.getString("DESCRIPTION"),
-				Messages.getString("CREATE_DATE"), Messages.getString("MODIFY_DATE"), Messages.getString("ACTIVE") };
-		int[] bounds = { 100, 400, 150, 150, 10 };
-
-		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[0], bounds[0]);
+		// Label
+		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("LABEL"), 100);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -239,7 +236,9 @@ public class PolicyDefinitionEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn descColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[1], bounds[1]);
+		// Description
+		TableViewerColumn descColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("DESCRIPTION"), 400);
 		descColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -250,8 +249,9 @@ public class PolicyDefinitionEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[2],
-				bounds[2]);
+		// Create date
+		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("CREATE_DATE"), 150);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -263,8 +263,9 @@ public class PolicyDefinitionEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn modifyDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[3],
-				bounds[3]);
+		// Modify date
+		TableViewerColumn modifyDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("MODIFY_DATE"), 150);
 		modifyDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -276,7 +277,9 @@ public class PolicyDefinitionEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn activeColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[4], bounds[4]);
+		// Active
+		TableViewerColumn activeColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("ACTIVE"), 10);
 		activeColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -286,6 +289,11 @@ public class PolicyDefinitionEditor extends EditorPart {
 				return Messages.getString("UNTITLED");
 			}
 		});
+	}
+
+	@Override
+	public void setFocus() {
+		btnAddPolicy.setFocus();
 	}
 
 	/**
@@ -303,11 +311,6 @@ public class PolicyDefinitionEditor extends EditorPart {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
-	}
-
-	@Override
-	public void setFocus() {
-		btnAddPolicy.setFocus();
 	}
 
 	/**

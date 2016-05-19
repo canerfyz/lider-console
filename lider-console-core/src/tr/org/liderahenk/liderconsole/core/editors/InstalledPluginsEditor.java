@@ -120,14 +120,9 @@ public class InstalledPluginsEditor extends EditorPart {
 	 */
 	private void createTableColumns() {
 
-		String[] titles = { Messages.getString("PLUGIN_NAME"), Messages.getString("PLUGIN_VERSION"),
-				Messages.getString("DESCRIPTION"), Messages.getString("CREATE_DATE"),
-				Messages.getString("MACHINE_ORIENTED_PLUGIN"), Messages.getString("USER_ORIENTED_PLUGIN"),
-				Messages.getString("POLICY_PLUGIN") };
-		int[] bounds = { 200, 150, 100, 150, 100, 100, 100 };
-
-		TableViewerColumn pluginNameColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[0],
-				bounds[0]);
+		// Plugin name
+		TableViewerColumn pluginNameColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("PLUGIN_NAME"), 200);
 		pluginNameColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -138,8 +133,9 @@ public class InstalledPluginsEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn pluginVersionColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[1],
-				bounds[1]);
+		// Plugin version
+		TableViewerColumn pluginVersionColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("PLUGIN_VERSION"), 150);
 		pluginVersionColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -150,8 +146,9 @@ public class InstalledPluginsEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn descriptionColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[2],
-				bounds[2]);
+		// Description
+		TableViewerColumn descriptionColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("DESCRIPTION"), 100);
 		descriptionColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -162,8 +159,9 @@ public class InstalledPluginsEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[3],
-				bounds[3]);
+		// Create date
+		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("CREATE_DATE"), 150);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -175,8 +173,9 @@ public class InstalledPluginsEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn machineOrientedColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[4],
-				bounds[4]);
+		// Machine-oriented
+		TableViewerColumn machineOrientedColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("MACHINE_ORIENTED_PLUGIN"), 100);
 		machineOrientedColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -188,8 +187,9 @@ public class InstalledPluginsEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn userOrientedColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[5],
-				bounds[5]);
+		// User-oriented
+		TableViewerColumn userOrientedColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("USER_ORIENTED_PLUGIN"), 100);
 		userOrientedColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -200,8 +200,9 @@ public class InstalledPluginsEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn policyPluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[6],
-				bounds[6]);
+		// Policy plugin	
+		TableViewerColumn policyPluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("POLICY_PLUGIN"), 100);
 		policyPluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {

@@ -18,6 +18,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -164,6 +165,7 @@ public class ExecutedPolicyEditor extends EditorPart {
 		createTableColumns();
 		populateTable(false);
 
+		// Hook listener
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
@@ -191,12 +193,9 @@ public class ExecutedPolicyEditor extends EditorPart {
 	 */
 	private void createTableColumns() {
 
-		String[] titles = { Messages.getString("LABEL"), Messages.getString("CREATE_DATE"),
-				Messages.getString("RECEIVED_STATUS"), Messages.getString("SUCCESS_STATUS"),
-				Messages.getString("ERROR_STATUS") };
-		int[] bounds = { 200, 250, 100, 100, 100 };
-
-		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[0], bounds[0]);
+		// Label
+		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("LABEL"), 200);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -207,8 +206,9 @@ public class ExecutedPolicyEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[1],
-				bounds[1]);
+		// Create date
+		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("CREATE_DATE"), 250);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -220,8 +220,9 @@ public class ExecutedPolicyEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn receivedColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[2],
-				bounds[2]);
+		// Received status
+		TableViewerColumn receivedColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("RECEIVED_STATUS"), 100);
 		receivedColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -234,7 +235,9 @@ public class ExecutedPolicyEditor extends EditorPart {
 			}
 		});
 
-		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[3], bounds[3]);
+		// Success status
+		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("SUCCESS_STATUS"), 100);
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -245,9 +248,16 @@ public class ExecutedPolicyEditor extends EditorPart {
 				}
 				return Messages.getString("UNTITLED");
 			}
+
+			@Override
+			public Color getBackground(Object element) {
+				return SWTResourceManager.getSuccessColor();
+			}
 		});
 
-		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer, titles[4], bounds[4]);
+		// Error status
+		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("ERROR_STATUS"), 100);
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -256,6 +266,11 @@ public class ExecutedPolicyEditor extends EditorPart {
 							? ((ExecutedPolicy) element).getErrorResults().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
+			}
+
+			@Override
+			public Color getBackground(Object element) {
+				return SWTResourceManager.getErrorColor();
 			}
 		});
 
