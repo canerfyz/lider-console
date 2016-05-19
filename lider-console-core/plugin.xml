@@ -49,6 +49,11 @@
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.core.commands.AgentInfo"
+            name="%command.agent.info">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
             name="%command.report.template">
       </command>
@@ -88,6 +93,10 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyDefinitionHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition">
+      </handler>
+	  <handler
+            class="tr.org.liderahenk.liderconsole.core.handlers.AgentInfoHandler"
+            commandId="tr.org.liderahenk.liderconsole.core.commands.AgentInfo">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.ReportTemplateHandler"
@@ -165,6 +174,12 @@
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
 	          id="tr.org.liderahenk.liderconsole.core.commands.PolicyDefinition"
 	          tooltip="%command.policy.definition">
+        </command>
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.AgentInfo"
+	          id="tr.org.liderahenk.liderconsole.core.commands.AgentInfo"
+	          icon="icons/16/chart-flow.png"
+	          tooltip="%command.agent.info">
         </command>
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
@@ -284,6 +299,12 @@
 		    icon="icons/16/folder-open.png"
 		    id="tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor"
 		    name="%editor.policy.definition">
+	    </editor> 
+	    <editor
+		    class="tr.org.liderahenk.liderconsole.core.editors.AgentInfoEditor"
+		    icon="icons/16/chart-flow.png"
+		    id="tr.org.liderahenk.liderconsole.core.editors.AgentInfoEditor"
+		    name="%editor.agent.info">
 	    </editor> 
 	    <editor
 		    class="tr.org.liderahenk.liderconsole.core.editors.ReportTemplateEditor"
