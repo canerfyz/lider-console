@@ -1,4 +1,4 @@
-package tr.org.liderahenk.liderconsole.core.ldap;
+package tr.org.liderahenk.liderconsole.core.ldap.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
-import tr.org.liderahenk.liderconsole.core.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
 
 /**
  * LdapUtils provides utility methods for querying and updating LDAP entries.
