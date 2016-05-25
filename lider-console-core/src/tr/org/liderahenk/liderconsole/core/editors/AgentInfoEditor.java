@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -35,6 +37,7 @@ import tr.org.liderahenk.liderconsole.core.dialogs.AgentDetailDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Agent;
+import tr.org.liderahenk.liderconsole.core.rest.utils.AgentUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -334,7 +337,15 @@ public class AgentInfoEditor extends EditorPart {
 	 * Get agents and populate the table with them.
 	 */
 	private void populateTable() {
-		// TODO Auto-generated method stub
+		try {
+			List<Agent> agents = AgentUtils.list(null, null);
+			if (agents != null) {
+				tableViewer.setInput(agents);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
 	}
 
 	/**

@@ -44,6 +44,7 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		CTabFolder tabFolder = createTabFolder(composite);
 
 		// Agent properties tab
@@ -68,7 +69,7 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 	private void createPropTable(Composite tabContainer) {
 		Composite composite = new Composite(tabContainer, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
-		composite.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		composite.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
 		TableViewer tableViewer = SWTResourceManager.createTableViewer(composite);
 		createPropTableColumns(tableViewer);
 		populatePropTable(tableViewer);
@@ -82,7 +83,7 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 	private void createPropTableColumns(TableViewer tableViewer) {
 		// Property name
 		TableViewerColumn propNameColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("PROPERTY_NAME"), 100);
+				Messages.getString("PROPERTY_NAME"), 200);
 		propNameColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -127,7 +128,7 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 	private void createSessionTable(Composite tabContainer) {
 		Composite composite = new Composite(tabContainer, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
-		composite.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		composite.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
 		TableViewer tableViewer = SWTResourceManager.createTableViewer(composite);
 		createSessionTableColumns(tableViewer);
 		populateSessionTable(tableViewer);
@@ -153,7 +154,7 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 		});
 		// Session Event
 		TableViewerColumn eventColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("SESSION_EVENT"), 100);
+				Messages.getString("SESSION_EVENT"), 150);
 		eventColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
