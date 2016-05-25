@@ -773,6 +773,7 @@ public class SWTResourceManager {
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 		gridData.heightHint = 420;
+		gridData.widthHint = 600;
 		gridData.horizontalAlignment = GridData.FILL;
 		tableViewer.getControl().setLayoutData(gridData);
 		return tableViewer;
