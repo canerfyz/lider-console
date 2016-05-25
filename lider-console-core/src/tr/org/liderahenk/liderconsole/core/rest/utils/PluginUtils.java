@@ -1,7 +1,9 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
@@ -39,7 +41,19 @@ public class PluginUtils {
 	public static List<Plugin> list(String name, String version) throws Exception {
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/list?name=").append(name).append("&version=").append(version);
+		url.append("/list?");
+
+		// Append optional parameters
+		List<String> params = new ArrayList<String>();
+		if (name != null) {
+			params.add("name=" + name);
+		}
+		if (version != null) {
+			params.add("version=" + version);
+		}
+		if (!params.isEmpty()) {
+			url.append(StringUtils.join(params, "&"));
+		}
 		logger.debug("Sending request to URL: {}", url.toString());
 
 		// Send GET request to server
