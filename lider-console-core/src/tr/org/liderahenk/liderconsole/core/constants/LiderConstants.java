@@ -49,6 +49,9 @@ public class LiderConstants {
 
 	/**
 	 * Configuration properties used in config.properties file
+	 * 
+	 * If you modify these inner class, do not forget to modify
+	 * <b>config.properties</b> as well!
 	 */
 	public static final class CONFIG {
 		public static final String REST_SOCKET_TIMEOUT = "rest.socket.timeout";
@@ -56,6 +59,7 @@ public class LiderConstants {
 		public static final String REST_CONN_REQUEST_TIMEOUT = "rest.connection.request.timeout";
 		public static final String REST_PROFILE_BASE_URL = "rest.profile.base.url";
 		public static final String REST_PLUGIN_BASE_URL = "rest.plugin.base.url";
+		public static final String REST_AGENT_BASE_URL = "rest.agent.base.url";
 		public static final String REST_POLICY_BASE_URL = "rest.policy.base.url";
 		public static final String REST_REPORT_BASE_URL = "rest.report.base.url";
 		public static final String REST_TASK_BASE_URL = "rest.task.base.url";
