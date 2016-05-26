@@ -2,6 +2,7 @@ package tr.org.liderahenk.liderconsole.core.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -14,7 +15,7 @@ public class Task implements Serializable {
 
 	private String commandClsId;
 
-	private byte[] parameterMap;
+	private Map<String, Object> parameterMap;
 
 	private boolean deleted = false;
 
@@ -38,11 +39,11 @@ public class Task implements Serializable {
 		this.commandClsId = commandClsId;
 	}
 
-	public byte[] getParameterMap() {
+	public Map<String, Object> getParameterMap() {
 		return parameterMap;
 	}
 
-	public void setParameterMap(byte[] parameterMap) {
+	public void setParameterMap(Map<String, Object> parameterMap) {
 		this.parameterMap = parameterMap;
 	}
 
