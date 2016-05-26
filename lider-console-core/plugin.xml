@@ -349,14 +349,14 @@
             class="tr.org.liderahenk.liderconsole.core.views.SystemLogsView"
             id="tr.org.liderahenk.liderconsole.core.views.SystemLogsView"
             name="%view.system.logs"
-            icon="icons/32/log-book.png"
+            icon="icons/16/log-book.png"
             restorable="true">
       </view>
       <view
             allowMultiple="false"
             category="tr.org.liderahenk.liderconsole.core.category"
             class="tr.org.liderahenk.liderconsole.core.views.ProfileMenuView"
-            icon="icons/32/folder-open.png"
+            icon="icons/16/folder-open.png"
             id="tr.org.liderahenk.liderconsole.core.views.ProfileMenuView"
             name="%view.profile.menu"
             restorable="true">
@@ -365,7 +365,7 @@
             allowMultiple="false"
             category="tr.org.liderahenk.liderconsole.core.category"
             class="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
-            icon="icons/32/task-play.png"
+            icon="icons/16/task-play.png"
             id="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
             name="%view.task.overview"
             restorable="true">
