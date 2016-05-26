@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.constants;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
+
 /**
  * Provides common constants used throughout the system.
  * 
@@ -39,12 +41,34 @@ public class LiderConstants {
 		public static final String POLICY_MENU = "tr.org.liderahenk.liderconsole.core.policymenu";
 	}
 
+	/**
+	 * Event topics used by {@link IEventBroker}
+	 */
 	public static final class EVENT_TOPICS {
+		/**
+		 * Thrown when XMPP connection establishes
+		 */
 		public static final String XMPP_ONLINE = "xmpp_online";
+		/**
+		 * Thrown when XMPP connection fails
+		 */
 		public static final String XMPP_OFFLINE = "xmpp_offline";
+		/**
+		 * Thrown when a roster becomes online
+		 */
 		public static final String ROSTER_ONLINE = "roster_online";
+		/**
+		 * Thrown when a roster becomes offline
+		 */
 		public static final String ROSTER_OFFLINE = "roster_offline";
-		public static final String TASK = "task";
+		/**
+		 * Thrown when 'task status' notification received
+		 */
+		public static final String TASK_STATUS_NOTIFICATION_RECEIVED = "task_status_notification_received";
+		/**
+		 * Thrown when 'task' notification received
+		 */
+		public static final String TASK_NOTIFICATION_RECEIVED = "task_notification_received";
 	}
 
 	/**
