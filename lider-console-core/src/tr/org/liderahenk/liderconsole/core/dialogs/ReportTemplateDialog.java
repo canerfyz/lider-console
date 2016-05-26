@@ -79,10 +79,10 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-
+		
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		parent.setLayout(new GridLayout(1, false));
-
+		
 		Composite composite = (Composite) super.createDialogArea(parent);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		composite.setLayout(new GridLayout(2, false));
@@ -114,6 +114,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		txtQuery = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		data.heightHint = 80;
+		data.widthHint = 160;
 		txtQuery.setLayoutData(data);
 		if (selectedTemplate != null) {
 			txtQuery.setText(selectedTemplate.getQuery());
@@ -183,11 +184,12 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		Label lblTemplateCols = new Label(parent, SWT.NONE);
 		lblTemplateCols.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblTemplateCols.setText(Messages.getString("TEMPLATE_COLUMNS"));
-
+		
 		createButtonsForCols(parent);
 		createTableForCols(parent);
 
 		applyDialogFont(parent);
+		
 		return parent;
 	}
 
@@ -288,6 +290,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 		gridData.heightHint = 140;
+		gridData.widthHint = 200;
 		gridData.horizontalAlignment = GridData.FILL;
 		tvParam.getControl().setLayoutData(gridData);
 
@@ -465,6 +468,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 		gridData.heightHint = 140;
+		gridData.widthHint = 550;
 		gridData.horizontalAlignment = GridData.FILL;
 		tvCol.getControl().setLayoutData(gridData);
 
