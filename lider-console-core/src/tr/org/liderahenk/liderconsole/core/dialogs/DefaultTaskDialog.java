@@ -133,9 +133,8 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 				if (validateBeforeExecution()) {
 					// TODO confirm box
 					try {
-						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
-								getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(), null,
-								new Date());
+						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK, getPluginName(),
+								getPluginVersion(), getCommandId(), getParameterMap(), null, new Date());
 						TaskUtils.execute(task);
 					} catch (Exception e1) {
 						logger.error(e1.getMessage(), e1);
@@ -166,9 +165,9 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 					}
 					// TODO confirm box
 					try {
-						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
-								getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(),
-								dialog.getCronExpression(), new Date());
+						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK, getPluginName(),
+								getPluginVersion(), getCommandId(), getParameterMap(), dialog.getCronExpression(),
+								new Date());
 						TaskUtils.execute(task);
 					} catch (Exception e1) {
 						logger.error(e1.getMessage(), e1);
