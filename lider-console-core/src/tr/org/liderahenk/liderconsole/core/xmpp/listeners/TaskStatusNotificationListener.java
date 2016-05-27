@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.xmpp.listeners;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -94,6 +95,7 @@ public class TaskStatusNotificationListener implements StanzaListener, StanzaFil
 
 				// Notify related plug-in
 				eventBroker.post(LiderConstants.EVENT_TOPICS.TASK_STATUS_NOTIFICATION_RECEIVED, taskStatus);
+				eventBroker.post(taskStatus.getPluginName().toUpperCase(Locale.ENGLISH), taskStatus);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
