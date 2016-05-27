@@ -32,6 +32,7 @@ Export-Package: tr.org.liderahenk.liderconsole.core.config,
  tr.org.liderahenk.liderconsole.core.editorinput,
  tr.org.liderahenk.liderconsole.core.exceptions,
  tr.org.liderahenk.liderconsole.core.handlers,
+ tr.org.liderahenk.liderconsole.core.ldap.enums,
  tr.org.liderahenk.liderconsole.core.ldap.utils,
  tr.org.liderahenk.liderconsole.core.model,
  tr.org.liderahenk.liderconsole.core.rest,
@@ -41,7 +42,8 @@ Export-Package: tr.org.liderahenk.liderconsole.core.config,
  tr.org.liderahenk.liderconsole.core.rest.utils,
  tr.org.liderahenk.liderconsole.core.utils,
  tr.org.liderahenk.liderconsole.core.widgets,
- tr.org.liderahenk.liderconsole.core.xmpp
+ tr.org.liderahenk.liderconsole.core.xmpp,
+ tr.org.liderahenk.liderconsole.core.xmpp.notifications
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Agem Bilişim
 Import-Package: org.apache.directory.api.ldap.model.exception,
