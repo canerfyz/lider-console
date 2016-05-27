@@ -6,9 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
@@ -16,11 +14,6 @@ import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.chat.ChatManagerListener;
-import org.jivesoftware.smack.chat.ChatMessageListener;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.packet.XMPPError;
@@ -38,11 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
-import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
-import tr.org.liderahenk.liderconsole.core.model.TaskStatus;
-import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
+import tr.org.liderahenk.liderconsole.core.xmpp.listeners.TaskNotificationListener;
+import tr.org.liderahenk.liderconsole.core.xmpp.listeners.TaskStatusNotificationListener;
 
 /**
  * XMPP client that is used to read presence info and get task results.
@@ -84,8 +76,9 @@ public class XMPPClient {
 	 */
 	private XMPPConnectionListener connectionListener;
 	private XMPPPingFailedListener pingFailedListener;
-	private ChatManagerListenerImpl chatManagerListener;
 	private RosterListenerImpl rosterListener;
+	private TaskNotificationListener taskNotificationListener;
+	private TaskStatusNotificationListener taskStatusNotificationListener;
 
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
@@ -220,14 +213,21 @@ public class XMPPClient {
 	 * Hook packet and connection listeners
 	 */
 	private void addListeners() {
+		// Hook connection listener
 		connectionListener = new XMPPConnectionListener();
-		pingFailedListener = new XMPPPingFailedListener();
-		chatManagerListener = new ChatManagerListenerImpl();
-		rosterListener = new RosterListenerImpl();
 		connection.addConnectionListener(connectionListener);
+		// Hook ping failed listener
+		pingFailedListener = new XMPPPingFailedListener();
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
-		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
+		// Hook roster listener
+		rosterListener = new RosterListenerImpl();
 		Roster.getInstanceFor(connection).addRosterListener(rosterListener);
+		// Hook task notification listener
+		taskNotificationListener = new TaskNotificationListener();
+		connection.addAsyncStanzaListener(taskNotificationListener, taskNotificationListener);
+		// Hook task status notification listener
+		taskStatusNotificationListener = new TaskStatusNotificationListener();
+		connection.addAsyncStanzaListener(taskStatusNotificationListener, taskStatusNotificationListener);
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
 	}
 
@@ -350,78 +350,6 @@ public class XMPPClient {
 		}
 	}
 
-	class ChatManagerListenerImpl implements ChatManagerListener {
-		@Override
-		public void chatCreated(Chat chat, boolean createdLocally) {
-			if (createdLocally) {
-				logger.info("The chat was created by the local user.");
-			}
-			chat.addMessageListener(new ChatMessageListener() {
-				@Override
-				public void processMessage(Chat chat, Message message) {
-					// All messages from Lider are type normal
-					if (!Message.Type.normal.equals(message.getType())) {
-						logger.warn("Not a normal message type, will not notify subscribers:  {}", message.getBody());
-						return;
-					}
-					String from = message.getFrom();
-					String body = message.getBody();
-					logger.debug("Received message from: {}", from);
-					logger.debug("Received message body: {}", message.getBody());
-
-					if (null != body && !body.isEmpty()) {
-						postTaskStatus(body);
-					}
-				}
-			});
-		}
-	}
-
-	protected void postTaskStatus(String body) {
-
-		try {
-			final TaskStatus taskStatus = new ObjectMapper().readValue(body, TaskStatus.class);
-
-			if (taskStatus != null && taskStatus.getTaskId() != null) {
-
-				// Show task notification
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						switch (taskStatus.getResponseCode()) {
-						case TASK_PROCESSED:
-							Notifier.success(null, taskStatus.getResponseMessage() != null
-									? taskStatus.getResponseMessage() : Messages.getString("TASK_PROCESSED"));
-							break;
-						case TASK_WARNING:
-							Notifier.warning(null, taskStatus.getResponseMessage() != null
-									? taskStatus.getResponseMessage() : Messages.getString("TASK_WARNING"));
-							break;
-						case TASK_ERROR:
-						case TASK_TIMEOUT:
-						case TASK_KILLED:
-							Notifier.error(null, taskStatus.getResponseMessage() != null
-									? taskStatus.getResponseMessage() : Messages.getString("TASK_ERROR"));
-							break;
-						default:
-							break;
-						}
-					}
-				});
-
-				// TODO improvement. Get plugin name from taskStatus object and
-				// use
-				// it as event topic to narrow down notified classes.
-
-				// Notify related plug-in
-				eventBroker.post(LiderConstants.EVENT_TOPICS.TASK, body);
-			}
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-		}
-
-	}
-
 	/**
 	 * Listens to roster presence changes.
 	 *
@@ -505,8 +433,6 @@ public class XMPPClient {
 	public void disconnect() {
 		logger.debug("Trying to disconnect from XMPP server.");
 		if (connection != null && connection.isConnected()) {
-			// Remove listeners
-			ChatManager.getInstanceFor(connection).removeChatListener(chatManagerListener);
 			Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
 			connection.removeConnectionListener(connectionListener);
 			PingManager.getInstanceFor(connection).setPingInterval(-1);
