@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -76,7 +77,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		paramContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		paramContainer.setLayout(new GridLayout(2, false));
 
-		List<ReportTemplateParameter> params = selectedTemplate.getTemplateParams();
+		Set<ReportTemplateParameter> params = selectedTemplate.getTemplateParams();
 		if (params != null) {
 			for (ReportTemplateParameter param : params) {
 				// Param label
@@ -156,7 +157,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 	 */
 	private void createTableColumns(TableViewer tableViewer, List<LinkedHashMap<String, String>> list) {
 
-		List<ReportTemplateColumn> columns = selectedTemplate.getTemplateColumns();
+		Set<ReportTemplateColumn> columns = selectedTemplate.getTemplateColumns();
 		if (columns != null && !columns.isEmpty()) {
 			for (final ReportTemplateColumn c : columns) {
 				TableViewerColumn column = createTableViewerColumn(tableViewer, c.getName(),

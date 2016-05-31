@@ -2,7 +2,7 @@ package tr.org.liderahenk.liderconsole.core.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -31,16 +31,16 @@ public class Agent implements Serializable {
 
 	private Date modifyDate;
 
-	private List<AgentProperty> properties;
+	private Set<AgentProperty> properties;
 
-	private List<UserSession> sessions;
+	private Set<UserSession> sessions;
 
 	public Agent() {
 	}
 
 	public Agent(Long id, String jid, Boolean deleted, String dn, String password, String hostname, String ipAddresses,
-			String macAddresses, Date createDate, Date modifyDate, List<AgentProperty> properties,
-			List<UserSession> sessions) {
+			String macAddresses, Date createDate, Date modifyDate, Set<AgentProperty> properties,
+			Set<UserSession> sessions) {
 		this.id = id;
 		this.jid = jid;
 		this.deleted = deleted;
@@ -135,19 +135,19 @@ public class Agent implements Serializable {
 		this.modifyDate = modifyDate;
 	}
 
-	public List<AgentProperty> getProperties() {
+	public Set<AgentProperty> getProperties() {
 		return properties;
 	}
 
-	public void setProperties(List<AgentProperty> properties) {
+	public void setProperties(Set<AgentProperty> properties) {
 		this.properties = properties;
 	}
 
-	public List<UserSession> getSessions() {
+	public Set<UserSession> getSessions() {
 		return sessions;
 	}
 
-	public void setSessions(List<UserSession> sessions) {
+	public void setSessions(Set<UserSession> sessions) {
 		this.sessions = sessions;
 	}
 

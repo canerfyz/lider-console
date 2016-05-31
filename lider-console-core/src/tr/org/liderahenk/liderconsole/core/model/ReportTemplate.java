@@ -2,7 +2,7 @@ package tr.org.liderahenk.liderconsole.core.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -25,9 +25,9 @@ public class ReportTemplate implements Serializable {
 
 	private String query;
 
-	private List<ReportTemplateParameter> templateParams;
+	private Set<ReportTemplateParameter> templateParams;
 
-	private List<ReportTemplateColumn> templateColumns;
+	private Set<ReportTemplateColumn> templateColumns;
 
 	private String reportHeader;
 
@@ -41,8 +41,8 @@ public class ReportTemplate implements Serializable {
 	}
 
 	public ReportTemplate(Long id, String name, String description, String query,
-			List<ReportTemplateParameter> templateParams, List<ReportTemplateColumn> templateColumns,
-			String reportHeader, String reportFooter, Date createDate, Date modifyDate) {
+			Set<ReportTemplateParameter> templateParams, Set<ReportTemplateColumn> templateColumns, String reportHeader,
+			String reportFooter, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -87,19 +87,19 @@ public class ReportTemplate implements Serializable {
 		this.query = query;
 	}
 
-	public List<ReportTemplateParameter> getTemplateParams() {
+	public Set<ReportTemplateParameter> getTemplateParams() {
 		return templateParams;
 	}
 
-	public void setTemplateParams(List<ReportTemplateParameter> templateParams) {
+	public void setTemplateParams(Set<ReportTemplateParameter> templateParams) {
 		this.templateParams = templateParams;
 	}
 
-	public List<ReportTemplateColumn> getTemplateColumns() {
+	public Set<ReportTemplateColumn> getTemplateColumns() {
 		return templateColumns;
 	}
 
-	public void setTemplateColumns(List<ReportTemplateColumn> templateColumns) {
+	public void setTemplateColumns(Set<ReportTemplateColumn> templateColumns) {
 		this.templateColumns = templateColumns;
 	}
 
