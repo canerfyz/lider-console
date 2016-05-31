@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.xmpp.listeners;
 
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -64,7 +65,10 @@ public class TaskStatusNotificationListener implements StanzaListener, StanzaFil
 				Message msg = (Message) packet;
 				logger.info("Task status message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
-				final TaskStatusNotification taskStatus = new ObjectMapper().readValue(msg.getBody(),
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+				
+				final TaskStatusNotification taskStatus = mapper.readValue(msg.getBody(),
 						TaskStatusNotification.class);
 
 				// Show task status notification

@@ -33,9 +33,11 @@ public class TaskStatusNotification implements Serializable {
 
 	private Date timestamp;
 
+	public TaskStatusNotification() {
+	}
+
 	public TaskStatusNotification(String pluginName, String pluginVersion, String commandClsId,
 			CommandExecution commandExecution, CommandExecutionResult result, Date timestamp) {
-		super();
 		this.pluginName = pluginName;
 		this.pluginVersion = pluginVersion;
 		this.commandClsId = commandClsId;

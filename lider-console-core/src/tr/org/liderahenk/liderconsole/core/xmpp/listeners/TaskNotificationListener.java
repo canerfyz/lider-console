@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.xmpp.listeners;
 
+import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -58,9 +59,10 @@ public class TaskNotificationListener implements StanzaListener, StanzaFilter {
 				Message msg = (Message) packet;
 				logger.info("Task message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
-				final TaskNotification task = new ObjectMapper().readValue(msg.getBody(), TaskNotification.class);
+				ObjectMapper mapper = new ObjectMapper();
+				mapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
 
-				// TODO show task notification
+				final TaskNotification task = mapper.readValue(msg.getBody(), TaskNotification.class);
 
 				// Notify related plug-in
 				eventBroker.post(LiderConstants.EVENT_TOPICS.TASK_NOTIFICATION_RECEIVED, task);
