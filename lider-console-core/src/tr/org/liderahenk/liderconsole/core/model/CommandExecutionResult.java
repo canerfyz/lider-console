@@ -27,6 +27,20 @@ public class CommandExecutionResult implements Serializable {
 
 	private Date createDate;
 
+	public CommandExecutionResult() {
+	}
+
+	public CommandExecutionResult(Long id, Long agentId, StatusCode responseCode, String responseMessage,
+			byte[] responseData, ContentType contentType, Date createDate) {
+		this.id = id;
+		this.agentId = agentId;
+		this.responseCode = responseCode;
+		this.responseMessage = responseMessage;
+		this.responseData = responseData;
+		this.contentType = contentType;
+		this.createDate = createDate;
+	}
+
 	public Long getId() {
 		return id;
 	}

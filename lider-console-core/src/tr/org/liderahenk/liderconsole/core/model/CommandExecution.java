@@ -23,6 +23,18 @@ public class CommandExecution implements Serializable {
 
 	private List<CommandExecutionResult> commandExecutionResults;
 
+	public CommandExecution() {
+	}
+
+	public CommandExecution(Long id, DNType dnType, String dn, Date createDate,
+			List<CommandExecutionResult> commandExecutionResults) {
+		this.id = id;
+		this.dnType = dnType;
+		this.dn = dn;
+		this.createDate = createDate;
+		this.commandExecutionResults = commandExecutionResults;
+	}
+
 	public Long getId() {
 		return id;
 	}

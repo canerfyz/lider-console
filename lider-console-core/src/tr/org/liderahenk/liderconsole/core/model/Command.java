@@ -27,6 +27,20 @@ public class Command implements Serializable {
 
 	private List<CommandExecution> commandExecutions;
 
+	public Command() {
+	}
+
+	public Command(Long id, Task task, List<String> dnList, DNType dnType, String commandOwnerUid, Date createDate,
+			List<CommandExecution> commandExecutions) {
+		this.id = id;
+		this.task = task;
+		this.dnList = dnList;
+		this.dnType = dnType;
+		this.commandOwnerUid = commandOwnerUid;
+		this.createDate = createDate;
+		this.commandExecutions = commandExecutions;
+	}
+
 	public Long getId() {
 		return id;
 	}
