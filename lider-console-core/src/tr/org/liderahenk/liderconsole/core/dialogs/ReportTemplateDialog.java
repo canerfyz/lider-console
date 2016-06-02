@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -79,10 +80,10 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		
+
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		parent.setLayout(new GridLayout(1, false));
-		
+
 		Composite composite = (Composite) super.createDialogArea(parent);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		composite.setLayout(new GridLayout(2, false));
@@ -184,12 +185,12 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		Label lblTemplateCols = new Label(parent, SWT.NONE);
 		lblTemplateCols.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblTemplateCols.setText(Messages.getString("TEMPLATE_COLUMNS"));
-		
+
 		createButtonsForCols(parent);
 		createTableForCols(parent);
 
 		applyDialogFont(parent);
-		
+
 		return parent;
 	}
 
@@ -366,7 +367,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	private void populateTableWithParams() {
 		if (selectedTemplate != null && selectedTemplate.getTemplateParams() != null
 				&& !selectedTemplate.getTemplateParams().isEmpty()) {
-			tvParam.setInput(selectedTemplate.getTemplateParams());
+			tvParam.setInput(new ArrayList<ReportTemplateParameter>(selectedTemplate.getTemplateParams()));
 			tvParam.refresh();
 		}
 	}
@@ -552,7 +553,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	private void populateTableWithCols() {
 		if (selectedTemplate != null && selectedTemplate.getTemplateColumns() != null
 				&& !selectedTemplate.getTemplateColumns().isEmpty()) {
-			tvParam.setInput(selectedTemplate.getTemplateColumns());
+			tvParam.setInput(new ArrayList<ReportTemplateColumn>(selectedTemplate.getTemplateColumns()));
 			tvParam.refresh();
 		}
 	}
