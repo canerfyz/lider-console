@@ -73,8 +73,8 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		lblParam.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblParam.setText(Messages.getString("REPORT_PARAMETERS"));
 
-		paramContainer = (Composite) super.createDialogArea(parent);
-		paramContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		paramContainer = new Composite(parent, SWT.BORDER);
+		paramContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		paramContainer.setLayout(new GridLayout(2, false));
 
 		Set<ReportTemplateParameter> params = selectedTemplate.getTemplateParams();
@@ -86,6 +86,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 
 				// Param input
 				Text txt = new Text(paramContainer, SWT.BORDER);
+				txt.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 				// Associate parameter key with this input
 				txt.setData(param.getKey());
 			}
@@ -94,7 +95,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		// Report results label
 		lblResult = new Label(parent, SWT.NONE);
 		lblResult.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
-		lblResult.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblResult.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		lblResult.setText(Messages.getString("REPORT_RESULT"));
 		lblResult.setVisible(false);
 
@@ -106,7 +107,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		return parent;
 	}
 
-	protected void generateTable(List<LinkedHashMap<String, String>> list) {
+	protected void generateTable(List<Object[]> list) {
 		// Dispose previous table!
 		disposePrev(tableContainer);
 
@@ -155,7 +156,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 	 * @param list
 	 *            a collection of report fields
 	 */
-	private void createTableColumns(TableViewer tableViewer, List<LinkedHashMap<String, String>> list) {
+	private void createTableColumns(TableViewer tableViewer, List<Object[]> list) {
 
 		Set<ReportTemplateColumn> columns = selectedTemplate.getTemplateColumns();
 		if (columns != null && !columns.isEmpty()) {
@@ -178,19 +179,15 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		} else {
 			// No column defined in the template, we should display all the
 			// fields!
-			LinkedHashMap<String, String> row = list.get(0);
-			ArrayList<String> temp = new ArrayList<String>(row.keySet());
-			for (int i = 0; i < temp.size(); i++) {
-				TableViewerColumn column = createTableViewerColumn(tableViewer, temp.get(i), DEFAULT_COLUMN_WIDTH);
+			for (int i = 0; i < list.get(0).length; i++) {
+				TableViewerColumn column = createTableViewerColumn(tableViewer, "", DEFAULT_COLUMN_WIDTH);
 				final int j = i;
 				column.setLabelProvider(new ColumnLabelProvider() {
-					@SuppressWarnings("unchecked")
 					@Override
 					public String getText(Object element) {
-						if (element instanceof LinkedHashMap) {
-							LinkedHashMap<String, String> curRow = (LinkedHashMap<String, String>) element;
-							ArrayList<String> temp = new ArrayList<String>(curRow.values());
-							return temp.get(j);
+						if (element instanceof Object[]) {
+							Object[] curRow = (Object[]) element;
+							return curRow[j] != null ? curRow[j].toString() : "";
 						}
 						return Messages.getString("UNTITLED");
 					}
@@ -269,7 +266,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 				report.setParamValues(paramValues);
 
 				try {
-					List<LinkedHashMap<String, String>> list = ReportUtils.generate(report);
+					List<Object[]> list = ReportUtils.generate(report);
 					generateTable(list);
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);

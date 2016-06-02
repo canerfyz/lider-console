@@ -1,6 +1,5 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -35,7 +34,7 @@ public class ReportUtils {
 	 * @param report
 	 * @return
 	 */
-	public static List<LinkedHashMap<String, String>> generate(ReportGenerationRequest report) throws Exception {
+	public static List<Object[]> generate(ReportGenerationRequest report) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
@@ -44,12 +43,12 @@ public class ReportUtils {
 
 		// Send POST request to server
 		IResponse response = RestClient.post(report, url.toString());
-		List<LinkedHashMap<String, String>> resultList = null;
+		List<Object[]> resultList = null;
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("report") != null) {
 			resultList = new ObjectMapper().readValue(response.getResultMap().get("report").toString(),
-					new TypeReference<List<LinkedHashMap<String, String>>>() {
+					new TypeReference<List<Object[]>>() {
 					});
 			Notifier.success(null, Messages.getString("REPORT_GENERATED"));
 		} else {
