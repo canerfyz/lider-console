@@ -1,8 +1,11 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -149,6 +152,21 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		}
 	}
 
+	static Object[] convertToObjectArray(Object array) {
+	    Class ofArray = array.getClass().getComponentType();
+	    if (ofArray.isPrimitive()) {
+	        List ar = new ArrayList();
+	        int length = Array.getLength(array);
+	        for (int i = 0; i < length; i++) {
+	            ar.add(Array.get(array, i));
+	        }
+	        return ar.toArray();
+	    }
+	    else {
+	        return (Object[]) array;
+	    }
+	}
+	
 	/**
 	 * 
 	 * 
@@ -164,13 +182,11 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 				TableViewerColumn column = createTableViewerColumn(tableViewer, c.getName(),
 						c.getWidth() != null ? c.getWidth() : DEFAULT_COLUMN_WIDTH);
 				column.setLabelProvider(new ColumnLabelProvider() {
-					@SuppressWarnings("unchecked")
 					@Override
 					public String getText(Object element) {
-						if (element instanceof LinkedHashMap) {
-							LinkedHashMap<String, String> curRow = (LinkedHashMap<String, String>) element;
-							ArrayList<String> temp = new ArrayList<String>(curRow.values());
-							return temp.get(c.getColumnOrder());
+						if (element instanceof Object[]) {
+							Object[] convertToObjectArray = convertToObjectArray(element);
+							return convertToObjectArray[c.getColumnOrder()-1] == null ? Messages.getString("UNTITLED") : convertToObjectArray[c.getColumnOrder()-1].toString();
 						}
 						return Messages.getString("UNTITLED");
 					}
