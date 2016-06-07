@@ -11,6 +11,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -56,18 +57,21 @@ public class TaskOverview extends ViewPart {
 							return Status.OK_STATUS;
 						}
 						TaskNotification task = (TaskNotification) event.getProperty("org.eclipse.e4.data");
-						List<Command> items = null;
+						final List<Command> items = new ArrayList<Command>();
 						// Restore previous items
 						if (treeViewer.getInput() != null) {
-							items = (List<Command>) treeViewer.getInput();
-						}
-						if (items == null) {
-							items = new ArrayList<Command>();
+							items.addAll((List<Command>) treeViewer.getInput());
 						}
 						// Add new item
 						items.add(task.getCommand());
-						treeViewer.setInput(items);
-						treeViewer.refresh();
+						// Refresh tree
+						Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								treeViewer.setInput(items);
+								treeViewer.refresh();
+							}
+						});
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}
