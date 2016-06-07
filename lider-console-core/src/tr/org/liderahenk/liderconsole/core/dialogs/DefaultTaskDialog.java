@@ -140,6 +140,8 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 						logger.error(e1.getMessage(), e1);
 						Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 					}
+				} else {
+					Notifier.error("", Messages.getString("ERROR_ON_VALIDATE"));
 				}
 			}
 
@@ -173,6 +175,8 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 						logger.error(e1.getMessage(), e1);
 						Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 					}
+				} else {
+					Notifier.error("", Messages.getString("ERROR_ON_VALIDATE"));
 				}
 			}
 
