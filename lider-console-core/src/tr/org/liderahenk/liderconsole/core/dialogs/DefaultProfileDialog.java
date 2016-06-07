@@ -97,7 +97,7 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 		// Profile active
 		btnActive = new Button(composite, SWT.CHECK);
 		btnActive.setText(Messages.getString("ACTIVE"));
-		btnActive.setSelection(selectedProfile != null && selectedProfile.isActive());
+		btnActive.setSelection(selectedProfile != null ? selectedProfile.isActive() : true);
 
 		// Profile overridable
 		btnOverridable = new Button(composite, SWT.CHECK);
