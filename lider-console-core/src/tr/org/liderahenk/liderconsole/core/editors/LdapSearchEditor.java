@@ -11,7 +11,6 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -53,6 +52,7 @@ import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
+import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.AttrNameCombo;
 import tr.org.liderahenk.liderconsole.core.widgets.AttrOperator;
 import tr.org.liderahenk.liderconsole.core.widgets.AttrValueText;
@@ -64,7 +64,6 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-// TODO en-tr message must be corrected/added!
 public class LdapSearchEditor extends EditorPart {
 
 	private static Logger logger = LoggerFactory.getLogger(LdapSearchEditor.class);
@@ -140,7 +139,6 @@ public class LdapSearchEditor extends EditorPart {
 	public void createPartControl(Composite parent) {
 
 		parent.setLayout(new FillLayout());
-
 		sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 
 		// Main composite
@@ -153,8 +151,8 @@ public class LdapSearchEditor extends EditorPart {
 		sc.setExpandVertical(true);
 
 		Label lblSearchCriteria = new Label(composite, SWT.NONE);
-		lblSearchCriteria.setText("Arama Kriteri");
-		lblSearchCriteria.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+		lblSearchCriteria.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
+		lblSearchCriteria.setText(Messages.getString("LDAP_SEARCH_CRITERIA"));
 
 		cmpSearchCritera = new Composite(composite, SWT.NONE);
 		cmpSearchCritera.setLayout(new GridLayout(2, false));
@@ -174,23 +172,23 @@ public class LdapSearchEditor extends EditorPart {
 		});
 
 		Label lblSearchScope = new Label(composite, SWT.NONE);
-		lblSearchScope.setText("Arama Kapsamı");
-		lblSearchScope.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+		lblSearchScope.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
+		lblSearchScope.setText(Messages.getString("LDAP_SEARCH_SCOPE"));
 
 		Composite cmpSearchScope = new Composite(composite, SWT.NONE);
 		cmpSearchScope.setLayout(new GridLayout(3, false));
 		cmpSearchScope.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		btnSearchAgents = new Button(cmpSearchScope, SWT.RADIO);
-		btnSearchAgents.setText("Sadece Ahenkler");
+		btnSearchAgents.setText(Messages.getString("LDAP_ONLY_AGENTS"));
 		btnSearchAgents.setSelection(true);
 
 		btnSearchUsers = new Button(cmpSearchScope, SWT.RADIO);
-		btnSearchUsers.setText("Sadece Kullanıcılar");
+		btnSearchUsers.setText(Messages.getString("LDAP_ONLY_USERS"));
 
 		btnSearch = new Button(composite, SWT.PUSH);
 		btnSearch.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/filter.png")));
-		btnSearch.setText("Aramayı Başlat");
+		btnSearch.setText(Messages.getString("LDAP_DO_SEARCH"));
 		btnSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -259,7 +257,7 @@ public class LdapSearchEditor extends EditorPart {
 				// TODO
 				// TODO
 				// TODO
-				
+
 			}
 			recreateTable(returningAttributes);
 			viewer.setInput(result);

@@ -83,7 +83,6 @@ public class LdapConnectionListener implements IConnectionListener {
 
 	@Override
 	public void connectionClosed(Connection conn, StudioProgressMonitor mon) {
-
 		closeAllEditors();
 
 		XMPPClient.getInstance().disconnect();
@@ -100,7 +99,6 @@ public class LdapConnectionListener implements IConnectionListener {
 			monitor.done();
 			monitor = null;
 		}
-
 	}
 
 	/**
@@ -123,6 +121,7 @@ public class LdapConnectionListener implements IConnectionListener {
 				}
 			}
 		});
+		Notifier.success(null, Messages.getString("LIDER_CONNECTION_CLOSED"));
 	}
 
 	@Override
@@ -130,110 +129,97 @@ public class LdapConnectionListener implements IConnectionListener {
 
 		monitor = new StudioProgressMonitor(mon);
 
-		openLdapSearchEditor();
-
 		Connection connWillBeClosed = LdapConnectionListener.conn;
 		LdapConnectionListener.conn = conn;
+
 		String baseDn = LdapUtils.getInstance().findBaseDn(conn);
-
 		if (baseDn == null || baseDn.equals("")) {
-			// TODO messages_tr/en
-			Notifier.notify("DİKKAT",
-					"Lider özelliklerini kullanabilmeniz\r\niçin, bağlantı ayarlarınızda Base DN\r\nayarlanmış olmalıdır. Şu anda\r\nlider özelliklerinizi kullanamazsınız! ");
-		} else {
+			Notifier.error(null, "LDAP_BASE_DN_ERROR");
+			return;
+		}
 
-			String restFulConfigDN = "cn=liderAhenkConfig," + baseDn;
-
-			try {
-
-				AuthenticationMethod authMethod = conn.getAuthMethod();
-				// sets the application wide current user.
-				if (authMethod.equals(AuthenticationMethod.SASL_CRAM_MD5)
-						|| authMethod.equals(AuthenticationMethod.SASL_DIGEST_MD5)) {
-					String uid = conn.getBindPrincipal();
-					String principal = LdapUtils.getInstance().findDnByUid(uid, conn, monitor);
-					String passwd = conn.getBindPassword();
-					UserSettings.setCurrentUserDn(principal);
-					UserSettings.setCurrentUserId(uid);
-					UserSettings.setCurrentUserPassword(passwd);
-				} else {
-					String principal = conn.getBindPrincipal();
-					String uid = LdapUtils.getInstance().findAttributeValueByDn(principal,
-							ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR), conn, monitor);
-					String passwd = conn.getBindPassword();
-					UserSettings.setCurrentUserDn(principal);
-					UserSettings.setCurrentUserId(uid);
-					UserSettings.setCurrentUserPassword(passwd);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+		try {
+			// Set the application-wide current user.
+			AuthenticationMethod authMethod = conn.getAuthMethod();
+			if (authMethod.equals(AuthenticationMethod.SASL_CRAM_MD5)
+					|| authMethod.equals(AuthenticationMethod.SASL_DIGEST_MD5)) {
+				String uid = conn.getBindPrincipal();
+				String principal = LdapUtils.getInstance().findDnByUid(uid, conn, monitor);
+				String passwd = conn.getBindPassword();
+				UserSettings.setCurrentUserDn(principal);
+				UserSettings.setCurrentUserId(uid);
+				UserSettings.setCurrentUserPassword(passwd);
+			} else {
+				String principal = conn.getBindPrincipal();
+				String uid = LdapUtils.getInstance().findAttributeValueByDn(principal,
+						ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR), conn, monitor);
+				String passwd = conn.getBindPassword();
+				UserSettings.setCurrentUserDn(principal);
+				UserSettings.setCurrentUserId(uid);
+				UserSettings.setCurrentUserPassword(passwd);
 			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, "LDAP_USER_CREDENTIALS_ERROR");
+			return;
+		}
 
-			Map<String, Map<String, Boolean>> privileges = LdapUtils.getInstance().findPrivileges(conn, monitor);
-			UserSettings.setCurrentUserPrivileges(privileges);
+		if ("".equals(UserSettings.USER_DN)) {
+			Notifier.error(null, Messages.getString("LDAP_USER_MISSING_UID_ERROR",
+					ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR)));
+			return;
+		}
 
-			StudioNamingEnumeration enumeration = LdapUtils.getInstance().search(restFulConfigDN,
-					LdapUtils.OBJECT_CLASS_FILTER, new String[] {}, SearchControls.OBJECT_SCOPE, 1, conn, monitor);
-			try {
-				if (enumeration != null && enumeration.hasMore()) {
-					SearchResult item = enumeration.next();
+		Map<String, Map<String, Boolean>> privileges = LdapUtils.getInstance().findPrivileges(conn, monitor);
+		UserSettings.setCurrentUserPrivileges(privileges);
+		String configDn = ConfigProvider.getInstance().get(LiderConstants.CONFIG.CONFIG_LDAP_DN_PREFIX) + "," + baseDn;
 
-					// REST Address
-					Attribute attribute = item.getAttributes()
-							.get(ConfigProvider.getInstance().get(LiderConstants.CONFIG.LDAP_REST_ADDRESS_ATTR));
-					String restFulAddress = LdapUtils.getInstance().findAttributeValue(attribute);
+		StudioNamingEnumeration configEntries = LdapUtils.getInstance().search(configDn, LdapUtils.OBJECT_CLASS_FILTER,
+				new String[] {}, SearchControls.OBJECT_SCOPE, 1, conn, monitor);
+		try {
+			if (configEntries != null && configEntries.hasMore()) {
+				SearchResult item = configEntries.next();
 
-					if ("".equals(UserSettings.USER_DN)) {
-						// TODO messages_tr/en
-						Notifier.notify("WARNING",
-								String.format(
-										"Lider özelliklerini kullanabilmeniz\r\niçin, bağlandığınız kullanıcının\r\n'%s' özelliği tanımlı olmalıdır.",
-										ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_UID_ATTR)));
-					} else {
-						if (restFulAddress != null && !restFulAddress.isEmpty()) {
+				// REST Address
+				Attribute attribute = item.getAttributes()
+						.get(ConfigProvider.getInstance().get(LiderConstants.CONFIG.LDAP_REST_ADDRESS_ATTR));
+				String restFulAddress = LdapUtils.getInstance().findAttributeValue(attribute);
 
-							RestSettings.setServerUrl(restFulAddress);
-							IResponse response = null;
+				if (restFulAddress != null && !restFulAddress.isEmpty()) {
 
-							try {
-								response = TaskUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG");
-							} catch (Exception e) {
-								logger.error(e.getMessage(), e);
-								Notifier.error("Lider Sunucu",
-										"Sunucu adresine (" + restFulAddress + ") erişilemiyor.");
-							}
+					RestSettings.setServerUrl(restFulAddress);
+					IResponse response = null;
 
-							if (response != null) {
-								Map<String, Object> config = response.getResultMap();
-								if (config != null) {
-									// Initialise UID map before connecting to
-									// XMPP
-									// server.
-									LdapUtils.getInstance().getUidMap(conn, monitor);
-									XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
-											config.get("xmppServiceName").toString(), config.get("xmppHost").toString(),
-											new Integer(config.get("xmppPort").toString()));
-								} else {
-									// TODO messages_tr/en
-									// Notifier.notify("WARNING", "XMPP Baglanti
-									// Bilgilerine Erisilemiyor.");
-								}
-							}
-
+					try {
+						response = TaskUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG");
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+						Notifier.error(null, Messages.getString("REST_SERVER_ACCESS_ERROR", restFulAddress));
+						return;
+					}
+					if (response != null) {
+						Map<String, Object> config = response.getResultMap();
+						if (config != null) {
+							// Initialise UID map before connecting to
+							// XMPP server.
+							LdapUtils.getInstance().getUidMap(conn, monitor);
+							XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
+									config.get("xmppServiceName").toString(), config.get("xmppHost").toString(),
+									new Integer(config.get("xmppPort").toString()));
+							Notifier.success(null, Messages.getString("LIDER_CONNECTION_OPENED"));
 						} else {
-							// TODO messages_tr/en
-							Notifier.notify("WARNING",
-									"Bu LDAP Sunucusu Lider ile calismak uzere konfigure edilmemiş. Kullanabilmek için, lütfen '"
-											+ restFulConfigDN + "' oluşturup '"
-											+ ConfigProvider.getInstance()
-													.get(LiderConstants.CONFIG.LDAP_REST_ADDRESS_ATTR)
-											+ "' özelliğe lider web servisi adres bilgilerini giriniz.");
+							Notifier.error(null, Messages.getString("XMPP_CONNECTION_ERROR"));
 						}
 					}
+				} else {
+					Notifier.error(null, Messages.getString("LIDER_CONDIG_DN_ERROR", configDn));
 				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
 			}
+
+			openLdapSearchEditor();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
 
 		eventBroker.send("check_lider_status", null);
@@ -242,7 +228,6 @@ public class LdapConnectionListener implements IConnectionListener {
 		if (connWillBeClosed != null && connWillBeClosed.getConnectionWrapper().isConnected()) {
 			new StudioConnectionJob(new CloseConnectionsRunnable(connWillBeClosed)).execute();
 		}
-
 	}
 
 	private void openLdapSearchEditor() {
