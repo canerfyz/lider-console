@@ -116,12 +116,12 @@ public class LdapConnectionListener implements IConnectionListener {
 						IWorkbenchPage activePage = window.getActivePage();
 						activePage.closeAllEditors(false);
 					}
+					Notifier.success(null, Messages.getString("LIDER_CONNECTION_CLOSED"));
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
 				}
 			}
 		});
-		Notifier.success(null, Messages.getString("LIDER_CONNECTION_CLOSED"));
 	}
 
 	@Override
