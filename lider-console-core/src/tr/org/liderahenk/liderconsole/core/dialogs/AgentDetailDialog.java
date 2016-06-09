@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
+import java.util.List;
+
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -19,7 +21,9 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Agent;
 import tr.org.liderahenk.liderconsole.core.model.AgentProperty;
 import tr.org.liderahenk.liderconsole.core.model.UserSession;
+import tr.org.liderahenk.liderconsole.core.rest.utils.AgentUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
  * 
@@ -35,6 +39,11 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 	public AgentDetailDialog(Shell parentShell, Agent selectedAgent) {
 		super(parentShell);
 		this.selectedAgent = selectedAgent;
+	}
+
+	public AgentDetailDialog(Shell parentShell, String dn) {
+		super(parentShell);
+		this.selectedAgent = findAgent(dn);
 	}
 
 	@Override
@@ -220,6 +229,25 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 		tabFolder.setSelectionBackground(
 				Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		return tabFolder;
+	}
+
+	/**
+	 * This same dialog is used both by AgentInfoEditor and Lider context menu.
+	 * This method provides the related agent if the dialog is opened from the
+	 * context menu.
+	 * 
+	 * @param dn
+	 * @return
+	 */
+	private Agent findAgent(String dn) {
+		try {
+			List<Agent> agents = AgentUtils.list(null, dn);
+			return agents != null && agents.size() > 0 ? agents.get(0) : null;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+		return null;
 	}
 
 }
