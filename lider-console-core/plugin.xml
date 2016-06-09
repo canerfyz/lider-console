@@ -54,6 +54,11 @@
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.core.commands.AgentDetailInfo"
+            name="%command.agent.detail.info">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
             name="%command.report.template">
       </command>
@@ -97,6 +102,10 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.AgentInfoHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.AgentInfo">
+      </handler>
+	  <handler
+            class="tr.org.liderahenk.liderconsole.core.handlers.AgentDetailInfoHandler"
+            commandId="tr.org.liderahenk.liderconsole.core.commands.AgentDetailInfo">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.ReportTemplateHandler"
@@ -161,6 +170,14 @@
                id="tr.org.liderahenk.liderconsole.menus.LiderMain"
                label="%menu.label.main"
                mnemonic="%menu.mnemonic.main">
+               <visibleWhen>
+               		<with
+                       variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
+                       <equals
+                             value="true">
+                       </equals>
+               		</with>
+               </visibleWhen>
          </menu>
       </menuContribution>
       <menuContribution
@@ -223,6 +240,27 @@
                id="tr.org.liderahenk.liderconsole.menus.ApplyTask"
                label="%menu.label.apply.task">
          </menu>
+		 <command
+				commandId="tr.org.liderahenk.liderconsole.core.commands.AgentDetailInfo"
+				id="tr.org.liderahenk.liderconsole.core.commands.AgentDetailInfo"
+				tooltip="%menu.label.agent.detail.info">
+               <visibleWhen>
+					<and>
+			          <with
+			                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
+			             <equals
+			                   value="true">
+			             </equals>
+			          </with>
+					<with
+		                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isAhenkSelected">
+		             	<equals
+			                   value="true">
+			            </equals>
+		          	</with>
+			       </and>
+               </visibleWhen>
+		 </command>
       </menuContribution>
 	  <menuContribution
 		locationURI="popup:tr.org.liderahenk.liderconsole.menus.ApplyPolicy?after=additions">
