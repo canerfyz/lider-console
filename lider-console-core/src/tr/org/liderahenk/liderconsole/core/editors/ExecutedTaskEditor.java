@@ -312,7 +312,9 @@ public class ExecutedTaskEditor extends EditorPart {
 
 			@Override
 			public Color getBackground(Object element) {
-				return SWTResourceManager.getSuccessColor();
+				return element instanceof ExecutedTask && ((ExecutedTask) element).getSuccessResults() != null
+						&& ((ExecutedTask) element).getSuccessResults().intValue() > 0
+								? SWTResourceManager.getSuccessColor() : null;
 			}
 		});
 
@@ -331,7 +333,9 @@ public class ExecutedTaskEditor extends EditorPart {
 
 			@Override
 			public Color getBackground(Object element) {
-				return SWTResourceManager.getErrorColor();
+				return element instanceof ExecutedTask && ((ExecutedTask) element).getErrorResults() != null
+						&& ((ExecutedTask) element).getErrorResults().intValue() > 0
+								? SWTResourceManager.getErrorColor() : null;
 			}
 		});
 

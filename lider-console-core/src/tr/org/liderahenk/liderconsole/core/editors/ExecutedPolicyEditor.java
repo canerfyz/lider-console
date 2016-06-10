@@ -286,7 +286,9 @@ public class ExecutedPolicyEditor extends EditorPart {
 
 			@Override
 			public Color getBackground(Object element) {
-				return SWTResourceManager.getSuccessColor();
+				return element instanceof ExecutedPolicy && ((ExecutedPolicy) element).getSuccessResults() != null
+						&& ((ExecutedPolicy) element).getSuccessResults().intValue() > 0
+								? SWTResourceManager.getSuccessColor() : null;
 			}
 		});
 
@@ -305,7 +307,9 @@ public class ExecutedPolicyEditor extends EditorPart {
 
 			@Override
 			public Color getBackground(Object element) {
-				return SWTResourceManager.getErrorColor();
+				return element instanceof ExecutedPolicy && ((ExecutedPolicy) element).getErrorResults() != null
+						&& ((ExecutedPolicy) element).getErrorResults().intValue() > 0
+								? SWTResourceManager.getErrorColor() : null;
 			}
 		});
 
