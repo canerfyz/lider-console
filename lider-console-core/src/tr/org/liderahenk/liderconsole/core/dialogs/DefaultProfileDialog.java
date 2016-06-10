@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.editorinput.ProfileEditorInput;
 import tr.org.liderahenk.liderconsole.core.editors.DefaultProfileEditor;
+import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ProfileRequest;
@@ -128,34 +129,65 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 			Notifier.warning(null, Messages.getString("FILL_LABEL_FIELD"));
 			return;
 		}
-
-		// Populate profile instance
-		ProfileRequest profile = new ProfileRequest();
-		profile.setPluginName(editorInput.getPluginName());
-		profile.setPluginVersion(editorInput.getPluginVersion());
-		if (selectedProfile != null && selectedProfile.getId() != null) {
-			profile.setId(selectedProfile.getId());
-		}
-		profile.setActive(btnActive.getSelection());
-		profile.setDescription(txtDesc.getText());
-		profile.setLabel(txtLabel.getText());
-		profile.setOverridable(btnOverridable.getSelection());
-		logger.debug("Profile request: {}", profile);
-
-		try {
-			profile.setProfileData(editorInput.getProfileDialog().getProfileData());
+		
+		// Validate profile data
+		if (validateProfile()) {
+			
+			// Populate profile instance
+			ProfileRequest profile = new ProfileRequest();
+			profile.setPluginName(editorInput.getPluginName());
+			profile.setPluginVersion(editorInput.getPluginVersion());
 			if (selectedProfile != null && selectedProfile.getId() != null) {
-				ProfileUtils.update(profile);
-			} else {
-				ProfileUtils.add(profile);
+				profile.setId(selectedProfile.getId());
 			}
-			editor.refresh();
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+			profile.setActive(btnActive.getSelection());
+			profile.setDescription(txtDesc.getText());
+			profile.setLabel(txtLabel.getText());
+			profile.setOverridable(btnOverridable.getSelection());
+			logger.debug("Profile request: {}", profile);
+	
+			try {
+				profile.setProfileData(editorInput.getProfileDialog().getProfileData());
+				if (selectedProfile != null && selectedProfile.getId() != null) {
+					ProfileUtils.update(profile);
+				} else {
+					ProfileUtils.add(profile);
+				}
+				editor.refresh();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+				Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+			}
+	
+			close();
 		}
+	}
 
-		close();
+	/**
+	 * Handles validation result of profile data.
+	 */
+	private boolean validateProfile() 
+	{
+		try {
+			if (editorInput != null) {
+				editorInput.getProfileDialog().validateBeforeSave();
+				return true;
+			}
+		} catch (ValidationException e) {
+			if (e.getMessage() != null && !"".equals(e.getMessage())) {
+				Notifier.warning(null, e.getMessage());
+			} else {
+				Notifier.error(null, Messages.getString("ERROR_ON_VALIDATE"));
+			}
+			return false;
+		} catch (Exception e) { 
+			e.printStackTrace();
+			Notifier.error(null, Messages.getString("ERROR_ON_VALIDATE"));
+			return false;
+		}
+		
+		Notifier.error(null, Messages.getString("ERROR_ON_VALIDATE"));
+		return false;
 	}
 
 }

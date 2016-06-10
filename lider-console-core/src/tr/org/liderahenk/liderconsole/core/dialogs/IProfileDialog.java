@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
 
+import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 
 /**
@@ -21,6 +22,7 @@ public interface IProfileDialog {
 	 */
 	void init();
 
+	
 	/**
 	 * This is the main method that can be used to provide profile specific
 	 * input widgets.
@@ -31,6 +33,7 @@ public interface IProfileDialog {
 	 */
 	void createDialogArea(Composite parent, Profile profile);
 
+	
 	/**
 	 * Triggered on 'OK' button pressed. Implementation of this method provide
 	 * necessary profile data that need to be saved on database.
@@ -39,5 +42,16 @@ public interface IProfileDialog {
 	 * @throws Exception
 	 */
 	Map<String, Object> getProfileData() throws Exception;
+	
+	
+	/**
+	 * Triggered on 'OK' button pressed. Before saving profile data on database.
+	 * 
+	 * If validation fails for any of profile data, this method should throws a {@link ValidationException}.
+	 * 
+	 * @return
+	 * @throws ValidationException
+	 */
+	void validateBeforeSave() throws ValidationException;
 
 }
