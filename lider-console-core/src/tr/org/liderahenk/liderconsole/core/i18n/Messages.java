@@ -27,4 +27,17 @@ public class Messages extends NLS {
 			return '!' + key + '!';
 		}
 	}
+
+	/**
+	 * Returns a formatted string using the specified message string and
+	 * arguments.
+	 * 
+	 * @param key
+	 * @param args
+	 * @return
+	 */
+	public static String getString(String key, Object... args) {
+		return String.format(getString(key), args);
+	}
+
 }

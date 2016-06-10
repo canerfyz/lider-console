@@ -99,6 +99,7 @@ public class LiderConstants {
 		public static final String AGENT_LDAP_OBJ_CLS = "agent.ldap.object.classes";
 		public static final String GROUP_LDAP_OBJ_CLS = "group.ldap.object.classes";
 		public static final String LDAP_REST_ADDRESS_ATTR = "ldap.rest.address.attribute";
+		public static final String CONFIG_LDAP_DN_PREFIX = "config.ldap.dn.prefix";
 	}
 
 	public static class FILES {
