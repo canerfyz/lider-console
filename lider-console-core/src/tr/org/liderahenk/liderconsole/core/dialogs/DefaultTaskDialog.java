@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.rest.requests.TaskRequest;
@@ -75,10 +76,11 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 
 	/**
 	 * Validate task data here before sending it to Lider for execution.
+	 * If validation fails for any of task data, this method should throws a {@link ValidationException}.
 	 * 
 	 * @return
 	 */
-	public abstract boolean validateBeforeExecution();
+	public abstract void validateBeforeExecution() throws ValidationException;
 
 	/**
 	 * 
@@ -130,7 +132,9 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		btnExecuteNow.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (validateBeforeExecution()) {
+				
+				// Validation of task data
+				if (validateTaskData()) {
 					// TODO confirm box
 					try {
 						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK, getPluginName(),
@@ -140,8 +144,6 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 						logger.error(e1.getMessage(), e1);
 						Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 					}
-				} else {
-					Notifier.error("", Messages.getString("ERROR_ON_VALIDATE"));
 				}
 			}
 
@@ -159,7 +161,9 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		btnExecuteScheduled.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (validateBeforeExecution()) {
+				
+				// Validation of task data
+				if (validateTaskData()) {
 					SchedulerDialog dialog = new SchedulerDialog(Display.getDefault().getActiveShell());
 					dialog.create();
 					if (dialog.open() != Window.OK) {
@@ -175,8 +179,6 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 						logger.error(e1.getMessage(), e1);
 						Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 					}
-				} else {
-					Notifier.error("", Messages.getString("ERROR_ON_VALIDATE"));
 				}
 			}
 
@@ -208,6 +210,30 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 			return msg.toString();
 		}
 		return "";
+	}
+	
+	/**
+	 * Handles validation result of task data.
+	 */
+	private boolean validateTaskData() 
+	{
+		try {
+			validateBeforeExecution();
+			return true;
+		}
+		catch (ValidationException e) {
+			if (e.getMessage() != null && !"".equals(e.getMessage())) {
+				Notifier.warning(null, e.getMessage());
+			} else {
+				Notifier.error(null, Messages.getString("ERROR_ON_VALIDATE"));
+			}
+			return false;
+		} 
+		catch (Exception e) { 
+			e.printStackTrace();
+			Notifier.error(null, Messages.getString("ERROR_ON_VALIDATE"));
+			return false;
+		}
 	}
 
 }
