@@ -782,9 +782,11 @@ Public License instead of this License.  But first, please read
       <plugin id="org.apache.mina.core"/>
       <plugin id="org.apache.servicemix.bundles.antlr"/>
       <plugin id="org.apache.servicemix.bundles.dom4j"/>
+      <plugin id="org.apache.servicemix.bundles.xpp3"/>
       <plugin id="org.apache.xerces"/>
       <plugin id="org.apache.xml.resolver"/>
       <plugin id="org.apache.xml.serializer"/>
+      <plugin id="org.bouncycastle.bcprov"/>
       <plugin id="org.codehaus.jackson.core"/>
       <plugin id="org.codehaus.jackson.mapper"/>
       <plugin id="org.eclipse.ant.core"/>
@@ -846,7 +848,9 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
       <plugin id="org.eclipse.equinox.p2.director"/>
+      <plugin id="org.eclipse.equinox.p2.directorywatcher"/>
       <plugin id="org.eclipse.equinox.p2.engine"/>
+      <plugin id="org.eclipse.equinox.p2.extensionlocation"/>
       <plugin id="org.eclipse.equinox.p2.garbagecollector"/>
       <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
       <plugin id="org.eclipse.equinox.p2.metadata"/>
@@ -935,6 +939,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.igniterealtime.smack.resolver-javax"/>
       <plugin id="org.igniterealtime.smack.sasl-javax"/>
       <plugin id="org.igniterealtime.smack.tcp"/>
+      <plugin id="org.junit"/>
       <plugin id="org.jxmpp.core"/>
       <plugin id="org.jxmpp.util-cache"/>
       <plugin id="org.sat4j.core"/>
@@ -947,7 +952,6 @@ Public License instead of this License.  But first, please read
       <plugin id="org.w3c.dom.svg"/>
       <plugin id="tr.org.liderahenk.liderconsole.core"/>
       <plugin id="tr.org.liderahenk.liderconsole.rcp"/>
-      <plugin id="xpp3"/>
    </plugins>
 
    <configurations>
