@@ -112,7 +112,7 @@ public class SWTResourceManager {
 	 * @return color used for error status
 	 */
 	public static Color getErrorColor() {
-		return getColor(new RGB(247, 93, 89));
+		return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED);
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class SWTResourceManager {
 	 * @return color used for success status
 	 */
 	public static Color getSuccessColor() {
-		return getColor(new RGB(153, 198, 142));
+		return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN);
 	}
 
 	/**

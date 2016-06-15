@@ -1,6 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.Command;
@@ -108,9 +109,9 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 		// Policy active
 		btnActive = new Button(composite, SWT.CHECK);
 		btnActive.setText(Messages.getString("ACTIVE"));
-		btnActive.setSelection(selectedPolicy != null && selectedPolicy.isActive());
+		btnActive.setSelection(selectedPolicy != null ? selectedPolicy.isActive() : true);
 		new Label(composite, SWT.NONE);
-		
+
 		Label lblProfiles = new Label(parent, SWT.BOLD);
 		lblProfiles.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblProfiles.setText(Messages.getString("PROFILE_DEFINITION"));
@@ -119,7 +120,7 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 		Composite childComposite = new Composite(parent, SWT.BORDER);
 		childComposite.setLayout(new GridLayout(3, false));
 		childComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-		
+
 		// Find policy contributions
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry.getExtensionPoint(LiderConstants.EXTENSION_POINTS.POLICY_MENU);
@@ -129,7 +130,8 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 
 			// Command service will be used to trigger handler class related to
 			// specified 'profileCommandId'
-			final ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			final ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+					.getService(ICommandService.class);
 
 			// Init combo list. This will be used to iterate over combo widgets
 			// in order to collect selected IDs.
@@ -205,12 +207,28 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 			// Clear combo first!
 			combo.clearSelection();
 			combo.removeAll();
-			for (int i = 0; i < profiles.size(); i++) {
-				Profile profile = profiles.get(i);
+			boolean selected = false;
+			// Add 'empty' option, so user can decide not to choose a profile!
+			combo.add(" ");
+			// Populate other options with profile data
+			for (int i = 1; i <= profiles.size(); i++) {
+				Profile profile = profiles.get(i-1);
 				combo.add(profile.getLabel() + " " + profile.getCreateDate());
 				combo.setData(i + "", profile);
+				if (!selected && selectedPolicy.getProfiles() != null && !selectedPolicy.getProfiles().isEmpty()) {
+					Iterator<Profile> iterator = selectedPolicy.getProfiles().iterator();
+					while (iterator.hasNext()) {
+						Profile savedProfile = iterator.next();
+						if (savedProfile.getId().equals(profile.getId())) {
+							combo.select(i);
+							selected = true;
+						}
+					}
+				}
 			}
-			combo.select(0); // select first profile by default
+			if (!selected) {
+				combo.select(0); // select first profile by default
+			}
 		}
 	}
 
@@ -227,6 +245,11 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 			Notifier.warning(null, Messages.getString("FILL_LABEL_FIELD"));
 			return;
 		}
+		List<Long> profileIdList = getSelectedProfileIds();
+		if (profileIdList == null || profileIdList.isEmpty()) {
+			Notifier.warning(null, Messages.getString("SELECT_AT_LEAST_ONE_PROFILE"));
+			return;
+		}
 
 		PolicyRequest policy = new PolicyRequest();
 		if (selectedPolicy != null && selectedPolicy.getId() != null) {
@@ -235,7 +258,7 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 		policy.setActive(btnActive.getSelection());
 		policy.setDescription(txtDesc.getText());
 		policy.setLabel(txtLabel.getText());
-		policy.setProfileIdList(getSelectedProfileIds());
+		policy.setProfileIdList(profileIdList);
 		logger.debug("Policy request: {}", policy);
 
 		try {
@@ -254,7 +277,7 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 	}
 
 	/**
-	 * Iterave over all combo widgets and collects selected profile IDs.
+	 * Iterate over all combo widgets and collects selected profile IDs.
 	 * 
 	 * @return selected profile ID list.
 	 */

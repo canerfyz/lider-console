@@ -48,7 +48,7 @@ public class PolicyUtils {
 		IResponse response = RestClient.post(policy, url.toString());
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK) {
-			Notifier.success(null, Messages.getString("POLICY_EXECUTED"));
+			Notifier.success(null, Messages.getString("POLICY_APPLIED"));
 			return true;
 		}
 

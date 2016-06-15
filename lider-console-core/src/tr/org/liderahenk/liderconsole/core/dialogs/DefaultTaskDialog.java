@@ -75,8 +75,9 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 	public abstract Control createTaskDialogArea(Composite parent);
 
 	/**
-	 * Validate task data here before sending it to Lider for execution.
-	 * If validation fails for any of task data, this method should throws a {@link ValidationException}.
+	 * Validate task data here before sending it to Lider for execution. If
+	 * validation fails for any of task data, this method should throws a
+	 * {@link ValidationException}.
 	 * 
 	 * @return
 	 */
@@ -132,7 +133,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		btnExecuteNow.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+
 				// Validation of task data
 				if (validateTaskData()) {
 					// TODO confirm box
@@ -161,7 +162,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		btnExecuteScheduled.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+
 				// Validation of task data
 				if (validateTaskData()) {
 					SchedulerDialog dialog = new SchedulerDialog(Display.getDefault().getActiveShell());
@@ -211,25 +212,22 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Handles validation result of task data.
 	 */
-	private boolean validateTaskData() 
-	{
+	private boolean validateTaskData() {
 		try {
 			validateBeforeExecution();
 			return true;
-		}
-		catch (ValidationException e) {
+		} catch (ValidationException e) {
 			if (e.getMessage() != null && !"".equals(e.getMessage())) {
 				Notifier.warning(null, e.getMessage());
 			} else {
 				Notifier.error(null, Messages.getString("ERROR_ON_VALIDATE"));
 			}
 			return false;
-		} 
-		catch (Exception e) { 
+		} catch (Exception e) {
 			e.printStackTrace();
 			Notifier.error(null, Messages.getString("ERROR_ON_VALIDATE"));
 			return false;

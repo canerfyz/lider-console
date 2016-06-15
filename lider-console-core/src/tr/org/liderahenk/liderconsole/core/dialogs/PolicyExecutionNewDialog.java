@@ -161,10 +161,10 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 		IConfigurationElement[] config = extensionPoint.getConfigurationElements();
 
 		if (config != null) {
-
 			// Command service will be used to trigger handler class related to
 			// specified 'profileCommandId'
-			final ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			final ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+					.getService(ICommandService.class);
 
 			// Init combo list. This will be used to iterate over combo widgets
 			// in order to collect selected IDs.
@@ -240,8 +240,11 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 			// Clear combo first!
 			combo.clearSelection();
 			combo.removeAll();
-			for (int i = 0; i < profiles.size(); i++) {
-				Profile profile = profiles.get(i);
+			// Add 'empty' option, so user can decide not to choose a profile!
+			combo.add(" ");
+			// Populate other options with profile data
+			for (int i = 1; i <= profiles.size(); i++) {
+				Profile profile = profiles.get(i - 1);
 				combo.add(profile.getLabel() + " " + profile.getCreateDate());
 				combo.setData(i + "", profile);
 			}
@@ -342,8 +345,7 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 	 */
 	private Long getSelectedProfileId(Combo combo) {
 		int selectionIndex = combo.getSelectionIndex();
-		if (selectionIndex > -1 && combo.getItem(selectionIndex) != null
-				&& combo.getData(selectionIndex + "") != null) {
+		if (selectionIndex > 0 && combo.getItem(selectionIndex) != null && combo.getData(selectionIndex + "") != null) {
 			Profile profile = (Profile) combo.getData(selectionIndex + "");
 			return profile.getId();
 		}

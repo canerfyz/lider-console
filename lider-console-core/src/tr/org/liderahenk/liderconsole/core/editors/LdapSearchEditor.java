@@ -114,7 +114,7 @@ public class LdapSearchEditor extends EditorPart {
 	@SuppressWarnings("unchecked")
 	private void queryComboItems() {
 		try {
-			IResponse response = TaskUtils.execute("LIDER-PERSISTENCE", "1.0.0", "GET-LDAP-SEARCH-ATTR");
+			IResponse response = TaskUtils.execute("LIDER-PERSISTENCE", "1.0.0", "GET-LDAP-SEARCH-ATTR", false);
 			// LDAP search attributes (such as uid, liderPrivilege)
 			attributes = (List<String>) response.getResultMap().get("attributes");
 			// Agent properties (such as hostname, ipAddresses, os)
