@@ -212,10 +212,11 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 			combo.add(" ");
 			// Populate other options with profile data
 			for (int i = 1; i <= profiles.size(); i++) {
-				Profile profile = profiles.get(i-1);
+				Profile profile = profiles.get(i - 1);
 				combo.add(profile.getLabel() + " " + profile.getCreateDate());
 				combo.setData(i + "", profile);
-				if (!selected && selectedPolicy.getProfiles() != null && !selectedPolicy.getProfiles().isEmpty()) {
+				if (!selected && selectedPolicy != null && selectedPolicy.getProfiles() != null
+						&& !selectedPolicy.getProfiles().isEmpty()) {
 					Iterator<Profile> iterator = selectedPolicy.getProfiles().iterator();
 					while (iterator.hasNext()) {
 						Profile savedProfile = iterator.next();
