@@ -41,7 +41,7 @@ public class TreePaintListener implements Listener {
 	private Boolean globalState = false;
 	private final Image offlineImage;
 	private final Image onlineImage;
-	private final Image pardusAhenkImage;
+	private final Image agentImage;
 
 	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 	private final Map<String, Boolean> onlineInfo;
@@ -52,8 +52,8 @@ public class TreePaintListener implements Listener {
 				this.getClass().getClassLoader().getResourceAsStream("icons/32/offline-red-mini.png"));
 		onlineImage = new Image(Display.getDefault(),
 				this.getClass().getClassLoader().getResourceAsStream("icons/32/online-mini.png"));
-		pardusAhenkImage = new Image(Display.getDefault(),
-				this.getClass().getClassLoader().getResourceAsStream("icons/32/pardusAhenk.png"));
+		agentImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/computer.png"));
 		onlineInfo = new TreeMap<String, Boolean>();
 
 		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, new EventHandler() {
@@ -151,7 +151,7 @@ public class TreePaintListener implements Listener {
 
 			Image originalImage = item.getImage();
 
-			if (originalImage != pardusAhenkImage && data instanceof IEntry) {
+			if (originalImage != agentImage && data instanceof IEntry) {
 				Collection<ObjectClass> classes = ((IEntry) data).getObjectClassDescriptions();
 				List<String> agentObjClsArr = new ArrayList<String>(
 						ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS));
@@ -170,12 +170,12 @@ public class TreePaintListener implements Listener {
 				// If the resulting list is empty, then specified entry belongs
 				// to an agent
 				if (agentObjClsArr.isEmpty()) {
-					item.setImage(pardusAhenkImage);
+					item.setImage(agentImage);
 					originalImage = item.getImage();
 				}
 			}
 			if (originalImage != null)
-				event.gc.drawImage(originalImage, event.x - 4, event.y + 4);
+				event.gc.drawImage(originalImage, event.x + 6, event.y - 1);
 
 			if (data instanceof IBookmark)
 				data = ((IBookmark) data).getEntry();
@@ -190,11 +190,11 @@ public class TreePaintListener implements Listener {
 						miniIcon = onlineImage;
 					else
 						miniIcon = offlineImage;
-					event.gc.drawImage(miniIcon, event.x + 8, event.y + 12);
+					event.gc.drawImage(miniIcon, event.x - 2, event.y + 8);
 				}
 			}
 
-			event.gc.drawText(text, event.x + 20, event.y, true);
+			event.gc.drawText(text, event.x + 24, event.y, true);
 			break;
 		}
 		case SWT.EraseItem: {

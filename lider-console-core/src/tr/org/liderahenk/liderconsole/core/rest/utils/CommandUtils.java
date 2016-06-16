@@ -33,12 +33,13 @@ public class CommandUtils {
 
 	/**
 	 * Send GET request to server in order to retrieve desired executed tasks.
+	 * @param i 
 	 * 
 	 * @throws Exception
 	 * 
 	 */
 	public static List<ExecutedTask> listExecutedTasks(String pluginName, String pluginVersion,
-			Date createDateRangeStart, Date createDateRangeEnd, Integer status) throws Exception {
+			Date createDateRangeStart, Date createDateRangeEnd, Integer status, Integer maxResults) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
@@ -60,6 +61,9 @@ public class CommandUtils {
 		}
 		if (status != null) {
 			params.add("status=" + status);
+		}
+		if (maxResults != null) {
+			params.add("maxResults=" + maxResults);
 		}
 		if (!params.isEmpty()) {
 			url.append(StringUtils.join(params, "&"));
