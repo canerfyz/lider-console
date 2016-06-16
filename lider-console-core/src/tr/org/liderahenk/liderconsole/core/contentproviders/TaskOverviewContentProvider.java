@@ -1,44 +1,98 @@
 package tr.org.liderahenk.liderconsole.core.contentproviders;
 
+import java.util.List;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import tr.org.liderahenk.liderconsole.core.model.Command;
+import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
+import tr.org.liderahenk.liderconsole.core.model.CommandExecutionResult;
+
 public class TaskOverviewContentProvider implements ITreeContentProvider {
 
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
+	private List<Command> rootElements;
 
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] getElements(Object inputElement) {
-		// TODO Auto-generated method stub
+		if (inputElement instanceof List<?> && !((List<?>) inputElement).isEmpty()
+				&& ((List<?>) inputElement).get(0) instanceof Command) {
+			rootElements = (List<Command>) inputElement;
+			return rootElements.toArray(new Command[rootElements.size()]);
+		}
 		return null;
 	}
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		// TODO Auto-generated method stub
+		if (parentElement instanceof Command) {
+			List<CommandExecution> executions = ((Command) parentElement).getCommandExecutions();
+			if (executions != null) {
+				return executions.toArray(new CommandExecution[executions.size()]);
+			}
+		} else if (parentElement instanceof CommandExecution) {
+			List<CommandExecutionResult> results = ((CommandExecution) parentElement).getCommandExecutionResults();
+			if (results != null) {
+				return results.toArray(new CommandExecutionResult[results.size()]);
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		// TODO Auto-generated method stub
+		if (element instanceof CommandExecution) {
+			// Then its parent is a Command instance
+			// Iterate over all root elements which consist of Command
+			// instances, and find the parent
+			if (rootElements != null) {
+				for (Command command : rootElements) {
+					if (command.getCommandExecutions() != null && !command.getCommandExecutions().isEmpty()) {
+						for (CommandExecution execution : command.getCommandExecutions()) {
+							if (execution.equals((CommandExecution) element)) {
+								return command;
+							}
+						}
+					}
+				}
+			}
+		} else if (element instanceof CommandExecutionResult) {
+			// Then its parent is a CommandExecution instance
+			if (rootElements != null) {
+				for (Command parent : rootElements) {
+					if (parent.getCommandExecutions() != null && !parent.getCommandExecutions().isEmpty()) {
+						for (CommandExecution execution : parent.getCommandExecutions()) {
+							if (execution.getCommandExecutionResults() != null
+									&& !execution.getCommandExecutionResults().isEmpty()) {
+								List<CommandExecutionResult> results = execution.getCommandExecutionResults();
+								for (CommandExecutionResult result : results) {
+									if (result.equals((CommandExecutionResult) element)) {
+										return execution;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
-		// TODO Auto-generated method stub
-		return false;
+		Object[] children = getChildren(element);
+		return children == null ? false : children.length > 0;
+	}
+
+	@Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	}
+
+	@Override
+	public void dispose() {
+		// Nothing to dispose
 	}
 
 }

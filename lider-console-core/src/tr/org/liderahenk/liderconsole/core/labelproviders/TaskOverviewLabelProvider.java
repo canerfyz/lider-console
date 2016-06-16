@@ -1,45 +1,104 @@
 package tr.org.liderahenk.liderconsole.core.labelproviders;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+
+import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
+import tr.org.liderahenk.liderconsole.core.model.Command;
+import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
+import tr.org.liderahenk.liderconsole.core.model.CommandExecutionResult;
+import tr.org.liderahenk.liderconsole.core.xmpp.enums.StatusCode;
 
 public class TaskOverviewLabelProvider implements ILabelProvider {
 
-	@Override
-	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
+	private List<ILabelProviderListener> listeners;
 
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
+	Image agentImage;
+	Image userImage;
+	Image groupImage;
+	Image taskSentImage;
+	Image taskDoneImage;
+	Image taskErrorImage;
+	Image taskWaitImage;
 
-	@Override
-	public boolean isLabelProperty(Object element, String property) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-		
+	public TaskOverviewLabelProvider() {
+		listeners = new ArrayList<ILabelProviderListener>();
+		agentImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/computer.png"));
+		userImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/user.png"));
+		groupImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/users.png"));
+		taskSentImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/send.png"));
+		taskDoneImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/task-done.png"));
+		taskErrorImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/task-cancel.png"));
+		taskWaitImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/task-wait.png"));
 	}
 
 	@Override
 	public Image getImage(Object element) {
-		// TODO Auto-generated method stub
+		if (element instanceof Command) {
+			return taskSentImage;
+		} else if (element instanceof CommandExecution) {
+			DNType dnType = ((CommandExecution) element).getDnType();
+			return dnType == DNType.USER ? userImage : (dnType == DNType.AHENK ? agentImage : groupImage);
+		} else if (element instanceof CommandExecutionResult) {
+			StatusCode responseCode = ((CommandExecutionResult) element).getResponseCode();
+			return responseCode == StatusCode.TASK_PROCESSED ? taskDoneImage
+					: (responseCode == StatusCode.TASK_ERROR ? taskErrorImage : taskWaitImage);
+		}
 		return null;
 	}
 
 	@Override
 	public String getText(Object element) {
-		// TODO Auto-generated method stub
+		if (element instanceof Command) {
+			Command command = (Command) element;
+			// TODO get also plugin name & version
+			return command.getTask().getCommandClsId() + " - " + command.getTask().getCreateDate();
+		} else if (element instanceof CommandExecution) {
+			CommandExecution execution = (CommandExecution) element;
+			return execution.getDn().substring(0, 30);
+		} else if (element instanceof CommandExecutionResult) {
+			CommandExecutionResult result = (CommandExecutionResult) element;
+			return result.getResponseCode().getMessage();
+		}
 		return null;
+	}
+
+	@Override
+	public void addListener(ILabelProviderListener listener) {
+		listeners.add(listener);
+	}
+
+	@Override
+	public boolean isLabelProperty(Object element, String property) {
+		return false;
+	}
+
+	@Override
+	public void removeListener(ILabelProviderListener listener) {
+		listeners.remove(listener);
+	}
+
+	@Override
+	public void dispose() {
+		agentImage.dispose();
+		userImage.dispose();
+		groupImage.dispose();
+		taskSentImage.dispose();
+		taskDoneImage.dispose();
+		taskErrorImage.dispose();
+		taskWaitImage.dispose();
 	}
 
 }

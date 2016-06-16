@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewSite;
@@ -23,8 +24,12 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.contentproviders.TaskOverviewContentProvider;
+import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.labelproviders.TaskOverviewLabelProvider;
 import tr.org.liderahenk.liderconsole.core.model.Command;
+import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
+import tr.org.liderahenk.liderconsole.core.model.ExecutedTask;
+import tr.org.liderahenk.liderconsole.core.rest.utils.CommandUtils;
 import tr.org.liderahenk.liderconsole.core.xmpp.notifications.TaskNotification;
 import tr.org.liderahenk.liderconsole.core.xmpp.notifications.TaskStatusNotification;
 
@@ -42,6 +47,7 @@ public class TaskOverview extends ViewPart {
 		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.TASK_NOTIFICATION_RECEIVED, taskNotificationHandler);
 		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.TASK_STATUS_NOTIFICATION_RECEIVED,
 				taskStatusNotificationHandler);
+		eventBroker.subscribe("check_lider_status", connectionHandler);
 	}
 
 	private EventHandler taskNotificationHandler = new EventHandler() {
@@ -89,15 +95,73 @@ public class TaskOverview extends ViewPart {
 		@Override
 		public void handleEvent(final Event event) {
 			Job job = new Job("TASK_STATUS_NOTIFICATION") {
+				@SuppressWarnings("unchecked")
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					monitor.beginTask("Task", 100);
 					try {
 						TaskStatusNotification task = (TaskStatusNotification) event.getProperty("org.eclipse.e4.data");
-						System.out.println("TASK: " + task);
-						// TODO
-						// TODO
-						// TODO
+						CommandExecution relatedExecution = task.getCommandExecution();
+						final List<Command> items = new ArrayList<Command>();
+						// Restore previous items
+						if (treeViewer.getInput() != null) {
+							items.addAll((List<Command>) treeViewer.getInput());
+						}
+						if (!items.isEmpty()) {
+							// Find related command execution...
+							for (Command command : items) {
+								if (command.getCommandExecutions() != null
+										&& !command.getCommandExecutions().isEmpty()) {
+									for (CommandExecution execution : command.getCommandExecutions()) {
+										if (execution.equals(relatedExecution)) {
+											// ...and append execution result to
+											// it.
+											execution.getCommandExecutionResults().add(task.getResult());
+										}
+									}
+								}
+							}
+							// Refresh tree
+							Display.getDefault().asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									treeViewer.setInput(items);
+									treeViewer.refresh();
+								}
+							});
+						}
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+					monitor.worked(100);
+					monitor.done();
+					return Status.OK_STATUS;
+				}
+			};
+			job.setUser(true);
+			job.schedule();
+		}
+	};
+
+	private EventHandler connectionHandler = new EventHandler() {
+		@Override
+		public void handleEvent(final Event event) {
+			Job job = new Job("QUERY_PREV_TASKS") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask("Task", 100);
+					try {
+						if (treeViewer == null) {
+							return Status.OK_STATUS;
+						}
+						if (RestSettings.isAvailable()) {
+							// Query previous tasks
+							List<ExecutedTask> tasks = CommandUtils.listExecutedTasks(null, null, null, null, null, 10);
+							// TODO
+							// TODO
+							// TODO
+							// TODO
+						}
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}
@@ -113,8 +177,8 @@ public class TaskOverview extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-
 		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		treeViewer.setContentProvider(new TaskOverviewContentProvider());
 		treeViewer.setLabelProvider(new TaskOverviewLabelProvider());
 	}

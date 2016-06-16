@@ -1,6 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -39,6 +40,58 @@ public class CommandExecutionResult implements Serializable {
 		this.responseData = responseData;
 		this.contentType = contentType;
 		this.createDate = createDate;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((agentId == null) ? 0 : agentId.hashCode());
+		result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+		result = prime * result + ((createDate == null) ? 0 : createDate.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((responseCode == null) ? 0 : responseCode.hashCode());
+		result = prime * result + Arrays.hashCode(responseData);
+		result = prime * result + ((responseMessage == null) ? 0 : responseMessage.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CommandExecutionResult other = (CommandExecutionResult) obj;
+		if (agentId == null) {
+			if (other.agentId != null)
+				return false;
+		} else if (!agentId.equals(other.agentId))
+			return false;
+		if (contentType != other.contentType)
+			return false;
+		if (createDate == null) {
+			if (other.createDate != null)
+				return false;
+		} else if (!createDate.equals(other.createDate))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (responseCode != other.responseCode)
+			return false;
+		if (!Arrays.equals(responseData, other.responseData))
+			return false;
+		if (responseMessage == null) {
+			if (other.responseMessage != null)
+				return false;
+		} else if (!responseMessage.equals(other.responseMessage))
+			return false;
+		return true;
 	}
 
 	public Long getId() {
