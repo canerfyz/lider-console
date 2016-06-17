@@ -775,7 +775,6 @@ Public License instead of this License.  But first, please read
       <plugin id="org.apache.directory.studio.ldapbrowser.ui"/>
       <plugin id="org.apache.directory.studio.ldifeditor"/>
       <plugin id="org.apache.directory.studio.ldifparser"/>
-      <plugin id="org.apache.directory.studio.slf4j-eclipselog" fragment="true"/>
       <plugin id="org.apache.directory.studio.valueeditors"/>
       <plugin id="org.apache.httpcomponents.httpclient"/>
       <plugin id="org.apache.httpcomponents.httpcore"/>
@@ -804,6 +803,8 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.core.filesystem.java7" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.net"/>
+      <plugin id="org.eclipse.core.net.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
       <plugin id="org.eclipse.core.runtime"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>

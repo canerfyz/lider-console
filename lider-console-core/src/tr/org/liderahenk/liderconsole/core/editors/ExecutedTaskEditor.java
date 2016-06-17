@@ -347,9 +347,9 @@ public class ExecutedTaskEditor extends EditorPart {
 			List<ExecutedTask> tasks = null;
 			if (useParams) {
 				tasks = CommandUtils.listExecutedTasks(txtPluginName.getText(), txtPluginVersion.getText(),
-						convertDate(dtCreateDateRangeStart), convertDate(dtCreateDateRangeEnd), null);
+						convertDate(dtCreateDateRangeStart), convertDate(dtCreateDateRangeEnd), null, null);
 			} else {
-				tasks = CommandUtils.listExecutedTasks(null, null, null, null, null);
+				tasks = CommandUtils.listExecutedTasks(null, null, null, null, null, null);
 			}
 			if (tasks != null) {
 				tableViewer.setInput(tasks);
