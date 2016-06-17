@@ -22,8 +22,7 @@ Apache Software Foundation http://apache.org/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog
--nl tr
+      <programArgs>-nl tr
       </programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.7 -XX:MaxPermSize=256m -Xms40m -Xmx512m
       </vmArgs>
