@@ -37,7 +37,7 @@ import tr.org.liderahenk.liderconsole.core.dialogs.PolicyDefinitionDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
-import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -161,7 +161,7 @@ public class PolicyDefinitionEditor extends EditorPart {
 					return;
 				}
 				try {
-					PolicyUtils.delete(getSelectedPolicy().getId());
+					PolicyRestUtils.delete(getSelectedPolicy().getId());
 					refresh();
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
@@ -368,7 +368,7 @@ public class PolicyDefinitionEditor extends EditorPart {
 	 */
 	private void populateTable() {
 		try {
-			List<Policy> policies = PolicyUtils.list(null, null);
+			List<Policy> policies = PolicyRestUtils.list(null, null);
 			if (policies != null) {
 				tableViewer.setInput(policies);
 			}

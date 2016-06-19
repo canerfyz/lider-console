@@ -7,7 +7,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -28,8 +27,6 @@ public class ReportTemplateColumnDialog extends DefaultLiderTitleAreaDialog {
 	// Widgets
 	private Spinner spnOrder;
 	private Text txtName;
-	private Button btnVisible;
-	private Spinner spnWidth;
 
 	public ReportTemplateColumnDialog(Shell parentShell, TableViewer tableViewer) {
 		super(parentShell);
@@ -76,24 +73,6 @@ public class ReportTemplateColumnDialog extends DefaultLiderTitleAreaDialog {
 			txtName.setText(column.getName());
 		}
 
-		// Visible
-		Label lblVisible = new Label(composite, SWT.NONE);
-		lblVisible.setText(Messages.getString("VISIBLE"));
-		
-		btnVisible = new Button(composite, SWT.CHECK);
-		btnVisible.setSelection((column != null && column.isVisible()) || column == null);
-
-		// Width
-		Label lblWidth = new Label(composite, SWT.NONE);
-		lblWidth.setText(Messages.getString("WIDTH"));
-
-		spnWidth = new Spinner(composite, SWT.BORDER);
-		spnWidth.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
-		spnWidth.setMinimum(20);
-		if (column != null && column.getWidth() != null) {
-			spnWidth.setSelection(column.getWidth());
-		}
-
 		return composite;
 	}
 
@@ -115,9 +94,7 @@ public class ReportTemplateColumnDialog extends DefaultLiderTitleAreaDialog {
 		}
 		// Set values
 		column.setName(txtName.getText());
-		column.setVisible(btnVisible.getSelection());
 		column.setColumnOrder(spnOrder.getSelection());
-		column.setWidth(spnWidth.getSelection());
 
 		// Get previous columns...
 		List<ReportTemplateColumn> columns = (List<ReportTemplateColumn>) tableViewer.getInput();

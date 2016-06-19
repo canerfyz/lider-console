@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,6 +31,8 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 	private Text txtKey;
 	private Text txtLabel;
 	private Combo cmbType;
+	private Text txtDefaultValue;
+	private Button btnMandatory;
 
 	public ReportTemplateParamDialog(Shell parentShell, TableViewer tableViewer) {
 		super(parentShell);
@@ -60,7 +63,7 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 		lblKey.setText(Messages.getString("PARAM_KEY"));
 
 		txtKey = new Text(composite, SWT.BORDER);
-		txtKey.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txtKey.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		if (parameter != null && parameter.getKey() != null) {
 			txtKey.setText(parameter.getKey());
 		}
@@ -70,7 +73,7 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 		lblLabel.setText(Messages.getString("PARAM_LABEL"));
 
 		txtLabel = new Text(composite, SWT.BORDER);
-		txtLabel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+		txtLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		if (parameter != null && parameter.getLabel() != null) {
 			txtLabel.setText(parameter.getLabel());
 		}
@@ -89,6 +92,23 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 				cmbType.select(i);
 			}
 		}
+
+		// Default value
+		Label lblDefaultValue = new Label(composite, SWT.NONE);
+		lblDefaultValue.setText(Messages.getString("DEFAULT_VALUE"));
+
+		txtDefaultValue = new Text(composite, SWT.BORDER);
+		txtDefaultValue.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		if (parameter != null && parameter.getDefaultValue() != null) {
+			txtDefaultValue.setText(parameter.getDefaultValue());
+		}
+
+		// Mandatory
+		Label lblMandatory = new Label(composite, SWT.NONE);
+		lblMandatory.setText(Messages.getString("MANDATORY"));
+
+		btnMandatory = new Button(composite, SWT.CHECK);
+		btnMandatory.setSelection(parameter != null && parameter.isMandatory());
 
 		return composite;
 	}
@@ -113,6 +133,8 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 		parameter.setKey(txtKey.getText());
 		parameter.setLabel(txtLabel.getText());
 		parameter.setType(getSelectedType());
+		parameter.setDefaultValue(txtDefaultValue.getText());
+		parameter.setMandatory(btnMandatory.getSelection());
 
 		// Get previous parameters...
 		List<ReportTemplateParameter> params = (List<ReportTemplateParameter>) tableViewer.getInput();

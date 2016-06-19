@@ -21,7 +21,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Agent;
 import tr.org.liderahenk.liderconsole.core.model.AgentProperty;
 import tr.org.liderahenk.liderconsole.core.model.UserSession;
-import tr.org.liderahenk.liderconsole.core.rest.utils.AgentUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.AgentRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -241,7 +241,7 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 	 */
 	private Agent findAgent(String dn) {
 		try {
-			List<Agent> agents = AgentUtils.list(null, dn);
+			List<Agent> agents = AgentRestUtils.list(null, dn);
 			return agents != null && agents.size() > 0 ? agents.get(0) : null;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

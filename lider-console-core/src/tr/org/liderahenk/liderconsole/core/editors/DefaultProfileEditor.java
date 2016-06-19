@@ -31,7 +31,7 @@ import tr.org.liderahenk.liderconsole.core.dialogs.DefaultProfileDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.ProfileEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -158,7 +158,7 @@ public class DefaultProfileEditor extends EditorPart {
 					return;
 				}
 				try {
-					ProfileUtils.delete(getSelectedProfile().getId());
+					ProfileRestUtils.delete(getSelectedProfile().getId());
 					refresh();
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
@@ -305,7 +305,7 @@ public class DefaultProfileEditor extends EditorPart {
 	private void populateTable() {
 		try {
 			ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
-			List<Profile> profiles = ProfileUtils.list(editorInput.getPluginName(), editorInput.getPluginVersion(),
+			List<Profile> profiles = ProfileRestUtils.list(editorInput.getPluginName(), editorInput.getPluginVersion(),
 					null, null);
 			if (profiles != null) {
 				tableViewer.setInput(profiles);

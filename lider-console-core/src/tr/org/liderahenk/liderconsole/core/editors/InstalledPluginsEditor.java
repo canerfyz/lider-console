@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Plugin;
-import tr.org.liderahenk.liderconsole.core.rest.utils.PluginUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.PluginRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -253,7 +253,7 @@ public class InstalledPluginsEditor extends EditorPart {
 	 */
 	private void populateTable() {
 		try {
-			List<Plugin> plugins = PluginUtils.list(null, null);
+			List<Plugin> plugins = PluginRestUtils.list(null, null);
 			if (plugins != null) {
 				tableViewer.setInput(plugins);
 			}

@@ -33,8 +33,8 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyRequest;
-import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyUtils;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -155,7 +155,7 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 					final Combo combo = new Combo(childComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 					combo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 					// Populate combo with active profiles
-					List<Profile> profiles = ProfileUtils.list(pluginName, pluginVersion, null, true);
+					List<Profile> profiles = ProfileRestUtils.list(pluginName, pluginVersion, null, true);
 					populateCombo(combo, profiles);
 					comboList.add(combo);
 
@@ -174,7 +174,7 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 							try {
 								command.executeWithChecks(new ExecutionEvent());
 								// Refresh profile combo
-								List<Profile> profiles = ProfileUtils.list(pluginName, pluginVersion, null, true);
+								List<Profile> profiles = ProfileRestUtils.list(pluginName, pluginVersion, null, true);
 								populateCombo(combo, profiles);
 							} catch (Exception e1) {
 								logger.error(e1.getMessage(), e1);
@@ -264,9 +264,9 @@ public class PolicyDefinitionDialog extends DefaultLiderDialog {
 
 		try {
 			if (selectedPolicy != null && selectedPolicy.getId() != null) {
-				PolicyUtils.update(policy);
+				PolicyRestUtils.update(policy);
 			} else {
-				PolicyUtils.add(policy);
+				PolicyRestUtils.add(policy);
 			}
 			editor.refresh();
 		} catch (Exception e) {
