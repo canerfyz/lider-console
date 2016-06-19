@@ -1,6 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -19,21 +20,19 @@ public class ReportTemplateColumn implements Serializable {
 
 	private String name;
 
-	private boolean visible;
-
-	private Integer width;
-
 	private Integer columnOrder;
+
+	private Date timestamp;
 
 	public ReportTemplateColumn() {
 	}
 
-	public ReportTemplateColumn(Long id, String name, boolean visible, Integer width, Integer columnOrder) {
+	public ReportTemplateColumn(Long id, String name, Integer columnOrder) {
+		super();
 		this.id = id;
 		this.name = name;
-		this.visible = visible;
-		this.width = width;
 		this.columnOrder = columnOrder;
+		this.timestamp = new Date();
 	}
 
 	public Long getId() {
@@ -52,28 +51,20 @@ public class ReportTemplateColumn implements Serializable {
 		this.name = name;
 	}
 
-	public boolean isVisible() {
-		return visible;
-	}
-
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
-
-	public Integer getWidth() {
-		return width;
-	}
-
-	public void setWidth(Integer width) {
-		this.width = width;
-	}
-
 	public Integer getColumnOrder() {
 		return columnOrder;
 	}
 
 	public void setColumnOrder(Integer columnOrder) {
 		this.columnOrder = columnOrder;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
 
 }

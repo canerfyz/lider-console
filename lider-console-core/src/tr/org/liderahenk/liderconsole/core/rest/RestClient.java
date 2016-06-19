@@ -31,16 +31,16 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.rest.requests.IRequest;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.responses.RestResponse;
-import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyUtils;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
-import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileRestUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.TaskRestUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
  * RestClient provides utility methods for sending requests to Lider Server and
  * handling their responses. Instead of this class, it is recommended that
- * plugin developers should use {@link ProfileUtils}, {@link PolicyUtils} or
- * {@link TaskUtils} according to their needs.
+ * plugin developers should use {@link ProfileRestUtils}, {@link PolicyRestUtils} or
+ * {@link TaskRestUtils} according to their needs.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
