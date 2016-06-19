@@ -24,9 +24,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ReportUtils {
+public class ReportRestUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(ReportUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReportRestUtils.class);
 
 	/**
 	 * Send POST request to server in order to generate report
@@ -34,11 +34,13 @@ public class ReportUtils {
 	 * @param report
 	 * @return
 	 */
-	public static List<Object[]> generate(ReportGenerationRequest report) throws Exception {
-
+	public static List<Object[]> generateView(ReportGenerationRequest report) throws Exception {
+		// TODO
+		// TODO
+		// TODO
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/generate");
+		url.append("/view/generate");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { report, url.toString() });
 
 		// Send POST request to server
@@ -65,11 +67,11 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean validate(ReportTemplateRequest template) throws Exception {
+	public static boolean validateTemplate(ReportTemplateRequest template) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/validate");
+		url.append("/template/validate");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { template, url.toString() });
 
 		// Send POST request to server
@@ -91,11 +93,11 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ReportTemplate add(ReportTemplateRequest template) throws Exception {
+	public static ReportTemplate addTemplate(ReportTemplateRequest template) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/add");
+		url.append("/template/add");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { template, url.toString() });
 
 		// Send POST request to server
@@ -121,11 +123,11 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ReportTemplate update(ReportTemplateRequest template) throws Exception {
+	public static ReportTemplate updateTemplate(ReportTemplateRequest template) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/update");
+		url.append("/template/update");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { template, url.toString() });
 
 		IResponse response = RestClient.post(template, url.toString());
@@ -150,11 +152,11 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<ReportTemplate> list(String name) throws Exception {
+	public static List<ReportTemplate> listTemplates(String name) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/list?");
+		url.append("/template/list?");
 
 		// Append optional parameters
 		if (name != null) {
@@ -186,7 +188,7 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ReportTemplate get(Long templateId) throws Exception {
+	public static ReportTemplate getTemplate(Long templateId) throws Exception {
 
 		if (templateId == null) {
 			throw new IllegalArgumentException("ID was null.");
@@ -194,7 +196,7 @@ public class ReportUtils {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/").append(templateId).append("/get");
+		url.append("/template/").append(templateId).append("/get");
 		logger.debug("Sending request to URL: {}", url.toString());
 
 		IResponse response = RestClient.get(url.toString());
@@ -219,7 +221,7 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean delete(Long templateId) throws Exception {
+	public static boolean deleteTemplate(Long templateId) throws Exception {
 
 		if (templateId == null) {
 			throw new IllegalArgumentException("ID was null.");
@@ -227,7 +229,7 @@ public class ReportUtils {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/").append(templateId).append("/delete");
+		url.append("/template/").append(templateId).append("/delete");
 		logger.debug("Sending request to URL: {}", url.toString());
 
 		IResponse response = RestClient.get(url.toString());
