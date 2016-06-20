@@ -194,7 +194,7 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 
 					// Add profile button
 					Button btnAdd = new Button(childComposite, SWT.NONE);
-					btnAdd.setText(Messages.getString("ADD"));
+					btnAdd.setText(Messages.getString("NEW"));
 					btnAdd.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 					btnAdd.setImage(SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
 							"icons/16/add.png"));
