@@ -33,12 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
-import tr.org.liderahenk.liderconsole.core.dialogs.ReportGenerationDialog;
 import tr.org.liderahenk.liderconsole.core.dialogs.ReportTemplateDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplate;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ReportUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.ReportRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -59,7 +58,6 @@ public class ReportTemplateEditor extends EditorPart {
 	private Button btnEditTemplate;
 	private Button btnDeleteTemplate;
 	private Button btnRefreshTemplate;
-	private Button btnGenerateReport;
 
 	private ReportTemplate selectedTemplate;
 
@@ -105,7 +103,7 @@ public class ReportTemplateEditor extends EditorPart {
 
 		final Composite composite = new Composite(parent, GridData.FILL);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		composite.setLayout(new GridLayout(5, false));
+		composite.setLayout(new GridLayout(4, false));
 
 		btnAddTemplate = new Button(composite, SWT.NONE);
 		btnAddTemplate.setText(Messages.getString("ADD"));
@@ -163,34 +161,12 @@ public class ReportTemplateEditor extends EditorPart {
 					return;
 				}
 				try {
-					ReportUtils.delete(getSelectedTemplate().getId());
+					ReportRestUtils.deleteTemplate(getSelectedTemplate().getId());
 					refresh();
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
 					Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
 				}
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
-		btnGenerateReport = new Button(composite, SWT.NONE);
-		btnGenerateReport.setText(Messages.getString("GENERATE_REPORT"));
-		btnGenerateReport.setImage(
-				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/report.png"));
-		btnGenerateReport.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		btnGenerateReport.setEnabled(false);
-		btnGenerateReport.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (null == getSelectedTemplate()) {
-					Notifier.warning(null, Messages.getString("PLEASE_SELECT_POLICY"));
-					return;
-				}
-				ReportGenerationDialog dialog = new ReportGenerationDialog(composite.getShell(), getSelectedTemplate());
-				dialog.open();
 			}
 
 			@Override
@@ -239,7 +215,6 @@ public class ReportTemplateEditor extends EditorPart {
 				}
 				btnEditTemplate.setEnabled(true);
 				btnDeleteTemplate.setEnabled(true);
-				btnGenerateReport.setEnabled(true);
 			}
 		});
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -376,7 +351,7 @@ public class ReportTemplateEditor extends EditorPart {
 	 */
 	private void populateTable() {
 		try {
-			List<ReportTemplate> templates = ReportUtils.list(null);
+			List<ReportTemplate> templates = ReportRestUtils.listTemplates(null);
 			if (templates != null) {
 				tableViewer.setInput(templates);
 			}

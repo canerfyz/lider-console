@@ -37,7 +37,7 @@ import tr.org.liderahenk.liderconsole.core.dialogs.AgentDetailDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Agent;
-import tr.org.liderahenk.liderconsole.core.rest.utils.AgentUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.AgentRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -338,7 +338,7 @@ public class AgentInfoEditor extends EditorPart {
 	 */
 	private void populateTable() {
 		try {
-			List<Agent> agents = AgentUtils.list(null, null);
+			List<Agent> agents = AgentRestUtils.list(null, null);
 			if (agents != null) {
 				tableViewer.setInput(agents);
 			}

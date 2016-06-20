@@ -25,7 +25,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyExecutionRequest;
-import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -72,7 +72,7 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 		cmbPolicy.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		List<Policy> policies = null;
 		try {
-			policies = PolicyUtils.list(null, true);
+			policies = PolicyRestUtils.list(null, true);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -166,7 +166,7 @@ public class PolicyExecutionSelectDialog extends DefaultLiderDialog {
 		logger.debug("Policy request: {}", policy);
 
 		try {
-			PolicyUtils.execute(policy);
+			PolicyRestUtils.execute(policy);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));

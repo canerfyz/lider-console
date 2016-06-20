@@ -1,0 +1,91 @@
+package tr.org.liderahenk.liderconsole.core.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ReportViewColumn implements Serializable {
+
+	private static final long serialVersionUID = -5263444001265331037L;
+
+	private Long id;
+
+	private Long referencedColumnId;
+
+	private ViewColumnType type;
+
+	private String legend;
+
+	private Integer width;
+
+	private Date timestamp;
+
+	public ReportViewColumn() {
+	}
+
+	public ReportViewColumn(Long id, Long referencedColumnId, ViewColumnType type, String legend, Integer width) {
+		super();
+		this.id = id;
+		this.referencedColumnId = referencedColumnId;
+		this.type = type;
+		this.legend = legend;
+		this.width = width;
+		this.timestamp = new Date();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getReferencedColumnId() {
+		return referencedColumnId;
+	}
+
+	public void setReferencedColumnId(Long referencedColumnId) {
+		this.referencedColumnId = referencedColumnId;
+	}
+
+	public ViewColumnType getType() {
+		return type;
+	}
+
+	public void setType(ViewColumnType type) {
+		this.type = type;
+	}
+
+	public String getLegend() {
+		return legend;
+	}
+
+	public void setLegend(String legend) {
+		this.legend = legend;
+	}
+
+	public Integer getWidth() {
+		return width;
+	}
+
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+
+}

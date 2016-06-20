@@ -29,10 +29,6 @@ public class ReportTemplate implements Serializable {
 
 	private Set<ReportTemplateColumn> templateColumns;
 
-	private String reportHeader;
-
-	private String reportFooter;
-
 	private Date createDate;
 
 	private Date modifyDate;
@@ -41,16 +37,14 @@ public class ReportTemplate implements Serializable {
 	}
 
 	public ReportTemplate(Long id, String name, String description, String query,
-			Set<ReportTemplateParameter> templateParams, Set<ReportTemplateColumn> templateColumns, String reportHeader,
-			String reportFooter, Date createDate, Date modifyDate) {
+			Set<ReportTemplateParameter> templateParams, Set<ReportTemplateColumn> templateColumns, Date createDate,
+			Date modifyDate) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.query = query;
 		this.templateParams = templateParams;
 		this.templateColumns = templateColumns;
-		this.reportHeader = reportHeader;
-		this.reportFooter = reportFooter;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 	}
@@ -101,22 +95,6 @@ public class ReportTemplate implements Serializable {
 
 	public void setTemplateColumns(Set<ReportTemplateColumn> templateColumns) {
 		this.templateColumns = templateColumns;
-	}
-
-	public String getReportHeader() {
-		return reportHeader;
-	}
-
-	public void setReportHeader(String reportHeader) {
-		this.reportHeader = reportHeader;
-	}
-
-	public String getReportFooter() {
-		return reportFooter;
-	}
-
-	public void setReportFooter(String reportFooter) {
-		this.reportFooter = reportFooter;
 	}
 
 	public Date getCreateDate() {

@@ -34,7 +34,7 @@ import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
-import tr.org.liderahenk.liderconsole.core.rest.utils.TaskUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.TaskRestUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 import tr.org.liderahenk.liderconsole.core.xmpp.XMPPClient;
 
@@ -191,7 +191,7 @@ public class LdapConnectionListener implements IConnectionListener {
 					IResponse response = null;
 
 					try {
-						response = TaskUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG", false);
+						response = TaskRestUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG", false);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 						Notifier.error(null, Messages.getString("REST_SERVER_ACCESS_ERROR", restFulAddress));

@@ -18,7 +18,7 @@ import tr.org.liderahenk.liderconsole.core.exceptions.ValidationException;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ProfileRequest;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileRestUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -149,9 +149,9 @@ public class DefaultProfileDialog extends DefaultLiderDialog {
 			try {
 				profile.setProfileData(editorInput.getProfileDialog().getProfileData());
 				if (selectedProfile != null && selectedProfile.getId() != null) {
-					ProfileUtils.update(profile);
+					ProfileRestUtils.update(profile);
 				} else {
-					ProfileUtils.add(profile);
+					ProfileRestUtils.add(profile);
 				}
 				editor.refresh();
 			} catch (Exception e) {

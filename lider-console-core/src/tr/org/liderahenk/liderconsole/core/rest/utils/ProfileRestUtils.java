@@ -23,9 +23,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ProfileUtils {
+public class ProfileRestUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(ProfileUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProfileRestUtils.class);
 
 	/**
 	 * Send POST request to server in order to save specified profile.

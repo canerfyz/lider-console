@@ -20,9 +20,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class TaskUtils {
+public class TaskRestUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(TaskUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(TaskRestUtils.class);
 
 	/**
 	 * Send POST request to server in order to execute specified task.

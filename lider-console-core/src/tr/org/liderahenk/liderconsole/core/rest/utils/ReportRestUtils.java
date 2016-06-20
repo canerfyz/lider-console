@@ -11,10 +11,12 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplate;
+import tr.org.liderahenk.liderconsole.core.model.ReportView;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ReportGenerationRequest;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ReportTemplateRequest;
+import tr.org.liderahenk.liderconsole.core.rest.requests.ReportViewRequest;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -24,9 +26,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ReportUtils {
+public class ReportRestUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(ReportUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReportRestUtils.class);
 
 	/**
 	 * Send POST request to server in order to generate report
@@ -34,11 +36,13 @@ public class ReportUtils {
 	 * @param report
 	 * @return
 	 */
-	public static List<Object[]> generate(ReportGenerationRequest report) throws Exception {
-
+	public static List<Object[]> generateView(ReportGenerationRequest report) throws Exception {
+		// TODO
+		// TODO
+		// TODO
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/generate");
+		url.append("/view/generate");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { report, url.toString() });
 
 		// Send POST request to server
@@ -65,11 +69,11 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean validate(ReportTemplateRequest template) throws Exception {
+	public static boolean validateTemplate(ReportTemplateRequest template) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/validate");
+		url.append("/template/validate");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { template, url.toString() });
 
 		// Send POST request to server
@@ -91,11 +95,11 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ReportTemplate add(ReportTemplateRequest template) throws Exception {
+	public static ReportTemplate addTemplate(ReportTemplateRequest template) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/add");
+		url.append("/template/add");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { template, url.toString() });
 
 		// Send POST request to server
@@ -121,11 +125,11 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ReportTemplate update(ReportTemplateRequest template) throws Exception {
+	public static ReportTemplate updateTemplate(ReportTemplateRequest template) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/update");
+		url.append("/template/update");
 		logger.debug("Sending request: {} to URL: {}", new Object[] { template, url.toString() });
 
 		IResponse response = RestClient.post(template, url.toString());
@@ -150,11 +154,11 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<ReportTemplate> list(String name) throws Exception {
+	public static List<ReportTemplate> listTemplates(String name) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/list?");
+		url.append("/template/list?");
 
 		// Append optional parameters
 		if (name != null) {
@@ -186,7 +190,7 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ReportTemplate get(Long templateId) throws Exception {
+	public static ReportTemplate getTemplate(Long templateId) throws Exception {
 
 		if (templateId == null) {
 			throw new IllegalArgumentException("ID was null.");
@@ -194,7 +198,7 @@ public class ReportUtils {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/").append(templateId).append("/get");
+		url.append("/template/").append(templateId).append("/get");
 		logger.debug("Sending request to URL: {}", url.toString());
 
 		IResponse response = RestClient.get(url.toString());
@@ -219,7 +223,7 @@ public class ReportUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean delete(Long templateId) throws Exception {
+	public static boolean deleteTemplate(Long templateId) throws Exception {
 
 		if (templateId == null) {
 			throw new IllegalArgumentException("ID was null.");
@@ -227,7 +231,166 @@ public class ReportUtils {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
-		url.append("/").append(templateId).append("/delete");
+		url.append("/template/").append(templateId).append("/delete");
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		IResponse response = RestClient.get(url.toString());
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK) {
+			Notifier.error(null, Messages.getString("RECORD_DELETED"));
+			return true;
+		}
+
+		Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+		return false;
+	}
+
+	//////////////////////////////////////////////
+	//////////////////////////////////////////////
+	//////////////////////////////////////////////
+	//////////////////////////////////////////////
+
+	/**
+	 * Send POST request to server in order to save specified view.
+	 * 
+	 * @param view
+	 * @return
+	 * @throws Exception
+	 */
+	public static ReportView addView(ReportViewRequest view) throws Exception {
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/view/add");
+		logger.debug("Sending request: {} to URL: {}", new Object[] { view, url.toString() });
+
+		// Send POST request to server
+		IResponse response = RestClient.post(view, url.toString());
+		ReportView result = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("view") != null) {
+			result = new ObjectMapper().readValue(response.getResultMap().get("view").toString(), ReportView.class);
+			Notifier.success(null, Messages.getString("RECORD_SAVED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+		}
+
+		return result;
+	}
+
+	/**
+	 * Send POST request to server in order to update specified view.
+	 * 
+	 * @param view
+	 * @return
+	 * @throws Exception
+	 */
+	public static ReportView updateView(ReportViewRequest view) throws Exception {
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/view/update");
+		logger.debug("Sending request: {} to URL: {}", new Object[] { view, url.toString() });
+
+		IResponse response = RestClient.post(view, url.toString());
+		ReportView result = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("view") != null) {
+			result = new ObjectMapper().readValue(response.getResultMap().get("view").toString(), ReportView.class);
+			Notifier.success(null, Messages.getString("RECORD_SAVED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+		}
+
+		return result;
+	}
+
+	/**
+	 * Send GET request to server in order to retrieve desired views.
+	 * 
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<ReportView> listViews(String name) throws Exception {
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/view/list?");
+
+		// Append optional parameters
+		if (name != null) {
+			url.append("name=").append(name);
+		}
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		// Send GET request to server
+		IResponse response = RestClient.get(url.toString());
+		List<ReportView> views = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("views") != null) {
+			views = new ObjectMapper().readValue(response.getResultMap().get("views").toString(),
+					new TypeReference<List<ReportTemplate>>() {
+					});
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return views;
+	}
+
+	/**
+	 * Send GET request to server in order to retrieve desired view.
+	 * 
+	 * @param viewId
+	 * @return
+	 * @throws Exception
+	 */
+	public static ReportView getView(Long viewId) throws Exception {
+
+		if (viewId == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/view/").append(viewId).append("/get");
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		IResponse response = RestClient.get(url.toString());
+		ReportView view = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("view") != null) {
+			view = new ObjectMapper().readValue(response.getResultMap().get("view").toString(), ReportView.class);
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return view;
+	}
+
+	/**
+	 * Send GET request to server in order to delete desired view.
+	 * 
+	 * @param viewId
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean deleteView(Long viewId) throws Exception {
+
+		if (viewId == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/view/").append(viewId).append("/delete");
 		logger.debug("Sending request to URL: {}", url.toString());
 
 		IResponse response = RestClient.get(url.toString());

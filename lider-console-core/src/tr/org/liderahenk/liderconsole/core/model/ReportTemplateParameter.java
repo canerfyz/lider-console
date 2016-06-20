@@ -1,6 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
@@ -23,14 +24,24 @@ public class ReportTemplateParameter implements Serializable {
 
 	private ParameterType type;
 
+	private String defaultValue;
+
+	private boolean mandatory;
+
+	private Date timestamp;
+
 	public ReportTemplateParameter() {
 	}
 
-	public ReportTemplateParameter(Long id, String key, String label, ParameterType type) {
+	public ReportTemplateParameter(Long id, String key, String label, ParameterType type, String defaultValue,
+			boolean mandatory) {
 		this.id = id;
 		this.key = key;
 		this.label = label;
 		this.type = type;
+		this.defaultValue = defaultValue;
+		this.mandatory = mandatory;
+		this.timestamp = new Date();
 	}
 
 	public Long getId() {
@@ -63,6 +74,30 @@ public class ReportTemplateParameter implements Serializable {
 
 	public void setType(ParameterType type) {
 		this.type = type;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
 
 }

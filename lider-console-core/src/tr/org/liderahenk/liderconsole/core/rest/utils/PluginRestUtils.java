@@ -24,9 +24,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class PluginUtils {
+public class PluginRestUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(PluginUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(PluginRestUtils.class);
 
 	/**
 	 * Send GET request to server in order to retrieve desired plugins.

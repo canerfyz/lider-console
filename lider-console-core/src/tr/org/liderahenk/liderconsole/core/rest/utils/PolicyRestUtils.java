@@ -24,9 +24,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class PolicyUtils {
+public class PolicyRestUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(PolicyUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(PolicyRestUtils.class);
 
 	/**
 	 * Send POST request to server in order to execute policy (Policy does not

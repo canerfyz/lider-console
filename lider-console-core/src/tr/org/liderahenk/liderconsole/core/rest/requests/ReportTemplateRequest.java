@@ -26,10 +26,6 @@ public class ReportTemplateRequest implements IRequest {
 
 	private List<ReportTemplateColumn> templateColumns;
 
-	private String reportHeader;
-
-	private String reportFooter;
-
 	private Date timestamp;
 
 	public Long getId() {
@@ -80,22 +76,6 @@ public class ReportTemplateRequest implements IRequest {
 		this.templateColumns = templateColumns;
 	}
 
-	public String getReportHeader() {
-		return reportHeader;
-	}
-
-	public void setReportHeader(String reportHeader) {
-		this.reportHeader = reportHeader;
-	}
-
-	public String getReportFooter() {
-		return reportFooter;
-	}
-
-	public void setReportFooter(String reportFooter) {
-		this.reportFooter = reportFooter;
-	}
-
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -107,9 +87,8 @@ public class ReportTemplateRequest implements IRequest {
 	@Override
 	public String toString() {
 		return "ReportTemplateRequest [id=" + id + ", name=" + name + ", description=" + description + ", query="
-				+ query + ", templateParams=" + templateParams + ", templateColumns=" + templateColumns
-				+ ", reportHeader=" + reportHeader + ", reportFooter=" + reportFooter + ", timestamp=" + timestamp
-				+ "]";
+				+ query + ", templateParams=" + templateParams + ", templateColumns=" + templateColumns + ", timestamp="
+				+ timestamp + "]";
 	}
 
 	@Override

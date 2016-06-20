@@ -24,9 +24,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class AgentUtils {
+public class AgentRestUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(AgentUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(AgentRestUtils.class);
 
 	/**
 	 * Send GET request to server in order to retrieve desired agents.

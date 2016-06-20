@@ -37,8 +37,8 @@ import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyExecutionRequest;
 import tr.org.liderahenk.liderconsole.core.rest.requests.PolicyRequest;
-import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyUtils;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -188,7 +188,7 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 					final Combo combo = new Combo(childComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 					combo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 					// Populate combo with active profiles
-					List<Profile> profiles = ProfileUtils.list(pluginName, pluginVersion, null, true);
+					List<Profile> profiles = ProfileRestUtils.list(pluginName, pluginVersion, null, true);
 					populateCombo(combo, profiles);
 					comboList.add(combo);
 
@@ -207,7 +207,7 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 							try {
 								command.executeWithChecks(new ExecutionEvent());
 								// Refresh profile combo
-								List<Profile> profiles = ProfileUtils.list(pluginName, pluginVersion, null, true);
+								List<Profile> profiles = ProfileRestUtils.list(pluginName, pluginVersion, null, true);
 								populateCombo(combo, profiles);
 							} catch (Exception e1) {
 								logger.error(e1.getMessage(), e1);
@@ -277,7 +277,7 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 		boolean success = false;
 		Policy savedPolicy = null;
 		try {
-			savedPolicy = PolicyUtils.add(policy);
+			savedPolicy = PolicyRestUtils.add(policy);
 			success = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -294,7 +294,7 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 			logger.debug("Policy request: {}", policy);
 
 			try {
-				PolicyUtils.execute(policyExec);
+				PolicyRestUtils.execute(policyExec);
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));

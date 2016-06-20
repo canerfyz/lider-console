@@ -38,7 +38,7 @@ import tr.org.liderahenk.liderconsole.core.model.ReportTemplate;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplateColumn;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplateParameter;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ReportGenerationRequest;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ReportUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.ReportRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -282,7 +282,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 				report.setParamValues(paramValues);
 
 				try {
-					List<Object[]> list = ReportUtils.generate(report);
+					List<Object[]> list = ReportRestUtils.generateView(report);
 					generateTable(list);
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);

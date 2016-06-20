@@ -37,7 +37,7 @@ import tr.org.liderahenk.liderconsole.core.model.ReportTemplate;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplateColumn;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplateParameter;
 import tr.org.liderahenk.liderconsole.core.rest.requests.ReportTemplateRequest;
-import tr.org.liderahenk.liderconsole.core.rest.utils.ReportUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.ReportRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -53,8 +53,6 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	private Text txtName;
 	private Text txtDesc;
 	private Text txtQuery;
-	private Text txtReportHeader;
-	private Text txtReportFooter;
 	private TableViewer tvParam;
 	private TableViewer tvCol;
 	private Button btnAddParam;
@@ -137,7 +135,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 				temp.setTemplateParams((List<ReportTemplateParameter>) tvParam.getInput());
 				logger.debug("Template request: {}", temp);
 				try {
-					ReportUtils.validate(temp);
+					ReportRestUtils.validateTemplate(temp);
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
 					Notifier.error(null, Messages.getString("ERROR_ON_VALIDATION"));
@@ -160,26 +158,6 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		composite = (Composite) super.createDialogArea(parent);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		composite.setLayout(new GridLayout(2, false));
-
-		// Report Header
-		Label lblHeader = new Label(composite, SWT.NONE);
-		lblHeader.setText(Messages.getString("REPORT_HEADER"));
-
-		txtReportHeader = new Text(composite, SWT.BORDER);
-		txtReportHeader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		if (selectedTemplate != null && selectedTemplate.getReportHeader() != null) {
-			txtReportHeader.setText(selectedTemplate.getReportHeader());
-		}
-
-		// Report Footer
-		Label lblFooter = new Label(composite, SWT.NONE);
-		lblFooter.setText(Messages.getString("REPORT_FOOTER"));
-
-		txtReportFooter = new Text(composite, SWT.BORDER);
-		txtReportFooter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		if (selectedTemplate != null && selectedTemplate.getReportFooter() != null) {
-			txtReportFooter.setText(selectedTemplate.getReportFooter());
-		}
 
 		// Template Columns
 		Label lblTemplateCols = new Label(parent, SWT.NONE);
@@ -326,8 +304,9 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	private void createTableColumnsForParams() {
 
 		String[] titles = { Messages.getString("PARAM_KEY"), Messages.getString("PARAM_LABEL"),
-				Messages.getString("PARAM_TYPE") };
-		int[] bounds = { 200, 200, 200 };
+				Messages.getString("PARAM_TYPE"), Messages.getString("DEFAULT_VALUE"),
+				Messages.getString("MANDATORY") };
+		int[] bounds = { 100, 150, 100, 100, 50 };
 
 		TableViewerColumn keyColumn = createTableViewerColumn(tvParam, titles[0], bounds[0]);
 		keyColumn.setLabelProvider(new ColumnLabelProvider() {
@@ -358,6 +337,30 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 				if (element instanceof ReportTemplateParameter) {
 					return Messages.getString(
 							((ReportTemplateParameter) element).getType().toString().toUpperCase(Locale.ENGLISH));
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn defaultValueColumn = createTableViewerColumn(tvParam, titles[3], bounds[3]);
+		defaultValueColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ReportTemplateParameter) {
+					return ((ReportTemplateParameter) element).getDefaultValue() != null
+							? ((ReportTemplateParameter) element).getDefaultValue() : Messages.getString("UNTITLED");
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
+		TableViewerColumn mandatorColumn = createTableViewerColumn(tvParam, titles[4], bounds[4]);
+		mandatorColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ReportTemplateParameter) {
+					return ((ReportTemplateParameter) element).isMandatory() ? Messages.getString("YES")
+							: Messages.getString("NO");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -524,30 +527,6 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 				return Messages.getString("UNTITLED");
 			}
 		});
-
-		TableViewerColumn widthColumn = createTableViewerColumn(tvCol, titles[2], bounds[2]);
-		widthColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof ReportTemplateColumn) {
-					return ((ReportTemplateColumn) element).getWidth() != null
-							? ((ReportTemplateColumn) element).getWidth().toString() : "";
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-
-		TableViewerColumn visibleColumn = createTableViewerColumn(tvCol, titles[3], bounds[3]);
-		visibleColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof ReportTemplateColumn) {
-					return ((ReportTemplateColumn) element).isVisible() ? Messages.getString("YES")
-							: Messages.getString("NO");
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
 	}
 
 	private void populateTableWithCols() {
@@ -596,17 +575,15 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		template.setDescription(txtDesc.getText());
 		template.setName(txtName.getText());
 		template.setQuery(txtQuery.getText());
-		template.setReportFooter(txtReportFooter.getText());
-		template.setReportHeader(txtReportHeader.getText());
 		template.setTemplateColumns((List<ReportTemplateColumn>) tvCol.getInput());
 		template.setTemplateParams((List<ReportTemplateParameter>) tvParam.getInput());
 		logger.debug("Template request: {}", template);
 
 		try {
 			if (selectedTemplate != null && selectedTemplate.getId() != null) {
-				ReportUtils.update(template);
+				ReportRestUtils.updateTemplate(template);
 			} else {
-				ReportUtils.add(template);
+				ReportRestUtils.addTemplate(template);
 			}
 			editor.refresh();
 		} catch (Exception e) {
