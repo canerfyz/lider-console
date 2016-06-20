@@ -439,23 +439,11 @@
                priorityLevel="workbench">
          </variable>
          <variable
-               name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isUserSelected"
-               priorityLevel="workbench">
-         </variable>
-         <variable
                name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isLdapUserSelected"
                priorityLevel="workbench">
          </variable>
          <variable
                name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.privilegesForSelectedItem"
-               priorityLevel="workbench">
-         </variable>
-         <variable
-               name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.selectedItem"
-               priorityLevel="workbench">
-         </variable>
-         <variable
-               name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.selectedUser"
                priorityLevel="workbench">
          </variable>
 	  </sourceProvider>
