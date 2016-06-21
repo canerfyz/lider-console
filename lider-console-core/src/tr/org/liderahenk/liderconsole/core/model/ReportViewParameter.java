@@ -19,6 +19,8 @@ public class ReportViewParameter implements Serializable {
 
 	private Long referencedParameterId;
 
+	private ReportTemplateParameter referencedParam;
+
 	private String label;
 
 	private String value;
@@ -74,6 +76,17 @@ public class ReportViewParameter implements Serializable {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public ReportTemplateParameter getReferencedParam() {
+		return referencedParam;
+	}
+
+	public void setReferencedParam(ReportTemplateParameter referencedParam) {
+		this.referencedParam = referencedParam;
+		if (referencedParam != null) {
+			this.referencedParameterId = referencedParam.getId();
+		}
 	}
 
 }

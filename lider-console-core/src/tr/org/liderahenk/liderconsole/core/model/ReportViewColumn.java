@@ -19,6 +19,8 @@ public class ReportViewColumn implements Serializable {
 
 	private Long referencedColumnId;
 
+	private ReportTemplateColumn referencedCol;
+
 	private ViewColumnType type;
 
 	private String legend;
@@ -86,6 +88,17 @@ public class ReportViewColumn implements Serializable {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public ReportTemplateColumn getReferencedCol() {
+		return referencedCol;
+	}
+
+	public void setReferencedCol(ReportTemplateColumn referencedCol) {
+		this.referencedCol = referencedCol;
+		if (referencedCol != null) {
+			this.referencedColumnId = referencedCol.getId();
+		}
 	}
 
 }
