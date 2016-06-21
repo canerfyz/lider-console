@@ -64,6 +64,11 @@
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.core.commands.ReportView"
+            name="%command.report.view">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.core.commands.PolicyExecutionSelect"
             name="%command.policy.execution.select">
       </command>
@@ -110,6 +115,10 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.ReportTemplateHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate">
+      </handler>
+	  <handler
+            class="tr.org.liderahenk.liderconsole.core.handlers.ReportViewHandler"
+            commandId="tr.org.liderahenk.liderconsole.core.commands.ReportView">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.ExecutedTaskHandler"
@@ -203,6 +212,12 @@
 	          id="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
 	          icon="icons/16/report.png"
 	          tooltip="%command.report.template">
+        </command>
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.ReportView"
+	          id="tr.org.liderahenk.liderconsole.core.commands.ReportView"
+	          icon="icons/16/report.png"
+	          tooltip="%command.report.view">
         </command>
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
@@ -349,6 +364,12 @@
 		    icon="icons/16/report.png"
 		    id="tr.org.liderahenk.liderconsole.core.editors.ReportTemplateEditor"
 		    name="%editor.report.template">
+	    </editor> 
+	    <editor
+		    class="tr.org.liderahenk.liderconsole.core.editors.ReportViewEditor"
+		    icon="icons/16/report.png"
+		    id="tr.org.liderahenk.liderconsole.core.editors.ReportViewEditor"
+		    name="%editor.report.view">
 	    </editor> 
 	    <editor
 		    class="tr.org.liderahenk.liderconsole.core.editors.ExecutedTaskEditor"
