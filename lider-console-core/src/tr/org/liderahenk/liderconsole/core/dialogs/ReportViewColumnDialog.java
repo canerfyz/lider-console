@@ -68,12 +68,19 @@ public class ReportViewColumnDialog extends DefaultLiderTitleAreaDialog {
 
 		cmbReferencedColumn = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
 		if (columns != null) {
+			boolean selected = false;
 			for (int i = 0; i < columns.size(); i++) {
-				ReportTemplateColumn column = columns.get(i);
-				cmbReferencedColumn.add(column.getColumnOrder() + " - " + column.getName());
-				cmbReferencedColumn.setData(i + "", column.getId());
+				ReportTemplateColumn col = columns.get(i);
+				cmbReferencedColumn.add(col.getColumnOrder() + " - " + col.getName());
+				cmbReferencedColumn.setData(i + "", col.getId());
+				if (!selected && column != null && column.getReferencedColumnId().equals(col.getId())) {
+					cmbReferencedColumn.select(i);
+					selected = true;
+				}
 			}
-			cmbReferencedColumn.select(0);
+			if (!selected) {
+				cmbReferencedColumn.select(0);
+			}
 		}
 
 		// Type
@@ -82,12 +89,19 @@ public class ReportViewColumnDialog extends DefaultLiderTitleAreaDialog {
 
 		cmbType = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
 		ViewColumnType[] types = ViewColumnType.values();
+		boolean selected = false;
 		for (int i = 0; i < types.length; i++) {
 			ViewColumnType type = types[i];
 			cmbType.add(type.getMessage());
 			cmbType.setData(i + "", type);
+			if (!selected && column != null && column.getType() == type) {
+				cmbType.select(i);
+				selected = true;
+			}
 		}
-		cmbType.select(0);
+		if (!selected) {
+			cmbType.select(0);
+		}
 
 		// Legend
 		Label lblLegend = new Label(composite, SWT.NONE);
@@ -98,7 +112,7 @@ public class ReportViewColumnDialog extends DefaultLiderTitleAreaDialog {
 		if (column != null && column.getLegend() != null) {
 			txtLegend.setText(column.getLegend());
 		}
-		
+
 		Label lblWidth = new Label(composite, SWT.NONE);
 		lblWidth.setText(Messages.getString("WIDTH"));
 

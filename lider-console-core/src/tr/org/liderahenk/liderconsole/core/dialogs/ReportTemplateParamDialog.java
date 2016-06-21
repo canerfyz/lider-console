@@ -84,13 +84,18 @@ public class ReportTemplateParamDialog extends DefaultLiderTitleAreaDialog {
 
 		cmbType = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
 		ParameterType[] values = ParameterType.values();
+		boolean selected = false;
 		for (int i = 0; i < values.length; i++) {
 			String i18n = Messages.getString(values[i].toString().toUpperCase(Locale.ENGLISH));
 			cmbType.add(i18n);
 			cmbType.setData(i18n, values[i]);
-			if (parameter != null && parameter.getType() != null && parameter.getType() == values[i]) {
+			if (!selected && parameter != null && parameter.getType() == values[i]) {
 				cmbType.select(i);
+				selected = true;
 			}
+		}
+		if (!selected) {
+			cmbType.select(0);
 		}
 
 		// Default value

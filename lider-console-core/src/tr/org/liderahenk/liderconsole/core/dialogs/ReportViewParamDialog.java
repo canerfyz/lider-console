@@ -63,15 +63,22 @@ public class ReportViewParamDialog extends DefaultLiderTitleAreaDialog {
 		// Referenced parameter
 		Label lblReferencedParam = new Label(composite, SWT.NONE);
 		lblReferencedParam.setText(Messages.getString("REFERENCED_PARAMETER"));
-		
+
 		cmbReferencedParam = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
 		if (params != null) {
+			boolean selected = false;
 			for (int i = 0; i < params.size(); i++) {
 				ReportTemplateParameter param = params.get(i);
 				cmbReferencedParam.add(param.getKey() + " - " + param.getLabel());
 				cmbReferencedParam.setData(i + "", param.getId());
+				if (!selected && parameter != null && parameter.getReferencedParameterId().equals(param.getId())) {
+					cmbReferencedParam.select(i);
+					selected = true;
+				}
 			}
-			cmbReferencedParam.select(0);
+			if (!selected) {
+				cmbReferencedParam.select(0);
+			}
 		}
 
 		// Label
