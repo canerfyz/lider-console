@@ -243,6 +243,19 @@ public class InstalledPluginsEditor extends EditorPart {
 				return Messages.getString("UNTITLED");
 			}
 		});
+		
+		// Task plugin
+		TableViewerColumn taskPluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("TASK_PLUGIN"), 100);
+		taskPluginColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Plugin) {
+					return ((Plugin) element).isTaskPlugin() ? Messages.getString("YES") : Messages.getString("NO");
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
 
 	}
 

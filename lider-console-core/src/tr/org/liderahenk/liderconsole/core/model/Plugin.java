@@ -35,6 +35,8 @@ public class Plugin implements Serializable {
 
 	private boolean policyPlugin;
 
+	private boolean taskPlugin;
+
 	private boolean xBased;
 
 	private Date createDate;
@@ -135,6 +137,14 @@ public class Plugin implements Serializable {
 
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
+	}
+
+	public boolean isTaskPlugin() {
+		return taskPlugin;
+	}
+
+	public void setTaskPlugin(boolean taskPlugin) {
+		this.taskPlugin = taskPlugin;
 	}
 
 }
