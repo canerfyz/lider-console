@@ -33,33 +33,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
-import tr.org.liderahenk.liderconsole.core.dialogs.ReportTemplateDialog;
+import tr.org.liderahenk.liderconsole.core.dialogs.ReportViewDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
-import tr.org.liderahenk.liderconsole.core.model.ReportTemplate;
+import tr.org.liderahenk.liderconsole.core.model.ReportView;
 import tr.org.liderahenk.liderconsole.core.rest.utils.ReportRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
- * Editor class for report templates.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ReportTemplateEditor extends EditorPart {
+public class ReportViewEditor extends EditorPart {
 
-	private static final Logger logger = LoggerFactory.getLogger(ReportTemplateEditor.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReportViewEditor.class);
 
 	private TableViewer tableViewer;
 	private TableFilter tableFilter;
 	private Text txtSearch;
-	private Button btnAddTemplate;
-	private Button btnEditTemplate;
-	private Button btnDeleteTemplate;
-	private Button btnRefreshTemplate;
+	private Button btnAddView;
+	private Button btnEditView;
+	private Button btnDeleteView;
+	private Button btnRefreshView;
 
-	private ReportTemplate selectedTemplate;
+	private ReportView selectedView;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -105,16 +104,15 @@ public class ReportTemplateEditor extends EditorPart {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		composite.setLayout(new GridLayout(4, false));
 
-		btnAddTemplate = new Button(composite, SWT.NONE);
-		btnAddTemplate.setText(Messages.getString("ADD"));
-		btnAddTemplate.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		btnAddTemplate.setImage(
+		btnAddView = new Button(composite, SWT.NONE);
+		btnAddView.setText(Messages.getString("ADD"));
+		btnAddView.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnAddView.setImage(
 				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/add.png"));
-		btnAddTemplate.addSelectionListener(new SelectionListener() {
+		btnAddView.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ReportTemplateDialog dialog = new ReportTemplateDialog(Display.getDefault().getActiveShell(),
-						getSelf());
+				ReportViewDialog dialog = new ReportViewDialog(Display.getDefault().getActiveShell(), getSelf());
 				dialog.create();
 				dialog.open();
 			}
@@ -124,21 +122,20 @@ public class ReportTemplateEditor extends EditorPart {
 			}
 		});
 
-		btnEditTemplate = new Button(composite, SWT.NONE);
-		btnEditTemplate.setText(Messages.getString("EDIT"));
-		btnEditTemplate.setImage(
+		btnEditView = new Button(composite, SWT.NONE);
+		btnEditView.setText(Messages.getString("EDIT"));
+		btnEditView.setImage(
 				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/edit.png"));
-		btnEditTemplate.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		btnEditTemplate.setEnabled(false);
-		btnEditTemplate.addSelectionListener(new SelectionListener() {
+		btnEditView.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnEditView.setEnabled(false);
+		btnEditView.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (null == getSelectedTemplate()) {
+				if (null == getSelectedView()) {
 					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
 					return;
 				}
-				ReportTemplateDialog dialog = new ReportTemplateDialog(composite.getShell(), getSelectedTemplate(),
-						getSelf());
+				ReportViewDialog dialog = new ReportViewDialog(composite.getShell(), getSelectedView(), getSelf());
 				dialog.open();
 			}
 
@@ -147,21 +144,21 @@ public class ReportTemplateEditor extends EditorPart {
 			}
 		});
 
-		btnDeleteTemplate = new Button(composite, SWT.NONE);
-		btnDeleteTemplate.setText(Messages.getString("DELETE"));
-		btnDeleteTemplate.setImage(
+		btnDeleteView = new Button(composite, SWT.NONE);
+		btnDeleteView.setText(Messages.getString("DELETE"));
+		btnDeleteView.setImage(
 				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/delete.png"));
-		btnDeleteTemplate.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		btnDeleteTemplate.setEnabled(false);
-		btnDeleteTemplate.addSelectionListener(new SelectionListener() {
+		btnDeleteView.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnDeleteView.setEnabled(false);
+		btnDeleteView.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (null == getSelectedTemplate()) {
+				if (null == getSelectedView()) {
 					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
 					return;
 				}
 				try {
-					ReportRestUtils.deleteTemplate(getSelectedTemplate().getId());
+					ReportRestUtils.deleteView(getSelectedView().getId());
 					refresh();
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
@@ -174,12 +171,12 @@ public class ReportTemplateEditor extends EditorPart {
 			}
 		});
 
-		btnRefreshTemplate = new Button(composite, SWT.NONE);
-		btnRefreshTemplate.setText(Messages.getString("REFRESH"));
-		btnRefreshTemplate.setImage(
+		btnRefreshView = new Button(composite, SWT.NONE);
+		btnRefreshView.setText(Messages.getString("REFRESH"));
+		btnRefreshView.setImage(
 				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
-		btnRefreshTemplate.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-		btnRefreshTemplate.addSelectionListener(new SelectionListener() {
+		btnRefreshView.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnRefreshView.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				refresh();
@@ -210,18 +207,17 @@ public class ReportTemplateEditor extends EditorPart {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
 				Object firstElement = selection.getFirstElement();
-				if (firstElement instanceof ReportTemplate) {
-					setSelectedTemplate((ReportTemplate) firstElement);
+				if (firstElement instanceof ReportView) {
+					setSelectedView((ReportView) firstElement);
 				}
-				btnEditTemplate.setEnabled(true);
-				btnDeleteTemplate.setEnabled(true);
+				btnEditView.setEnabled(true);
+				btnDeleteView.setEnabled(true);
 			}
 		});
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				ReportTemplateDialog dialog = new ReportTemplateDialog(parent.getShell(), getSelectedTemplate(),
-						getSelf());
+				ReportViewDialog dialog = new ReportViewDialog(parent.getShell(), getSelectedView(), getSelf());
 				dialog.open();
 			}
 		});
@@ -249,7 +245,7 @@ public class ReportTemplateEditor extends EditorPart {
 		// Filter table rows
 		txtSearch = new Text(filterContainer, SWT.BORDER | SWT.SEARCH);
 		txtSearch.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		txtSearch.setToolTipText(Messages.getString("SEARCH_TEMPLATE_TOOLTIP"));
+		txtSearch.setToolTipText(Messages.getString("SEARCH_VIEW_TOOLTIP"));
 		txtSearch.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -277,9 +273,8 @@ public class ReportTemplateEditor extends EditorPart {
 			if (searchString == null || searchString.length() == 0) {
 				return true;
 			}
-			ReportTemplate template = (ReportTemplate) element;
-			return template.getName().matches(searchString) || template.getDescription().matches(searchString)
-					|| template.getQuery().matches(searchString);
+			ReportView view = (ReportView) element;
+			return view.getName().matches(searchString) || view.getDescription().matches(searchString);
 		}
 	}
 
@@ -290,13 +285,13 @@ public class ReportTemplateEditor extends EditorPart {
 	private void createTableColumns() {
 
 		// Report name
-		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+		TableViewerColumn nameColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("REPORT_NAME"), 250);
-		labelColumn.setLabelProvider(new ColumnLabelProvider() {
+		nameColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ReportTemplate) {
-					return ((ReportTemplate) element).getName();
+				if (element instanceof ReportView) {
+					return ((ReportView) element).getName();
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -308,8 +303,8 @@ public class ReportTemplateEditor extends EditorPart {
 		descColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ReportTemplate) {
-					return ((ReportTemplate) element).getDescription();
+				if (element instanceof ReportView) {
+					return ((ReportView) element).getDescription();
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -321,9 +316,9 @@ public class ReportTemplateEditor extends EditorPart {
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ReportTemplate) {
-					return ((ReportTemplate) element).getCreateDate() != null
-							? ((ReportTemplate) element).getCreateDate().toString() : Messages.getString("UNTITLED");
+				if (element instanceof ReportView) {
+					return ((ReportView) element).getCreateDate() != null
+							? ((ReportView) element).getCreateDate().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -335,9 +330,9 @@ public class ReportTemplateEditor extends EditorPart {
 		modifyDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ReportTemplate) {
-					return ((ReportTemplate) element).getModifyDate() != null
-							? ((ReportTemplate) element).getModifyDate().toString() : Messages.getString("UNTITLED");
+				if (element instanceof ReportView) {
+					return ((ReportView) element).getModifyDate() != null
+							? ((ReportView) element).getModifyDate().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -345,15 +340,15 @@ public class ReportTemplateEditor extends EditorPart {
 	}
 
 	/**
-	 * Search templates by name, then populate specified table with template
+	 * Search views by name, then populate specified table with template
 	 * records.
 	 * 
 	 */
 	private void populateTable() {
 		try {
-			List<ReportTemplate> templates = ReportRestUtils.listTemplates(null);
-			if (templates != null) {
-				tableViewer.setInput(templates);
+			List<ReportView> views = ReportRestUtils.listViews(null);
+			if (views != null) {
+				tableViewer.setInput(views);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -361,13 +356,8 @@ public class ReportTemplateEditor extends EditorPart {
 		}
 	}
 
-	@Override
-	public void setFocus() {
-		btnAddTemplate.setFocus();
-	}
-
 	/**
-	 * Re-populate table with templates.
+	 * Re-populate table with views.
 	 * 
 	 */
 	public void refresh() {
@@ -375,16 +365,21 @@ public class ReportTemplateEditor extends EditorPart {
 		tableViewer.refresh();
 	}
 
-	public ReportTemplateEditor getSelf() {
+	public ReportViewEditor getSelf() {
 		return this;
 	}
 
-	public ReportTemplate getSelectedTemplate() {
-		return selectedTemplate;
+	@Override
+	public void setFocus() {
+		btnAddView.setFocus();
 	}
 
-	public void setSelectedTemplate(ReportTemplate selectedTemplate) {
-		this.selectedTemplate = selectedTemplate;
+	public ReportView getSelectedView() {
+		return selectedView;
+	}
+
+	public void setSelectedView(ReportView selectedView) {
+		this.selectedView = selectedView;
 	}
 
 }

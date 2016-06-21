@@ -32,6 +32,7 @@ public class LiderConstants {
 		public static final String POLICY_DEFINITION_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor";
 		public static final String AGENT_INFO_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.AgentInfoEditor";
 		public static final String REPORT_TEMPLATE_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ReportTemplateEditor";
+		public static final String REPORT_VIEW_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ReportViewEditor";
 	}
 
 	public static final class EXTENSION_POINTS {

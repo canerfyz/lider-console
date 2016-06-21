@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.model;
 
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+
 /**
  * Enum class for report types.
  * 
@@ -40,6 +42,15 @@ public enum ReportType {
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
+	}
+
+	/**
+	 * Provide i18n message representation of the enum type.
+	 * 
+	 * @return
+	 */
+	public String getMessage() {
+		return Messages.getString(this.toString());
 	}
 
 }

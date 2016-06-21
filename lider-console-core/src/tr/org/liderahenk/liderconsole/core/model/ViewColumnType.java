@@ -1,5 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.model;
 
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+
 /**
  * View column type indicates if a column can be used as value or label field in
  * a chart.
@@ -41,6 +43,15 @@ public enum ViewColumnType {
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
+	}
+
+	/**
+	 * Provide i18n message representation of the enum type.
+	 * 
+	 * @return
+	 */
+	public String getMessage() {
+		return Messages.getString(this.toString());
 	}
 
 }

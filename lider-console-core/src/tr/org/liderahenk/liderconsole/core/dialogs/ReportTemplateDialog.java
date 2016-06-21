@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -24,8 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,10 +152,6 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		createButtonsForParams(parent);
 		createTableForParams(parent);
 
-		composite = (Composite) super.createDialogArea(parent);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		composite.setLayout(new GridLayout(2, false));
-
 		// Template Columns
 		Label lblTemplateCols = new Label(parent, SWT.NONE);
 		lblTemplateCols.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
@@ -248,30 +241,10 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	}
 
 	private void createTableForParams(final Composite parent) {
-		tvParam = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-
-		// Create table columns
+		tvParam = SWTResourceManager.createTableViewer(parent);
+		((GridData) tvParam.getControl().getLayoutData()).heightHint = 200;
 		createTableColumnsForParams();
-
-		// Configure table layout
-		final Table table = tvParam.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.getVerticalBar().setEnabled(true);
-		table.getVerticalBar().setVisible(true);
-		tvParam.setContentProvider(new ArrayContentProvider());
-
 		populateTableWithParams();
-
-		GridData gridData = new GridData();
-		gridData.verticalAlignment = GridData.FILL;
-		gridData.horizontalSpan = 3;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.heightHint = 140;
-		gridData.widthHint = 200;
-		gridData.horizontalAlignment = GridData.FILL;
-		tvParam.getControl().setLayoutData(gridData);
 
 		// Hook up listeners
 		tvParam.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -298,17 +271,12 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	}
 
 	/**
-	 * Create table columns related to blacklist/whitelist items.
+	 * Create table columns related to template parameters
 	 * 
 	 */
 	private void createTableColumnsForParams() {
-
-		String[] titles = { Messages.getString("PARAM_KEY"), Messages.getString("PARAM_LABEL"),
-				Messages.getString("PARAM_TYPE"), Messages.getString("DEFAULT_VALUE"),
-				Messages.getString("MANDATORY") };
-		int[] bounds = { 100, 150, 100, 100, 50 };
-
-		TableViewerColumn keyColumn = createTableViewerColumn(tvParam, titles[0], bounds[0]);
+		TableViewerColumn keyColumn = SWTResourceManager.createTableViewerColumn(tvParam,
+				Messages.getString("PARAM_KEY"), 100);
 		keyColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -319,7 +287,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			}
 		});
 
-		TableViewerColumn labelColumn = createTableViewerColumn(tvParam, titles[1], bounds[1]);
+		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tvParam,
+				Messages.getString("PARAM_LABEL"), 150);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -330,7 +299,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			}
 		});
 
-		TableViewerColumn typeColumn = createTableViewerColumn(tvParam, titles[2], bounds[2]);
+		TableViewerColumn typeColumn = SWTResourceManager.createTableViewerColumn(tvParam,
+				Messages.getString("PARAM_TYPE"), 100);
 		typeColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -342,7 +312,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			}
 		});
 
-		TableViewerColumn defaultValueColumn = createTableViewerColumn(tvParam, titles[3], bounds[3]);
+		TableViewerColumn defaultValueColumn = SWTResourceManager.createTableViewerColumn(tvParam,
+				Messages.getString("DEFAULT_VALUE"), 100);
 		defaultValueColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -354,7 +325,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			}
 		});
 
-		TableViewerColumn mandatorColumn = createTableViewerColumn(tvParam, titles[4], bounds[4]);
+		TableViewerColumn mandatorColumn = SWTResourceManager.createTableViewerColumn(tvParam,
+				Messages.getString("MANDATORY"), 50);
 		mandatorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -451,30 +423,10 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	}
 
 	private void createTableForCols(final Composite parent) {
-		tvCol = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-
-		// Create table columns
+		tvCol = SWTResourceManager.createTableViewer(parent);
+		((GridData) tvCol.getControl().getLayoutData()).heightHint = 200;
 		createTableColumnsForCols();
-
-		// Configure table layout
-		final Table table = tvCol.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.getVerticalBar().setEnabled(true);
-		table.getVerticalBar().setVisible(true);
-		tvCol.setContentProvider(new ArrayContentProvider());
-
 		populateTableWithCols();
-
-		GridData gridData = new GridData();
-		gridData.verticalAlignment = GridData.FILL;
-		gridData.horizontalSpan = 3;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.heightHint = 140;
-		gridData.widthHint = 550;
-		gridData.horizontalAlignment = GridData.FILL;
-		tvCol.getControl().setLayoutData(gridData);
 
 		// Hook up listeners
 		tvCol.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -501,12 +453,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	}
 
 	private void createTableColumnsForCols() {
-
-		String[] titles = { Messages.getString("COLUMN_ORDER"), Messages.getString("COLUMN_NAME"),
-				Messages.getString("WIDTH"), Messages.getString("VISIBLE") };
-		int[] bounds = { 100, 250, 100, 100 };
-
-		TableViewerColumn orderColumn = createTableViewerColumn(tvCol, titles[0], bounds[0]);
+		TableViewerColumn orderColumn = SWTResourceManager.createTableViewerColumn(tvCol,
+				Messages.getString("COLUMN_ORDER"), 100);
 		orderColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -517,7 +465,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			}
 		});
 
-		TableViewerColumn nameColumn = createTableViewerColumn(tvCol, titles[1], bounds[1]);
+		TableViewerColumn nameColumn = SWTResourceManager.createTableViewerColumn(tvCol,
+				Messages.getString("COLUMN_NAME"), 250);
 		nameColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -532,27 +481,9 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	private void populateTableWithCols() {
 		if (selectedTemplate != null && selectedTemplate.getTemplateColumns() != null
 				&& !selectedTemplate.getTemplateColumns().isEmpty()) {
-			tvParam.setInput(new ArrayList<ReportTemplateColumn>(selectedTemplate.getTemplateColumns()));
-			tvParam.refresh();
+			tvCol.setInput(new ArrayList<ReportTemplateColumn>(selectedTemplate.getTemplateColumns()));
+			tvCol.refresh();
 		}
-	}
-
-	/**
-	 * Create new table viewer column instance.
-	 * 
-	 * @param title
-	 * @param bound
-	 * @return
-	 */
-	private TableViewerColumn createTableViewerColumn(TableViewer tv, String title, int bound) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(tv, SWT.NONE);
-		final TableColumn column = viewerColumn.getColumn();
-		column.setText(title);
-		column.setWidth(bound);
-		column.setResizable(true);
-		column.setMoveable(false);
-		column.setAlignment(SWT.LEFT);
-		return viewerColumn;
 	}
 
 	/**
