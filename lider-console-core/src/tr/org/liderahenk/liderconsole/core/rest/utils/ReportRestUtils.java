@@ -333,7 +333,7 @@ public class ReportRestUtils {
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("views") != null) {
 			views = new ObjectMapper().readValue(response.getResultMap().get("views").toString(),
-					new TypeReference<List<ReportTemplate>>() {
+					new TypeReference<List<ReportView>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
