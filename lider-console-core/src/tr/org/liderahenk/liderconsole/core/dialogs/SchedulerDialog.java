@@ -148,7 +148,7 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 					setEnabled(true);
 					dateTimeChanged = false;
 					dateTime.setEnabled(false);
-					setValues(new String[] { "0", "0", "1", "1", "?" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					setValues(new String[] { "0", "0", "1", "1", "*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					break;
 				// monthly
 				case 2:
@@ -156,7 +156,7 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 					setEnabled(true);
 					dateTimeChanged = false;
 					dateTime.setEnabled(false);
-					setValues(new String[] { "0", "0", "1", "*", "?" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					setValues(new String[] { "0", "0", "1", "*", "*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					break;
 				// weekly
 				case 3:
@@ -172,7 +172,7 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 					setEnabled(true);
 					dateTimeChanged = false;
 					dateTime.setEnabled(false);
-					setValues(new String[] { "0", "0", "*", "*", "?" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					setValues(new String[] { "0", "0", "*", "*", "*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					break;
 				// hourly
 				case 5:
@@ -180,7 +180,7 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 					setEnabled(true);
 					dateTimeChanged = false;
 					dateTime.setEnabled(false);
-					setValues(new String[] { "0", "*", "*", "*", "?" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					setValues(new String[] { "0", "*", "*", "*", "*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					break;
 				// once
 				case 6: {
@@ -190,7 +190,7 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 					setValues(new String[] { "", "", "", "", "" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					txtHour.setText(dateTime.getHours() + "");
 					txtMonth.setText((dateTime.getMonth() + 1) + "");
-					txtDayOfWeek.setText("?");
+					txtDayOfWeek.setText("*");
 					txtDayOfMonth.setText(dateTime.getDay() + "");
 					txtMinute.setText(dateTime.getMinutes() + "");
 					break;
@@ -241,7 +241,7 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 
 				txtHour.setText(dateTime.getHours() + "");
 				txtMonth.setText((dateTime.getMonth() + 1) + "");
-				txtDayOfWeek.setText("?");
+				txtDayOfWeek.setText("*");
 				txtDayOfMonth.setText(dateTime.getDay() + "");
 				txtMinute.setText(dateTime.getMinutes() + "");
 
