@@ -37,9 +37,6 @@ public class ReportRestUtils {
 	 * @return
 	 */
 	public static List<Object[]> generateView(ReportGenerationRequest report) throws Exception {
-		// TODO
-		// TODO
-		// TODO
 		// Build URL
 		StringBuilder url = getBaseUrl();
 		url.append("/view/generate");
@@ -50,8 +47,8 @@ public class ReportRestUtils {
 		List<Object[]> resultList = null;
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
-				&& response.getResultMap().get("report") != null) {
-			resultList = new ObjectMapper().readValue(response.getResultMap().get("report").toString(),
+				&& response.getResultMap().get("data") != null) {
+			resultList = new ObjectMapper().readValue(response.getResultMap().get("data").toString(),
 					new TypeReference<List<Object[]>>() {
 					});
 			Notifier.success(null, Messages.getString("REPORT_GENERATED"));

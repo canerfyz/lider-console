@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.dialogs.ReportGenerationDialog;
 import tr.org.liderahenk.liderconsole.core.dialogs.ReportViewDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
@@ -57,6 +58,7 @@ public class ReportViewEditor extends EditorPart {
 	private Button btnEditView;
 	private Button btnDeleteView;
 	private Button btnRefreshView;
+	private Button btnGenerateReport;
 
 	private ReportView selectedView;
 
@@ -102,7 +104,7 @@ public class ReportViewEditor extends EditorPart {
 
 		final Composite composite = new Composite(parent, GridData.FILL);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		composite.setLayout(new GridLayout(4, false));
+		composite.setLayout(new GridLayout(5, false));
 
 		btnAddView = new Button(composite, SWT.NONE);
 		btnAddView.setText(Messages.getString("ADD"));
@@ -186,6 +188,28 @@ public class ReportViewEditor extends EditorPart {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		
+		btnGenerateReport = new Button(composite, SWT.NONE);
+		btnGenerateReport.setText(Messages.getString("GENERATE_REPORT"));
+		btnGenerateReport.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/report.png"));
+		btnGenerateReport.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+		btnGenerateReport.setEnabled(false);
+		btnGenerateReport.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (null == getSelectedView()) {
+					Notifier.warning(null, Messages.getString("SELECT_VIEW"));
+					return;
+				}
+				ReportGenerationDialog dialog = new ReportGenerationDialog(composite.getShell(), getSelectedView());
+				dialog.open();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 	}
 
 	/**
@@ -212,6 +236,7 @@ public class ReportViewEditor extends EditorPart {
 				}
 				btnEditView.setEnabled(true);
 				btnDeleteView.setEnabled(true);
+				btnGenerateReport.setEnabled(true);
 			}
 		});
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {

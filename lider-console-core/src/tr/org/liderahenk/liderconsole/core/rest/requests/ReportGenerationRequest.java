@@ -11,18 +11,18 @@ public class ReportGenerationRequest implements IRequest {
 
 	private static final long serialVersionUID = 2446346120454832435L;
 
-	private Long templateId;
+	private Long viewId;
 
 	private Map<String, Object> paramValues;
 
 	private Date timestamp;
 
-	public Long getTemplateId() {
-		return templateId;
+	public Long getViewId() {
+		return viewId;
 	}
 
-	public void setTemplateId(Long templateId) {
-		this.templateId = templateId;
+	public void setViewId(Long viewId) {
+		this.viewId = viewId;
 	}
 
 	public Map<String, Object> getParamValues() {
@@ -43,8 +43,8 @@ public class ReportGenerationRequest implements IRequest {
 
 	@Override
 	public String toString() {
-		return "ReportGenerationRequest [templateId=" + templateId + ", paramValues=" + paramValues + ", timestamp="
-				+ timestamp + "]";
+		return "ReportGenerationRequest [viewId=" + viewId + ", paramValues=" + paramValues + ", timestamp=" + timestamp
+				+ "]";
 	}
 
 	@Override
