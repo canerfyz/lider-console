@@ -11,6 +11,9 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -27,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -217,43 +221,72 @@ public class LdapSearchEditor extends EditorPart {
 	 */
 	protected void doSearch() {
 
-		String filter = computeFilterClause();
-		String[] returningAttributes = findReturningAttributes();
+		Job job = new Job("LDAP_SEARCH") {
+			@Override
+			protected IStatus run(final IProgressMonitor monitor) {
+				monitor.beginTask("LDAP_SEARCH", 100);
 
-		// First, do LDAP search
-		List<SearchResult> entries = LdapUtils.getInstance().searchAndReturnList(null, filter, returningAttributes,
-				SearchControls.SUBTREE_SCOPE, 0, LdapConnectionListener.getConnection(),
-				LdapConnectionListener.getMonitor());
-		if (entries != null && !entries.isEmpty()) {
-			// Then, if 'agent' scope is selected,
-			// Filter the entries by agent properties as well
-			if (btnSearchAgents.getSelection()) {
-				// Then, filter these results by agent properties
-				Map<String, String> propFilter = computePropertyFilter();
-				if (propFilter != null && !propFilter.isEmpty()) {
-					// Read agents
-					queryAgents();
-					List<SearchResult> temp = new ArrayList<SearchResult>();
-					for (SearchResult entry : entries) {
-						String dn = entry.getName();
-						if (LdapUtils.getInstance().isAgent(entry.getAttributes().get("objectClass"))) {
-							Agent agent = findAgent(dn);
-							if (hasProperties(agent, propFilter)) {
-								temp.add(entry);
+				Display.getDefault().syncExec(new Runnable() {
+					@Override
+					public void run() {
+
+						btnSearch.setEnabled(false);
+
+						String filter = computeFilterClause();
+						String[] returningAttributes = findReturningAttributes();
+						monitor.worked(20);
+
+						monitor.worked(40);
+						// First, do LDAP search
+						List<SearchResult> entries = LdapUtils.getInstance().searchAndReturnList(null, filter,
+								returningAttributes, SearchControls.SUBTREE_SCOPE, 0,
+								LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
+						monitor.worked(80);
+
+						if (entries != null && !entries.isEmpty()) {
+							// Then, if 'agent' scope is selected,
+							// Filter the entries by agent properties as well
+							if (btnSearchAgents.getSelection()) {
+								// Then, filter these results by agent
+								// properties
+								Map<String, String> propFilter = computePropertyFilter();
+								if (propFilter != null && !propFilter.isEmpty()) {
+									// Read agents
+									queryAgents();
+									List<SearchResult> temp = new ArrayList<SearchResult>();
+									for (SearchResult entry : entries) {
+										String dn = entry.getName();
+										if (LdapUtils.getInstance().isAgent(entry.getAttributes().get("objectClass"))) {
+											Agent agent = findAgent(dn);
+											if (hasProperties(agent, propFilter)) {
+												temp.add(entry);
+											}
+										} else if (btnSearchGroups.getSelection() || btnSearchUsers.getSelection()) {
+											temp.add(entry);
+										}
+									}
+									entries = temp;
+								}
 							}
-						} else if (btnSearchGroups.getSelection() || btnSearchUsers.getSelection()) {
-							temp.add(entry);
+							recreateTable(returningAttributes);
+							viewer.setInput(entries);
+							redraw();
+						} else {
+							emptyTable(returningAttributes);
 						}
+
+						monitor.worked(100);
+						monitor.done();
+						btnSearch.setEnabled(true);
 					}
-					entries = temp;
-				}
+				});
+
+				return Status.OK_STATUS;
 			}
-			recreateTable(returningAttributes);
-			viewer.setInput(entries);
-			redraw();
-		} else {
-			emptyTable(returningAttributes);
-		}
+		};
+
+		job.setUser(true);
+		job.schedule();
 	}
 
 	private boolean hasProperties(Agent agent, Map<String, String> propFilter) {
