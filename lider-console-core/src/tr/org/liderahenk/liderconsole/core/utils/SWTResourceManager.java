@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -758,6 +759,22 @@ public class SWTResourceManager {
 	public static TableViewer createTableViewer(final Composite parent) {
 		TableViewer tableViewer = new TableViewer(parent,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		configureTableLayout(tableViewer);
+		return tableViewer;
+	}
+
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	public static CheckboxTableViewer createCheckboxTableViewer(final Composite parent) {
+		CheckboxTableViewer tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.FULL_SELECTION);
+		configureTableLayout(tableViewer);
+		return tableViewer;
+	}
+
+	private static void configureTableLayout(TableViewer tableViewer) {
 		// Configure table properties
 		final Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
@@ -776,7 +793,6 @@ public class SWTResourceManager {
 		gridData.widthHint = 600;
 		gridData.horizontalAlignment = GridData.FILL;
 		tableViewer.getControl().setLayoutData(gridData);
-		return tableViewer;
 	}
 
 	/**
