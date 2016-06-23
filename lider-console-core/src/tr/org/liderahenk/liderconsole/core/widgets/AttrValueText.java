@@ -1,7 +1,11 @@
 package tr.org.liderahenk.liderconsole.core.widgets;
 
-import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -12,7 +16,8 @@ import org.eclipse.swt.widgets.Text;
  */
 public class AttrValueText extends Text {
 
-	private AutoCompleteField acf;
+	private static String KEY_PRESS = "Ctrl+Space";
+	private String[] proposals = new String[] {};
 
 	/**
 	 * @param parent
@@ -20,7 +25,13 @@ public class AttrValueText extends Text {
 	 */
 	public AttrValueText(Composite parent, int style) {
 		super(parent, style);
-		acf = new AutoCompleteField(this, new TextContentAdapter(), new String[] {});
+		setAutoCompletion(this, null);
+		this.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent ke) {
+				// Method for autocompletion
+				setAutoCompletion(getSelf(), getSelf().getText());
+			}
+		});
 	}
 
 	public AttrNameCombo getRelatedAttrCombo() {
@@ -33,6 +44,19 @@ public class AttrValueText extends Text {
 			}
 		}
 		return null;
+	}
+
+	private void setAutoCompletion(Text text, String value) {
+		try {
+			ContentProposalAdapter adapter = null;
+			SimpleContentProposalProvider scp = new SimpleContentProposalProvider(proposals);
+			scp.setProposals(proposals);
+			KeyStroke ks = KeyStroke.getInstance(KEY_PRESS);
+			adapter = new ContentProposalAdapter(text, new TextContentAdapter(), scp, ks, null);
+			adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public AttrOperator getRelatedAttrOperator() {
@@ -48,7 +72,11 @@ public class AttrValueText extends Text {
 	}
 
 	public void setAutoCompleteProposals(String[] proposals) {
-		this.acf.setProposals(proposals);
+		this.proposals = proposals;
+	}
+
+	protected AttrValueText getSelf() {
+		return this;
 	}
 
 	@Override
