@@ -1,6 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,14 +11,8 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -35,11 +30,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +43,11 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.labelproviders.LdapSearchLabelProvider;
 import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
+import tr.org.liderahenk.liderconsole.core.model.Agent;
+import tr.org.liderahenk.liderconsole.core.model.AgentProperty;
+import tr.org.liderahenk.liderconsole.core.model.SearchFilterEnum;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
+import tr.org.liderahenk.liderconsole.core.rest.utils.AgentRestUtils;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.AttrNameCombo;
@@ -70,13 +67,14 @@ public class LdapSearchEditor extends EditorPart {
 
 	private ScrolledComposite sc;
 	private Composite cmpSearchCritera;
+	private Button btnSearchAgents;
+	private Button btnSearchUsers;
+	private Button btnSearchGroups;
 	private Composite cmpTable;
 	private AttrNameCombo cmbAttribute;
 	private AttrOperator cmbOperator;
 	private AttrValueText txtAttrValue;
 	private Button btnAddCriteria;
-	private Button btnSearchAgents;
-	private Button btnSearchUsers;
 	private Button btnSearch;
 	private CheckboxTableViewer viewer;
 
@@ -90,7 +88,10 @@ public class LdapSearchEditor extends EditorPart {
 	 */
 	private Map<String, String> properties;
 
-	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
+	/**
+	 * Agents
+	 */
+	private List<Agent> agents;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -105,24 +106,6 @@ public class LdapSearchEditor extends EditorPart {
 		setSite(site);
 		setInput(input);
 		queryComboItems();
-	}
-
-	/**
-	 * Populate comboItems array which will be used to populate criteria combos
-	 * (AttrCombo)
-	 */
-	@SuppressWarnings("unchecked")
-	private void queryComboItems() {
-		try {
-			IResponse response = TaskRestUtils.execute("LIDER-PERSISTENCE", "1.0.0", "GET-LDAP-SEARCH-ATTR", false);
-			// LDAP search attributes (such as uid, liderPrivilege)
-			attributes = (List<String>) response.getResultMap().get("attributes");
-			// Agent properties (such as hostname, ipAddresses, os)
-			properties = (Map<String, String>) response.getResultMap().get("properties");
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
-		}
 	}
 
 	@Override
@@ -150,6 +133,30 @@ public class LdapSearchEditor extends EditorPart {
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 
+		// LDAP search scope
+		Label lblSearchScope = new Label(composite, SWT.NONE);
+		lblSearchScope.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
+		lblSearchScope.setText(Messages.getString("LDAP_SEARCH_SCOPE"));
+
+		Composite cmpSearchScope = new Composite(composite, SWT.NONE);
+		cmpSearchScope.setLayout(new GridLayout(3, false));
+		cmpSearchScope.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
+		// Search agents
+		btnSearchAgents = new Button(cmpSearchScope, SWT.CHECK);
+		btnSearchAgents.setText(Messages.getString("SEARCH_AGENTS"));
+		btnSearchAgents.setSelection(true);
+
+		// Search users
+		btnSearchUsers = new Button(cmpSearchScope, SWT.CHECK);
+		btnSearchUsers.setText(Messages.getString("SEARCH_LDAP_USERS"));
+		btnSearchUsers.setSelection(true);
+
+		// Search groups
+		btnSearchGroups = new Button(cmpSearchScope, SWT.CHECK);
+		btnSearchGroups.setText(Messages.getString("SEARCH_LDAP_GROUPS"));
+
+		// LDAP search criteria
 		Label lblSearchCriteria = new Label(composite, SWT.NONE);
 		lblSearchCriteria.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblSearchCriteria.setText(Messages.getString("LDAP_SEARCH_CRITERIA"));
@@ -158,8 +165,10 @@ public class LdapSearchEditor extends EditorPart {
 		cmpSearchCritera.setLayout(new GridLayout(2, false));
 		cmpSearchCritera.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
+		// Criteria inputs
 		createSearchCriteria(cmpSearchCritera);
 
+		// Add new criteria
 		// Search criterias can be added/removed dynamically
 		btnAddCriteria = new Button(cmpSearchCritera, SWT.NONE);
 		btnAddCriteria.setImage(
@@ -171,28 +180,18 @@ public class LdapSearchEditor extends EditorPart {
 			}
 		});
 
-		Label lblSearchScope = new Label(composite, SWT.NONE);
-		lblSearchScope.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
-		lblSearchScope.setText(Messages.getString("LDAP_SEARCH_SCOPE"));
-
-		Composite cmpSearchScope = new Composite(composite, SWT.NONE);
-		cmpSearchScope.setLayout(new GridLayout(3, false));
-		cmpSearchScope.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-
-		btnSearchAgents = new Button(cmpSearchScope, SWT.RADIO);
-		btnSearchAgents.setText(Messages.getString("LDAP_ONLY_AGENTS"));
-		btnSearchAgents.setSelection(true);
-
-		btnSearchUsers = new Button(cmpSearchScope, SWT.RADIO);
-		btnSearchUsers.setText(Messages.getString("LDAP_ONLY_USERS"));
-
 		btnSearch = new Button(composite, SWT.PUSH);
 		btnSearch.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/filter.png")));
+		btnSearch.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
 		btnSearch.setText(Messages.getString("LDAP_DO_SEARCH"));
 		btnSearch.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				eventBroker.send("ldap_entry_selected", null);
+				if (!btnSearchAgents.getSelection() && !btnSearchGroups.getSelection()
+						&& !btnSearchUsers.getSelection()) {
+					Notifier.warning(null, Messages.getString("SELECT_AT_LEAST_ONE_SCOPE"));
+					return;
+				}
 				doSearch();
 			}
 		});
@@ -204,30 +203,7 @@ public class LdapSearchEditor extends EditorPart {
 		cmpTable.setLayout(new GridLayout(1, false));
 		cmpTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		viewer = CheckboxTableViewer.newCheckList(cmpTable, SWT.FULL_SELECTION);
-		getSite().setSelectionProvider(viewer);
-
-		viewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-
-				ISelection selection = viewer.getSelection();
-				if (selection instanceof IStructuredSelection) {
-					Object firstElement = ((IStructuredSelection) selection).getFirstElement();
-					if (firstElement instanceof SearchResult) {
-						eventBroker.send("ldap_entry_selected", firstElement);
-					}
-				}
-			}
-		});
-
-		viewer.setContentProvider(new ArrayContentProvider());
-		final Table table = viewer.getTable();
-		table.setHeaderVisible(false);
-		table.setLinesVisible(true);
-		table.getVerticalBar().setEnabled(true);
-		table.getVerticalBar().setVisible(true);
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		viewer = SWTResourceManager.createCheckboxTableViewer(cmpTable);
 
 		sc.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sc.setExpandHorizontal(true);
@@ -245,30 +221,94 @@ public class LdapSearchEditor extends EditorPart {
 		String[] returningAttributes = findReturningAttributes();
 
 		// First, do LDAP search
-		List<SearchResult> result = LdapUtils.getInstance().searchAndReturnList(null, filter, returningAttributes,
+		List<SearchResult> entries = LdapUtils.getInstance().searchAndReturnList(null, filter, returningAttributes,
 				SearchControls.SUBTREE_SCOPE, 0, LdapConnectionListener.getConnection(),
 				LdapConnectionListener.getMonitor());
-		if (result != null && !result.isEmpty()) {
-			// Then, filter these results by agent properties
-			Map<String, String> propFilter = computePropertyFilter();
-			if (propFilter != null && !propFilter.isEmpty()) {
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-				// TODO
-
+		if (entries != null && !entries.isEmpty()) {
+			// Then, if 'agent' scope is selected,
+			// Filter the entries by agent properties as well
+			if (btnSearchAgents.getSelection()) {
+				// Then, filter these results by agent properties
+				Map<String, String> propFilter = computePropertyFilter();
+				if (propFilter != null && !propFilter.isEmpty()) {
+					// Read agents
+					queryAgents();
+					List<SearchResult> temp = new ArrayList<SearchResult>();
+					for (SearchResult entry : entries) {
+						String dn = entry.getName();
+						if (LdapUtils.getInstance().isAgent(entry.getAttributes().get("objectClass"))) {
+							Agent agent = findAgent(dn);
+							if (hasProperties(agent, propFilter)) {
+								temp.add(entry);
+							}
+						} else if (btnSearchGroups.getSelection() || btnSearchUsers.getSelection()) {
+							temp.add(entry);
+						}
+					}
+					entries = temp;
+				}
 			}
 			recreateTable(returningAttributes);
-			viewer.setInput(result);
+			viewer.setInput(entries);
 			redraw();
 		} else {
 			emptyTable(returningAttributes);
 		}
 	}
 
-	private Map<String, String> computePropertyFilter() {
+	private boolean hasProperties(Agent agent, Map<String, String> propFilter) {
+		if (agent.getProperties() == null || agent.getProperties().isEmpty()) {
+			return false;
+		}
+		int i = 0;
+		for (AgentProperty property : agent.getProperties()) {
+			if (!propFilter.containsKey(property.getPropertyName()) || property.getPropertyValue() == null) {
+				i++; // count # of skipped properties
+				continue;
+			}
+			// return false if values of the same property do not match
+			if (!property.getPropertyValue().equalsIgnoreCase(propFilter.get(property.getPropertyName()))) {
+				return false;
+			}
+		}
+		// return false if we have skipped all of the properties, otherwise true
+		return !(agent.getProperties().size() == i);
+	}
+
+	private Agent findAgent(String dn) {
+		if (agents != null) {
+			for (Agent agent : agents) {
+				if (agent.getDn().equalsIgnoreCase(dn)) {
+					return agent;
+				}
+			}
+		}
 		return null;
+	}
+
+	private Map<String, String> computePropertyFilter() {
+		Map<String, String> propFilter = null;
+		Control[] children = cmpSearchCritera.getChildren();
+		if (children != null) {
+			propFilter = new HashMap<String, String>();
+			for (Control child : children) {
+				if (child instanceof Group) {
+					Control[] gChildren = ((Group) child).getChildren();
+					if (gChildren != null) {
+						for (Control gChild : gChildren) {
+							if (isValidAttributeValue(gChild)
+									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrCombo())) {
+								AttrNameCombo rAttrCombo = ((AttrValueText) gChild).getRelatedAttrCombo();
+								if (properties.keySet().contains(rAttrCombo.getText())) {
+									propFilter.put(rAttrCombo.getText(), ((AttrValueText) gChild).getText());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return propFilter;
 	}
 
 	/**
@@ -310,7 +350,8 @@ public class LdapSearchEditor extends EditorPart {
 	 */
 	private void createTableColumns(TableViewer viewer, String[] returningAttributes) {
 
-		TableViewerColumn dnColumn = createTableViewerColumn(viewer, "Entry", 250);
+		TableViewerColumn dnColumn = SWTResourceManager.createTableViewerColumn(viewer,
+				Messages.getString("LDAP_ENTRY"), 250);
 		dnColumn.setLabelProvider(new LdapSearchLabelProvider());
 
 		if (returningAttributes != null) {
@@ -319,7 +360,7 @@ public class LdapSearchEditor extends EditorPart {
 					continue; // ignore objectClass, show only search
 								// parameters.
 				}
-				TableViewerColumn attrColumn = createTableViewerColumn(viewer, attr, 150);
+				TableViewerColumn attrColumn = SWTResourceManager.createTableViewerColumn(viewer, attr, 150);
 				attrColumn.setLabelProvider(new ColumnLabelProvider() {
 					@Override
 					public String getText(Object element) {
@@ -337,36 +378,63 @@ public class LdapSearchEditor extends EditorPart {
 		}
 	}
 
-	private TableViewerColumn createTableViewerColumn(TableViewer viewer, String title, int bound) {
-		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
-		final TableColumn column = viewerColumn.getColumn();
-		column.setText(title);
-		column.setWidth(bound);
-		column.setResizable(true);
-		column.setMoveable(false);
-		column.setAlignment(SWT.LEFT);
-		return viewerColumn;
-	}
-
-	/**
-	 * @return
-	 */
 	private String computeFilterClause() {
 
 		ArrayList<String> filterExpressions = new ArrayList<String>();
 		filterExpressions.add("(objectClass=*)");
 
+		// Compute 'scope' related expressions (use OR logic)
+		ArrayList<String> scopeExpressions = new ArrayList<String>();
 		if (btnSearchUsers.getSelection()) {
+			ArrayList<String> userExpressions = new ArrayList<String>();
 			String[] userObjClsArr = ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS);
 			for (String userObjCls : userObjClsArr) {
-				filterExpressions.add("(objectClass=" + userObjCls + ")");
+				userExpressions.add("(objectClass=" + userObjCls + ")");
 			}
-		} else if (btnSearchAgents.getSelection()) {
+			if (userExpressions.size() == 1) {
+				scopeExpressions.add(userExpressions.get(0));
+			} else { // > 1
+				StringBuilder filter = new StringBuilder();
+				filter.append("(&").append(StringUtils.join(userExpressions, "")).append(")");
+				scopeExpressions.add(filter.toString());
+			}
+		}
+		if (btnSearchAgents.getSelection()) {
+			ArrayList<String> agentExpressions = new ArrayList<String>();
 			String[] agentObjClsArr = ConfigProvider.getInstance()
 					.getStringArr(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS);
 			for (String agentObjCls : agentObjClsArr) {
-				filterExpressions.add("(objectClass=" + agentObjCls + ")");
+				agentExpressions.add("(objectClass=" + agentObjCls + ")");
 			}
+			if (agentExpressions.size() == 1) {
+				scopeExpressions.add(agentExpressions.get(0));
+			} else {
+				StringBuilder filter = new StringBuilder();
+				filter.append("(&").append(StringUtils.join(agentExpressions, "")).append(")");
+				scopeExpressions.add(filter.toString());
+			}
+		}
+		if (btnSearchGroups.getSelection()) {
+			ArrayList<String> groupExpressions = new ArrayList<String>();
+			String[] groupObjClsArr = ConfigProvider.getInstance()
+					.getStringArr(LiderConstants.CONFIG.GROUP_LDAP_OBJ_CLS);
+			for (String groupObjCls : groupObjClsArr) {
+				groupExpressions.add("(objectClass=" + groupObjCls + ")");
+			}
+			if (groupExpressions.size() == 1) {
+				scopeExpressions.add(groupExpressions.get(0));
+			} else {
+				StringBuilder filter = new StringBuilder();
+				filter.append("(&").append(StringUtils.join(groupExpressions, "")).append(")");
+				scopeExpressions.add(filter.toString());
+			}
+		}
+		if (scopeExpressions.size() == 1) {
+			filterExpressions.add(scopeExpressions.get(0));
+		} else {
+			StringBuilder filter = new StringBuilder();
+			filter.append("(|").append(StringUtils.join(scopeExpressions, "")).append(")");
+			filterExpressions.add(filter.toString());
 		}
 
 		Control[] children = cmpSearchCritera.getChildren();
@@ -376,13 +444,15 @@ public class LdapSearchEditor extends EditorPart {
 					Control[] gChildren = ((Group) child).getChildren();
 					if (gChildren != null) {
 						for (Control gChild : gChildren) {
+							// gChild must be an instance of AttrValueText
 							if (isValidAttributeValue(gChild)
-									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrCombo())) {
-								AttrNameCombo rAttrText = ((AttrValueText) gChild).getRelatedAttrCombo();
+									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrCombo())
+									&& attributes.contains(((AttrValueText) gChild).getRelatedAttrCombo())) {
+								AttrNameCombo rAttrCombo = ((AttrValueText) gChild).getRelatedAttrCombo();
 								AttrOperator rAttrOperator = ((AttrValueText) gChild).getRelatedAttrOperator();
 
 								StringBuilder expression = new StringBuilder();
-								expression.append("(").append(rAttrText.getText())
+								expression.append("(").append(rAttrCombo.getText())
 										.append(rAttrOperator.getItem(rAttrOperator.getSelectionIndex()))
 										.append(((AttrValueText) gChild).getText()).append(")");
 								filterExpressions.add(expression.toString());
@@ -395,15 +465,10 @@ public class LdapSearchEditor extends EditorPart {
 
 		if (filterExpressions.size() == 1) {
 			return filterExpressions.get(0);
-		} else {
-			// TODO simdilik n adet expression'i AND islemiyle birlestir.
-			// TODO bir sonraki adimda ekrandan AND/OR/NOT operatorlerini de
-			// al!
-			String fExpr = StringUtils.join(filterExpressions, "");
-			StringBuilder filter = new StringBuilder();
-			filter.append("(&").append(fExpr).append(")");
-			return filter.toString();
 		}
+		StringBuilder filter = new StringBuilder();
+		filter.append("(&").append(StringUtils.join(filterExpressions, "")).append(")");
+		return filter.toString();
 	}
 
 	/**
@@ -423,7 +488,8 @@ public class LdapSearchEditor extends EditorPart {
 					Control[] gChildren = ((Group) child).getChildren();
 					if (gChildren != null) {
 						for (Control gChild : gChildren) {
-							if (isValidAttribute(gChild)) {
+							// gChild must be an instance of AttrNameCombo
+							if (isValidAttribute(gChild) && attributes.contains(((AttrNameCombo) gChild).getText())) {
 								returningAttributes.add(((AttrNameCombo) gChild).getText());
 							}
 						}
@@ -436,18 +502,19 @@ public class LdapSearchEditor extends EditorPart {
 	}
 
 	/**
-	 * @param relatedAttrText
-	 * @return true if attribute value is not empty or null and it is a LDAP
+	 * @param child
+	 *            instance of AttrNameCombo
+	 * @return true if attribute value is not empty or null and it is an LDAP
 	 *         search attribute (not agent property), false otherwise.
 	 */
 	private boolean isValidAttribute(Control child) {
 		return child instanceof AttrNameCombo && ((AttrNameCombo) child).getText() != null
-				&& !((AttrNameCombo) child).getText().isEmpty()
-				&& attributes.contains(((AttrNameCombo) child).getText());
+				&& !((AttrNameCombo) child).getText().isEmpty();
 	}
 
 	/**
 	 * @param child
+	 *            instance of AttrValueText
 	 * @return true if attribute name is not null or empty
 	 */
 	private boolean isValidAttributeValue(Control child) {
@@ -485,9 +552,12 @@ public class LdapSearchEditor extends EditorPart {
 		grpSearchCriteria.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		cmbAttribute = new AttrNameCombo(grpSearchCriteria, SWT.BORDER | SWT.DROP_DOWN);
-		cmbAttribute.setToolTipText("Öznitelik");
-		cmbAttribute.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		cmbAttribute.setToolTipText(Messages.getString("PROPERTY_NAME"));
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gridData.widthHint = 250;
+		cmbAttribute.setLayoutData(gridData);
 		cmbAttribute.setItems(generateComboItems());
+		cmbAttribute.select(0);
 		cmbAttribute.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -503,11 +573,11 @@ public class LdapSearchEditor extends EditorPart {
 		});
 
 		cmbOperator = new AttrOperator(grpSearchCriteria, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-		cmbOperator.setItems(new String[] { "=", "<", ">", "!=" });
+		cmbOperator.setItems(SearchFilterEnum.getOperators());
 		cmbOperator.select(0);
 
 		txtAttrValue = new AttrValueText(grpSearchCriteria, SWT.BORDER | SWT.DROP_DOWN);
-		txtAttrValue.setToolTipText("Değer");
+		txtAttrValue.setToolTipText(Messages.getString("PROPERTY_VALUE"));
 		txtAttrValue.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 	}
 
@@ -535,6 +605,40 @@ public class LdapSearchEditor extends EditorPart {
 					break;
 				}
 			}
+		}
+	}
+
+	/**
+	 * Populate comboItems array which will be used to populate criteria combos
+	 * (AttrCombo)
+	 */
+	@SuppressWarnings("unchecked")
+	private void queryComboItems() {
+		try {
+			if (attributes == null || properties == null) {
+				IResponse response = TaskRestUtils.execute("LIDER-PERSISTENCE", "1.0.0", "GET-LDAP-SEARCH-ATTR", false);
+				// LDAP search attributes (such as uid, liderPrivilege)
+				attributes = (List<String>) response.getResultMap().get("attributes");
+				// Agent properties (such as hostname, ipAddresses, os)
+				properties = (Map<String, String>) response.getResultMap().get("properties");
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+		}
+	}
+
+	/**
+	 * Read all agent records so that we can use them in search filter.
+	 */
+	private void queryAgents() {
+		try {
+			if (agents == null) {
+				agents = AgentRestUtils.list(null, null);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 		}
 	}
 
