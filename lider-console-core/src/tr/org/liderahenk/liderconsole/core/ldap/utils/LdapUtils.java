@@ -2,7 +2,9 @@ package tr.org.liderahenk.liderconsole.core.ldap.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,6 +20,7 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.apache.directory.api.ldap.model.schema.ObjectClass;
 import org.apache.directory.studio.common.core.jobs.StudioProgressMonitor;
 import org.apache.directory.studio.connection.core.Connection;
 import org.apache.directory.studio.connection.core.Connection.AliasDereferencingMethod;
@@ -413,6 +416,35 @@ public class LdapUtils {
 	}
 
 	/**
+	 * Compare provided object classes with the agent object classes and
+	 * determine if they belong to an agent LDAP entry.
+	 * 
+	 * @param classes
+	 * @return
+	 */
+	public boolean isAgent(Collection<ObjectClass> classes) {
+		// Remove common elements from the list
+		ArrayList<String> temp = new ArrayList<String>(
+				ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS));
+		for (Iterator<String> iterator = temp.iterator(); iterator.hasNext();) {
+			String agentObjCls = iterator.next();
+			for (ObjectClass c : classes) {
+				String cName = c.getName();
+				if (cName.equals(agentObjCls)) {
+					iterator.remove();
+					break;
+				}
+			}
+		}
+		return temp.isEmpty();
+	}
+
+	public boolean isAgent(Attribute objectClass) {
+		return LdapUtils.getInstance().attributeHasValue(objectClass,
+				ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS));
+	}
+
+	/**
 	 * 
 	 * @param dn
 	 * @return true if provided dn is user node. if a node has objectClass
@@ -426,6 +458,35 @@ public class LdapUtils {
 
 	public boolean isUser(String dn) {
 		return isUser(dn, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
+	}
+
+	/**
+	 * Compare provided object classes with the user object classes and
+	 * determine if they belong to a user LDAP entry.
+	 * 
+	 * @param classes
+	 * @return
+	 */
+	public boolean isUser(Collection<ObjectClass> classes) {
+		// Remove common elements from the list
+		ArrayList<String> temp = new ArrayList<String>(
+				ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS));
+		for (Iterator<String> iterator = temp.iterator(); iterator.hasNext();) {
+			String agentObjCls = iterator.next();
+			for (ObjectClass c : classes) {
+				String cName = c.getName();
+				if (cName.equals(agentObjCls)) {
+					iterator.remove();
+					break;
+				}
+			}
+		}
+		return temp.isEmpty();
+	}
+
+	public boolean isUser(Attribute objectClass) {
+		return LdapUtils.getInstance().attributeHasValue(objectClass,
+				ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS));
 	}
 
 	/**
