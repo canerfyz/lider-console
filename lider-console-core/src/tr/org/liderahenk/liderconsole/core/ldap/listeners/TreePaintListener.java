@@ -1,9 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.ldap.listeners;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -24,10 +21,10 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.event.EventHandler;
 
-import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
+import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 
 /**
  * This class is used to paint online/offline status images on LDAP tree while
@@ -42,6 +39,7 @@ public class TreePaintListener implements Listener {
 	private final Image offlineImage;
 	private final Image onlineImage;
 	private final Image agentImage;
+	private final Image userImage;
 
 	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 	private final Map<String, Boolean> onlineInfo;
@@ -54,6 +52,8 @@ public class TreePaintListener implements Listener {
 				this.getClass().getClassLoader().getResourceAsStream("icons/32/online-mini.png"));
 		agentImage = new Image(Display.getDefault(),
 				this.getClass().getClassLoader().getResourceAsStream("icons/16/computer.png"));
+		userImage = new Image(Display.getDefault(),
+				this.getClass().getClassLoader().getResourceAsStream("icons/16/user.png"));
 		onlineInfo = new TreeMap<String, Boolean>();
 
 		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, new EventHandler() {
@@ -142,44 +142,36 @@ public class TreePaintListener implements Listener {
 		case SWT.PaintItem: {
 			TreeItem item = (TreeItem) event.item;
 			String text = item.getText();
-			// Point size = event.gc.textExtent(text);
 
 			Object data = item.getData();
-
-			if (data instanceof SearchResult)
+			if (data instanceof SearchResult) {
 				data = ((SearchResult) data).getEntry();
+			}
 
+			//
+			// Draw agent/user icon
+			//
 			Image originalImage = item.getImage();
-
-			if (originalImage != agentImage && data instanceof IEntry) {
+			if (originalImage != agentImage && originalImage != userImage && data instanceof IEntry) {
 				Collection<ObjectClass> classes = ((IEntry) data).getObjectClassDescriptions();
-				List<String> agentObjClsArr = new ArrayList<String>(
-						ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.AGENT_LDAP_OBJ_CLS));
-
-				// Remove common elements from the list
-				for (Iterator<String> iterator = agentObjClsArr.iterator(); iterator.hasNext();) {
-					String agentObjCls = iterator.next();
-					for (ObjectClass c : classes) {
-						String cName = c.getName();
-						if (cName.equals(agentObjCls)) {
-							iterator.remove();
-							break;
-						}
-					}
-				}
-				// If the resulting list is empty, then specified entry belongs
-				// to an agent
-				if (agentObjClsArr.isEmpty()) {
+				if (LdapUtils.getInstance().isAgent(classes)) {
 					item.setImage(agentImage);
+					originalImage = item.getImage();
+				} else if (LdapUtils.getInstance().isUser(classes)) {
+					item.setImage(userImage);
 					originalImage = item.getImage();
 				}
 			}
-			if (originalImage != null)
+			if (originalImage != null) {
 				event.gc.drawImage(originalImage, event.x + 6, event.y - 1);
+			}
 
-			if (data instanceof IBookmark)
+			//
+			// Draw online/offline icon
+			//
+			if (data instanceof IBookmark) {
 				data = ((IBookmark) data).getEntry();
-
+			}
 			if (data instanceof IEntry) {
 				IEntry entry = (IEntry) data;
 				String dn = entry.getDn().getName();
@@ -190,7 +182,7 @@ public class TreePaintListener implements Listener {
 						miniIcon = onlineImage;
 					else
 						miniIcon = offlineImage;
-					event.gc.drawImage(miniIcon, event.x - 2, event.y + 8);
+					event.gc.drawImage(miniIcon, event.x, event.y + 8);
 				}
 			}
 
