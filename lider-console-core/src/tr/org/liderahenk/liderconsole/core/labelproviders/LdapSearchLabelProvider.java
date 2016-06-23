@@ -35,7 +35,7 @@ public class LdapSearchLabelProvider extends ColumnLabelProvider {
 			if (LdapUtils.getInstance().isAgent(((SearchResult) element).getName(),
 					LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor())) {
 				return SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
-						"icons/16/chart-flow.png");
+						"icons/16/computer.png");
 			} else if (LdapUtils.getInstance().isUser(((SearchResult) element).getName(),
 					LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor())) {
 				return SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/user.png");
