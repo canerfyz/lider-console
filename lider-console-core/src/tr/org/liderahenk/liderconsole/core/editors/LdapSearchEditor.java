@@ -257,7 +257,7 @@ public class LdapSearchEditor extends EditorPart {
 	}
 
 	private boolean hasProperties(Agent agent, Map<String, String> propFilter) {
-		if (agent.getProperties() == null || agent.getProperties().isEmpty()) {
+		if (agent == null || agent.getProperties() == null || agent.getProperties().isEmpty()) {
 			return false;
 		}
 		int i = 0;
@@ -446,16 +446,16 @@ public class LdapSearchEditor extends EditorPart {
 						for (Control gChild : gChildren) {
 							// gChild must be an instance of AttrValueText
 							if (isValidAttributeValue(gChild)
-									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrCombo())
-									&& attributes.contains(((AttrValueText) gChild).getRelatedAttrCombo())) {
+									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrCombo())) {
 								AttrNameCombo rAttrCombo = ((AttrValueText) gChild).getRelatedAttrCombo();
 								AttrOperator rAttrOperator = ((AttrValueText) gChild).getRelatedAttrOperator();
-
-								StringBuilder expression = new StringBuilder();
-								expression.append("(").append(rAttrCombo.getText())
-										.append(rAttrOperator.getItem(rAttrOperator.getSelectionIndex()))
-										.append(((AttrValueText) gChild).getText()).append(")");
-								filterExpressions.add(expression.toString());
+								if (attributes.contains(rAttrCombo.getText())) {
+									StringBuilder expression = new StringBuilder();
+									expression.append("(").append(rAttrCombo.getText())
+											.append(rAttrOperator.getItem(rAttrOperator.getSelectionIndex()))
+											.append(((AttrValueText) gChild).getText()).append(")");
+									filterExpressions.add(expression.toString());
+								}
 							}
 						}
 					}
