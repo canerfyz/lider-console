@@ -87,8 +87,8 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 		txtDayOfMonth.setText(""); //$NON-NLS-1$
 		txtDayOfWeek.setText(""); //$NON-NLS-1$
 		txtHour.setText(""); //$NON-NLS-1$
-		txtMinute.setText(""); //$NON-NLS-1$
 		txtMonth.setText(""); //$NON-NLS-1$
+		txtMinute.setText(""); //$NON-NLS-1$
 	}
 
 	private void setEnabled(final boolean enabled) {
@@ -192,7 +192,7 @@ public class SchedulerDialog extends DefaultLiderTitleAreaDialog {
 					txtMonth.setText((dateTime.getMonth() + 1) + "");
 					txtDayOfWeek.setText("*");
 					txtDayOfMonth.setText(dateTime.getDay() + "");
-					txtMinute.setText(dateTime.getMinutes() + "");
+					txtMinute.setText((dateTime.getMinutes()+1) + "");
 					break;
 				}
 				default:
