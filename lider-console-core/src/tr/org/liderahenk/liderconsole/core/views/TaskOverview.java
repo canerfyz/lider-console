@@ -156,7 +156,7 @@ public class TaskOverview extends ViewPart {
 						}
 						if (RestSettings.isAvailable()) {
 							// Query previous tasks
-							List<ExecutedTask> tasks = CommandUtils.listExecutedTasks(null, null, null, null, null, 10);
+//							List<ExecutedTask> tasks = CommandUtils.listExecutedTasks(null, null, null, null, null, 10);
 							// TODO
 							// TODO
 							// TODO
