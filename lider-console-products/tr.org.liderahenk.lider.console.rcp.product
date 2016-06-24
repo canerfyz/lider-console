@@ -4,7 +4,7 @@
 <product name="tr.org.liderahenk.liderconsole.rcp" uid="Lider Console Core" id="tr.org.liderahenk.liderconsole.rcp.product" application="tr.org.liderahenk.liderconsole.rcp.application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="../lider-console-rcp/icons/about.png"/>
+      <image path="/tr.org.liderahenk.liderconsole.rcp/icons/about.png"/>
       <text>
          Lider - Ahenk Merkezi Yonetim Sistemi
 
@@ -30,7 +30,7 @@ Apache Software Foundation http://apache.org/
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="../lider-console-rcp/icons/LiderConsole_16.png" i32="../lider-console-rcp/icons/LiderConsole_32.png" i48="../lider-console-rcp/icons/LiderConsole_48.png" i64="../lider-console-rcp/icons/LiderConsole_64.png" i128="../lider-console-rcp/icons/LiderConsole_128.png"/>
+   <windowImages i16="/tr.org.liderahenk.liderconsole.rcp/icons/LiderConsole_16.png" i32="/tr.org.liderahenk.liderconsole.rcp/icons/LiderConsole_32.png" i48="/tr.org.liderahenk.liderconsole.rcp/icons/LiderConsole_48.png" i64="/tr.org.liderahenk.liderconsole.rcp/icons/LiderConsole_64.png"/>
 
    <splash
       location="tr.org.liderahenk.liderconsole.rcp"
@@ -44,6 +44,7 @@ Apache Software Foundation http://apache.org/
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
@@ -984,7 +985,6 @@ Public License instead of this License.  But first, please read
       <plugin id="org.w3c.dom.smil"/>
       <plugin id="org.w3c.dom.svg"/>
       <plugin id="tr.org.liderahenk.liderconsole.core"/>
-      <plugin id="tr.org.liderahenk.liderconsole.core.tests" fragment="true"/>
       <plugin id="tr.org.liderahenk.liderconsole.rcp"/>
    </plugins>
 

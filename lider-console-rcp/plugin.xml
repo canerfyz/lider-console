@@ -24,7 +24,7 @@
             name="tr.org.liderahenk.liderconsole.rcp">
          <property
                name="windowImages"
-               value="../lider-console-rcp/icons/LiderConsole_16.png,../lider-console-rcp/icons/LiderConsole_32.png,../lider-console-rcp/icons/LiderConsole_48.png,../lider-console-rcp/icons/LiderConsole_64.png,../lider-console-rcp/icons/LiderConsole_128.png">
+               value="icons/LiderConsole_16.png,icons/LiderConsole_32.png,icons/LiderConsole_48.png,icons/LiderConsole_64.png">
          </property>
          <property
                name="appName"
@@ -36,7 +36,7 @@
          </property>
          <property
                name="aboutImage"
-               value="../lider-console-rcp/icons/about.png">
+               value="icons/about.png">
          </property>
          <property
                name="cssTheme"
