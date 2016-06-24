@@ -80,6 +80,8 @@ public class LdapSearchEditor extends EditorPart {
 	private AttrValueText txtAttrValue;
 	private Button btnAddCriteria;
 	private Button btnSearch;
+	private Button btnSelectAllEntries;
+	private Button btnCreateSearchGroup;
 	private CheckboxTableViewer viewer;
 
 	/**
@@ -184,7 +186,11 @@ public class LdapSearchEditor extends EditorPart {
 			}
 		});
 
-		btnSearch = new Button(composite, SWT.PUSH);
+		Composite cmpbuttons = new Composite(composite, SWT.NONE);
+		cmpbuttons.setLayout(new GridLayout(1, false));
+		cmpbuttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
+		btnSearch = new Button(cmpbuttons, SWT.PUSH);
 		btnSearch.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/filter.png")));
 		btnSearch.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
 		btnSearch.setText(Messages.getString("LDAP_DO_SEARCH"));
@@ -199,6 +205,26 @@ public class LdapSearchEditor extends EditorPart {
 				doSearch();
 			}
 		});
+
+//		btnSelectAllEntries = new Button(cmpbuttons, SWT.PUSH);
+//		btnSelectAllEntries.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
+//		btnSelectAllEntries.setText(Messages.getString("SELECT_ALL"));
+//		btnSelectAllEntries.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				viewer.setAllChecked(true);
+//			}
+//		});
+//		
+//		btnCreateSearchGroup = new Button(cmpbuttons, SWT.PUSH);
+//		btnCreateSearchGroup.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
+//		btnCreateSearchGroup.setText(Messages.getString("CREATE_SEARCH_GROUP"));
+//		btnCreateSearchGroup.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				
+//			}
+//		});
 
 		// cmpTable will be populated with table on LDAP search operations.
 		// After each operation, current table will be disposed and a new table
