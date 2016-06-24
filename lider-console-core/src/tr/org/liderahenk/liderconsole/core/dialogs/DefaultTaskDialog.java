@@ -30,6 +30,7 @@ import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.rest.requests.TaskRequest;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.widgets.LiderConfirmBox;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -133,17 +134,19 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		btnExecuteNow.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
 				// Validation of task data
 				if (validateTaskData()) {
-					// TODO confirm box
-					try {
-						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK, getPluginName(),
-								getPluginVersion(), getCommandId(), getParameterMap(), null, new Date());
-						TaskRestUtils.execute(task);
-					} catch (Exception e1) {
-						logger.error(e1.getMessage(), e1);
-						Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+							Messages.getString("TASK_EXEC_TITLE"), Messages.getString("TASK_EXEC_MESSAGE"))) {
+						try {
+							TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
+									getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(), null,
+									new Date());
+							TaskRestUtils.execute(task);
+						} catch (Exception e1) {
+							logger.error(e1.getMessage(), e1);
+							Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+						}
 					}
 				}
 			}
@@ -162,7 +165,6 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		btnExecuteScheduled.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
 				// Validation of task data
 				if (validateTaskData()) {
 					SchedulerDialog dialog = new SchedulerDialog(Display.getDefault().getActiveShell());
@@ -170,15 +172,18 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 					if (dialog.open() != Window.OK) {
 						return;
 					}
-					// TODO confirm box
-					try {
-						TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK, getPluginName(),
-								getPluginVersion(), getCommandId(), getParameterMap(), dialog.getCronExpression(),
-								new Date());
-						TaskRestUtils.execute(task);
-					} catch (Exception e1) {
-						logger.error(e1.getMessage(), e1);
-						Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+							Messages.getString("TASK_EXEC_SCHEDULED_TITLE"),
+							Messages.getString("TASK_EXEC_SCHEDULED_MESSAGE"))) {
+						try {
+							TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
+									getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(),
+									dialog.getCronExpression(), new Date());
+							TaskRestUtils.execute(task);
+						} catch (Exception e1) {
+							logger.error(e1.getMessage(), e1);
+							Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+						}
 					}
 				}
 			}
