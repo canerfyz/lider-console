@@ -769,7 +769,7 @@ public class SWTResourceManager {
 	 * @return
 	 */
 	public static CheckboxTableViewer createCheckboxTableViewer(final Composite parent) {
-		CheckboxTableViewer tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.FULL_SELECTION);
+		CheckboxTableViewer tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.FULL_SELECTION | SWT.BORDER);
 		configureTableLayout(tableViewer);
 		return tableViewer;
 	}
