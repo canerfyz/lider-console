@@ -1,5 +1,5 @@
 .MTrimmedWindow { 
-    background-color: #E1E6F6; 
+    background-color: #4E6F80; 
     margin-top: 2px;
     margin-bottom: 2px;
     margin-left: 2px;
@@ -7,10 +7,10 @@
 }
  
 .MTrimmedWindow.topLevel { 
-    margin-top: 24px;
+    margin-top: 10px;
     margin-bottom: 2px;
-    margin-left: 12px;
-    margin-right: 12px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
  
 .MPartStack {
@@ -24,20 +24,20 @@
 }
  
 .MTrimBar {
-    background-color: #E1E6F6; 
+    background-color: #D2DBE0; 
 }
  
 .MTrimBar#org-eclipse-ui-main-toolbar {
-    background-image:  url(./win7.PNG); 
+    background-color: #D2DBE0 rgb(170, 176, 191) 100%;
 }
  
 .MPartStack.active {
-    unselected-tabs-color: #F3F9FF #D0DFEE #CEDDED #CEDDED #D2E1F0 #D2E1F0 #FFFFFF 20% 45% 60% 70% 100% 100%;
-    outer-keyline-color: #B6BCCC;
+    unselected-tabs-color: #eef0f3 #ced4df #ced4df #FFFFFF 90% 100% 100%;
+    outer-keyline-color: #eef0f3;
     inner-keyline-color: #FFFFFF;
 }
  
 #PerspectiveSwitcher  {
-    background-color: #F5F7FC #E1E6F6 100%;
+    background-color: #D2DBE0 rgb(170, 176, 191) 100%;
 }
 

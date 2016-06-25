@@ -84,8 +84,8 @@
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
-            id="tr.org.liderahenk.liderconsole.core.commands.ExecutedPolicy"
-            name="%command.executed.policy">
+            id="tr.org.liderahenk.liderconsole.core.commands.AppliedPolicy"
+            name="%command.applied.policy">
       </command>
    </extension>
    
@@ -125,8 +125,8 @@
             commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask">
       </handler>
 	  <handler
-            class="tr.org.liderahenk.liderconsole.core.handlers.ExecutedPolicyHandler"
-            commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedPolicy">
+            class="tr.org.liderahenk.liderconsole.core.handlers.AppliedPolicyHandler"
+            commandId="tr.org.liderahenk.liderconsole.core.commands.AppliedPolicy">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyExecutionSelectHandler"
@@ -226,10 +226,10 @@
 	          tooltip="%command.executed.task">
         </command>
 		<command
-	          commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedPolicy"
-	          id="tr.org.liderahenk.liderconsole.core.commands.ExecutedPolicy"
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.AppliedPolicy"
+	          id="tr.org.liderahenk.liderconsole.core.commands.AppliedPolicy"
 	          icon="icons/16/task-done.png"
-	          tooltip="%command.executed.policy">
+	          tooltip="%command.applied.policy">
         </command>
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.commands.LdapSearch"
@@ -378,7 +378,7 @@
 		    name="%editor.executed.task">
 	    </editor> 
 	    <editor
-		    class="tr.org.liderahenk.liderconsole.core.editors.ExecutedPolicyEditor"
+		    class="tr.org.liderahenk.liderconsole.core.editors.AppliedPolicyEditor"
 		    icon="icons/16/task-done.png"
 		    id="tr.org.liderahenk.liderconsole.core.editors.ExecutedPolicyEditor"
 		    name="%editor.executed.policy">
