@@ -243,6 +243,7 @@ public class ReportTemplateEditor extends EditorPart {
 
 		// Search label
 		Label lblSearch = new Label(filterContainer, SWT.NONE);
+		lblSearch.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
 

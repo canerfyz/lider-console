@@ -36,7 +36,7 @@ import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ExecutedPolicyDialog extends DefaultLiderDialog {
+public class AppliedPolicyDialog extends DefaultLiderDialog {
 
 	// Model
 	private ExecutedPolicy policy;
@@ -47,7 +47,7 @@ public class ExecutedPolicyDialog extends DefaultLiderDialog {
 	private TableViewer tvExecResult;
 	private Label lblResult;
 
-	public ExecutedPolicyDialog(Shell parentShell, ExecutedPolicy policy, List<Command> commands) {
+	public AppliedPolicyDialog(Shell parentShell, ExecutedPolicy policy, List<Command> commands) {
 		super(parentShell);
 		this.policy = policy;
 		this.commands = commands;

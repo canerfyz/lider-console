@@ -33,7 +33,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.liderconsole.core.dialogs.ExecutedPolicyDialog;
+import tr.org.liderahenk.liderconsole.core.dialogs.AppliedPolicyDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
@@ -47,9 +47,9 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ExecutedPolicyEditor extends EditorPart {
+public class AppliedPolicyEditor extends EditorPart {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExecutedPolicyEditor.class);
+	private static final Logger logger = LoggerFactory.getLogger(AppliedPolicyEditor.class);
 
 	private TableViewer tableViewer;
 	private TableFilter tableFilter;
@@ -154,7 +154,7 @@ public class ExecutedPolicyEditor extends EditorPart {
 				try {
 					ExecutedPolicy policy = getSelectedPolicy();
 					List<Command> commands = CommandUtils.getPolicyCommands(policy.getId());
-					ExecutedPolicyDialog dialog = new ExecutedPolicyDialog(parent.getShell(), policy, commands);
+					AppliedPolicyDialog dialog = new AppliedPolicyDialog(parent.getShell(), policy, commands);
 					dialog.open();
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
@@ -180,6 +180,7 @@ public class ExecutedPolicyEditor extends EditorPart {
 
 		// Search label
 		Label lblSearch = new Label(filterContainer, SWT.NONE);
+		lblSearch.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
 

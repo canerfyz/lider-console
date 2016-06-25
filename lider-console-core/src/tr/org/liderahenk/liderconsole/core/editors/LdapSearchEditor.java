@@ -27,7 +27,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -132,9 +131,11 @@ public class LdapSearchEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-
-		parent.setLayout(new FillLayout());
-		sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		
+		sc = new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		sc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		sc.setLayout(new GridLayout(1, false));
+		parent.setBackgroundMode(SWT.INHERIT_FORCE);
 
 		// Main composite
 		Composite composite = new Composite(sc, SWT.NONE);

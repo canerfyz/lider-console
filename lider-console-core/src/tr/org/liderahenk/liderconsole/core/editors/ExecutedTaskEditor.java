@@ -192,6 +192,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Search label
 		Label lblSearch = new Label(filterContainer, SWT.NONE);
+		lblSearch.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 		lblSearch.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblSearch.setText(Messages.getString("SEARCH_FILTER"));
 
@@ -244,7 +245,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Plugin
 		TableViewerColumn pluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("PLUGIN"), 200);
+				Messages.getString("PLUGIN"), 150);
 		pluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -271,7 +272,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Create date
 		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("CREATE_DATE"), 250);
+				Messages.getString("CREATE_DATE"), 120);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
