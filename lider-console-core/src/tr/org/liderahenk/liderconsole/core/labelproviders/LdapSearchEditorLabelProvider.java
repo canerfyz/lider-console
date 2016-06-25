@@ -15,7 +15,7 @@ import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class LdapSearchLabelProvider extends ColumnLabelProvider {
+public class LdapSearchEditorLabelProvider extends ColumnLabelProvider {
 
 	@Override
 	public String getText(Object element) {

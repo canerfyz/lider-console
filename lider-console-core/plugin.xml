@@ -414,19 +414,19 @@
       <view
             allowMultiple="false"
             category="tr.org.liderahenk.liderconsole.core.category"
-            class="tr.org.liderahenk.liderconsole.core.views.ProfileMenuView"
-            icon="icons/16/folder-open.png"
-            id="tr.org.liderahenk.liderconsole.core.views.ProfileMenuView"
-            name="%view.profile.menu"
+            class="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
+            icon="icons/16/task-play.png"
+            id="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
+            name="%view.task.overview"
             restorable="true">
       </view>
       <view
             allowMultiple="false"
             category="tr.org.liderahenk.liderconsole.core.category"
-            class="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
-            icon="icons/16/task-play.png"
-            id="tr.org.liderahenk.liderconsole.core.views.TaskOverview"
-            name="%view.task.overview"
+            class="tr.org.liderahenk.liderconsole.core.views.SearchGroupView"
+            icon="icons/16/ldap.png"
+            id="tr.org.liderahenk.liderconsole.core.views.SearchGroupView"
+            name="%view.search.group"
             restorable="true">
       </view>
    </extension>
@@ -524,6 +524,18 @@
 	             ratio="0.75"
 	             relationship="stack"
 	             relative="org.eclipse.ui.views.ContentOutline"
+	             moveable="true"
+	             standalone="false"
+	             showTitle="true"
+	             visible="true">
+	       </view>
+	       <view
+	             closeable="true"
+	             id="tr.org.liderahenk.liderconsole.core.views.SearchGroupView"
+	             minimized="false"
+	             ratio="0.75"
+	             relationship="stack"
+	             relative="org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView"
 	             moveable="true"
 	             standalone="false"
 	             showTitle="true"

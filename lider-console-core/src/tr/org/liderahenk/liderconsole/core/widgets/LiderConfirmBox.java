@@ -33,7 +33,8 @@ public class LiderConfirmBox extends MessageDialog {
 	public static boolean open(Shell parent, String title, String message) {
 		LiderConfirmBox confirm = new LiderConfirmBox(parent, title,
 				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png"),
-				message, MessageDialog.CONFIRM, new String[] { JFaceResources.getString(IDialogLabelKeys.YES_LABEL_KEY),
+				message, MessageDialog.QUESTION,
+				new String[] { JFaceResources.getString(IDialogLabelKeys.YES_LABEL_KEY),
 						JFaceResources.getString(IDialogLabelKeys.NO_LABEL_KEY) },
 				SWT.NONE);
 		return confirm.open() == 0;

@@ -2,10 +2,13 @@ package tr.org.liderahenk.liderconsole.core.editors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
@@ -43,13 +46,16 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.dialogs.SearchGroupDialog;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
-import tr.org.liderahenk.liderconsole.core.labelproviders.LdapSearchLabelProvider;
+import tr.org.liderahenk.liderconsole.core.labelproviders.LdapSearchEditorLabelProvider;
+import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.model.Agent;
 import tr.org.liderahenk.liderconsole.core.model.AgentProperty;
 import tr.org.liderahenk.liderconsole.core.model.SearchFilterEnum;
+import tr.org.liderahenk.liderconsole.core.model.SearchGroupEntry;
 import tr.org.liderahenk.liderconsole.core.rest.responses.IResponse;
 import tr.org.liderahenk.liderconsole.core.rest.utils.AgentRestUtils;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskRestUtils;
@@ -186,11 +192,61 @@ public class LdapSearchEditor extends EditorPart {
 			}
 		});
 
-		Composite cmpbuttons = new Composite(composite, SWT.NONE);
-		cmpbuttons.setLayout(new GridLayout(1, false));
-		cmpbuttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		createButtonsArea(composite);
 
-		btnSearch = new Button(cmpbuttons, SWT.PUSH);
+		// cmpTable will be populated by a table.
+		// During each operation, current table will be disposed and a new table
+		// will be created to mimic dynamically-created table columns in SWT.
+		cmpTable = new Composite(composite, SWT.NONE);
+		cmpTable.setLayout(new GridLayout(1, false));
+		cmpTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		viewer = SWTResourceManager.createCheckboxTableViewer(cmpTable);
+
+		sc.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+	}
+
+	private void createButtonsArea(final Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(3, false));
+		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false));
+
+		btnSelectAllEntries = new Button(composite, SWT.PUSH);
+		btnSelectAllEntries.setImage(
+				new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/check-done.png")));
+		btnSelectAllEntries.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
+		btnSelectAllEntries.setText(Messages.getString("SELECT_ALL"));
+		btnSelectAllEntries.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				viewer.setAllChecked(true);
+			}
+		});
+		btnSelectAllEntries.setEnabled(false);
+
+		btnCreateSearchGroup = new Button(composite, SWT.PUSH);
+		btnCreateSearchGroup
+				.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/list.png")));
+		btnCreateSearchGroup.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
+		btnCreateSearchGroup.setText(Messages.getString("CREATE_SEARCH_GROUP"));
+		btnCreateSearchGroup.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// Build search criteria map
+				Map<String, String> criteria = buildCriteriaMap();
+				Set<SearchGroupEntry> entries = buildEntrySet();
+				SearchGroupDialog dialog = new SearchGroupDialog(Display.getDefault().getActiveShell(),
+						btnSearchAgents.getSelection(), btnSearchUsers.getSelection(), btnSearchGroups.getSelection(),
+						criteria, entries);
+				dialog.create();
+				dialog.open();
+			}
+		});
+		btnCreateSearchGroup.setEnabled(false);
+		
+		btnSearch = new Button(composite, SWT.PUSH);
 		btnSearch.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/filter.png")));
 		btnSearch.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
 		btnSearch.setText(Messages.getString("LDAP_DO_SEARCH"));
@@ -205,39 +261,43 @@ public class LdapSearchEditor extends EditorPart {
 				doSearch();
 			}
 		});
+	}
 
-//		btnSelectAllEntries = new Button(cmpbuttons, SWT.PUSH);
-//		btnSelectAllEntries.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
-//		btnSelectAllEntries.setText(Messages.getString("SELECT_ALL"));
-//		btnSelectAllEntries.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				viewer.setAllChecked(true);
-//			}
-//		});
-//		
-//		btnCreateSearchGroup = new Button(cmpbuttons, SWT.PUSH);
-//		btnCreateSearchGroup.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
-//		btnCreateSearchGroup.setText(Messages.getString("CREATE_SEARCH_GROUP"));
-//		btnCreateSearchGroup.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				
-//			}
-//		});
+	protected Set<SearchGroupEntry> buildEntrySet() {
+		HashSet<SearchGroupEntry> entries = new HashSet<SearchGroupEntry>();
+		Object[] checkedElements = viewer.getCheckedElements();
+		for (int i = 0; i < checkedElements.length; ++i) {
+			SearchResult item = (SearchResult) checkedElements[i];
+			Attribute attribute = item.getAttributes().get("objectClass");
+			DNType dnType = LdapUtils.getInstance().isAgent(attribute) ? DNType.AHENK
+					: (LdapUtils.getInstance().isUser(attribute) ? DNType.USER : DNType.GROUP);
+			SearchGroupEntry entry = new SearchGroupEntry(null, item.getName(), dnType);
+			entries.add(entry);
+		}
+		return entries;
+	}
 
-		// cmpTable will be populated with table on LDAP search operations.
-		// After each operation, current table will be disposed and a new table
-		// will be created to mimic dynamically-created table columns in SWT.
-		cmpTable = new Composite(composite, SWT.NONE);
-		cmpTable.setLayout(new GridLayout(1, false));
-		cmpTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		viewer = SWTResourceManager.createCheckboxTableViewer(cmpTable);
-
-		sc.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		sc.setExpandHorizontal(true);
-		sc.setExpandVertical(true);
+	protected Map<String, String> buildCriteriaMap() {
+		HashMap<String, String> criteria = null;
+		Control[] children = cmpSearchCritera.getChildren();
+		if (children != null) {
+			criteria = new HashMap<String, String>();
+			for (Control child : children) {
+				if (child instanceof Group) {
+					Control[] gChildren = ((Group) child).getChildren();
+					if (gChildren != null) {
+						for (Control gChild : gChildren) {
+							if (isValidAttributeValue(gChild)
+									&& isValidAttribute(((AttrValueText) gChild).getRelatedAttrCombo())) {
+								AttrNameCombo rAttrCombo = ((AttrValueText) gChild).getRelatedAttrCombo();
+								criteria.put(rAttrCombo.getText(), ((AttrValueText) gChild).getText());
+							}
+						}
+					}
+				}
+			}
+		}
+		return criteria;
 	}
 
 	/**
@@ -257,8 +317,10 @@ public class LdapSearchEditor extends EditorPart {
 					public void run() {
 
 						btnSearch.setEnabled(false);
+						btnSelectAllEntries.setEnabled(false);
+						btnCreateSearchGroup.setEnabled(false);
 
-						String filter = computeFilterClause();
+						String filter = buildFilterClause();
 						String[] returningAttributes = findReturningAttributes();
 						monitor.worked(20);
 
@@ -275,7 +337,7 @@ public class LdapSearchEditor extends EditorPart {
 							if (btnSearchAgents.getSelection()) {
 								// Then, filter these results by agent
 								// properties
-								Map<String, String> propFilter = computePropertyFilter();
+								Map<String, String> propFilter = buildPropertyMap();
 								if (propFilter != null && !propFilter.isEmpty()) {
 									// Read agents
 									queryAgents();
@@ -304,6 +366,8 @@ public class LdapSearchEditor extends EditorPart {
 						monitor.worked(100);
 						monitor.done();
 						btnSearch.setEnabled(true);
+						btnSelectAllEntries.setEnabled(true);
+						btnCreateSearchGroup.setEnabled(true);
 					}
 				});
 
@@ -345,7 +409,7 @@ public class LdapSearchEditor extends EditorPart {
 		return null;
 	}
 
-	private Map<String, String> computePropertyFilter() {
+	private Map<String, String> buildPropertyMap() {
 		Map<String, String> propFilter = null;
 		Control[] children = cmpSearchCritera.getChildren();
 		if (children != null) {
@@ -411,7 +475,7 @@ public class LdapSearchEditor extends EditorPart {
 
 		TableViewerColumn dnColumn = SWTResourceManager.createTableViewerColumn(viewer,
 				Messages.getString("LDAP_ENTRY"), 250);
-		dnColumn.setLabelProvider(new LdapSearchLabelProvider());
+		dnColumn.setLabelProvider(new LdapSearchEditorLabelProvider());
 
 		if (returningAttributes != null) {
 			for (final String attr : returningAttributes) {
@@ -437,7 +501,7 @@ public class LdapSearchEditor extends EditorPart {
 		}
 	}
 
-	private String computeFilterClause() {
+	private String buildFilterClause() {
 
 		ArrayList<String> filterExpressions = new ArrayList<String>();
 		filterExpressions.add("(objectClass=*)");

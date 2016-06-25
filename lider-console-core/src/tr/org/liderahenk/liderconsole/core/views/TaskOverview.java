@@ -28,17 +28,24 @@ import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.labelproviders.TaskOverviewLabelProvider;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
-import tr.org.liderahenk.liderconsole.core.model.ExecutedTask;
-import tr.org.liderahenk.liderconsole.core.rest.utils.CommandUtils;
 import tr.org.liderahenk.liderconsole.core.xmpp.notifications.TaskNotification;
 import tr.org.liderahenk.liderconsole.core.xmpp.notifications.TaskStatusNotification;
 
+/**
+ * View part for tasks.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class TaskOverview extends ViewPart {
 
 	private static final Logger logger = LoggerFactory.getLogger(TaskOverview.class);
 
 	private TreeViewer treeViewer;
 
+	/**
+	 * System-wide event broker
+	 */
 	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 
 	@Override
@@ -156,7 +163,9 @@ public class TaskOverview extends ViewPart {
 						}
 						if (RestSettings.isAvailable()) {
 							// Query previous tasks
-//							List<ExecutedTask> tasks = CommandUtils.listExecutedTasks(null, null, null, null, null, 10);
+							// List<ExecutedTask> tasks =
+							// CommandUtils.listExecutedTasks(null, null, null,
+							// null, null, 10);
 							// TODO
 							// TODO
 							// TODO
@@ -177,7 +186,7 @@ public class TaskOverview extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
 		treeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		treeViewer.setContentProvider(new TaskOverviewContentProvider());
 		treeViewer.setLabelProvider(new TaskOverviewLabelProvider());
@@ -192,6 +201,7 @@ public class TaskOverview extends ViewPart {
 	public void dispose() {
 		eventBroker.unsubscribe(taskNotificationHandler);
 		eventBroker.unsubscribe(taskStatusNotificationHandler);
+		eventBroker.unsubscribe(connectionHandler);
 		super.dispose();
 	}
 
