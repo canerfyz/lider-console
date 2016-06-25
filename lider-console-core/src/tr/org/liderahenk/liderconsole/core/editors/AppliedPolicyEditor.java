@@ -38,7 +38,7 @@ import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.ExecutedPolicy;
-import tr.org.liderahenk.liderconsole.core.rest.utils.CommandUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -153,7 +153,7 @@ public class AppliedPolicyEditor extends EditorPart {
 				// Query task details and populate dialog with it.
 				try {
 					ExecutedPolicy policy = getSelectedPolicy();
-					List<Command> commands = CommandUtils.getPolicyCommands(policy.getId());
+					List<Command> commands = PolicyRestUtils.listCommands(policy.getId());
 					AppliedPolicyDialog dialog = new AppliedPolicyDialog(parent.getShell(), policy, commands);
 					dialog.open();
 				} catch (Exception e) {
@@ -317,14 +317,13 @@ public class AppliedPolicyEditor extends EditorPart {
 	}
 
 	private void populateTable(boolean useParams) {
-		// TODO add status param!
 		try {
 			List<ExecutedPolicy> policies = null;
 			if (useParams) {
-				policies = CommandUtils.listExecutedPolicies(txtLabel.getText(), convertDate(dtCreateDateRangeStart),
+				policies = PolicyRestUtils.listAppliedPolicies(txtLabel.getText(), convertDate(dtCreateDateRangeStart),
 						convertDate(dtCreateDateRangeEnd), null);
 			} else {
-				policies = CommandUtils.listExecutedPolicies(null, null, null, null);
+				policies = PolicyRestUtils.listAppliedPolicies(null, null, null, null);
 			}
 			if (policies != null) {
 				tableViewer.setInput(policies);

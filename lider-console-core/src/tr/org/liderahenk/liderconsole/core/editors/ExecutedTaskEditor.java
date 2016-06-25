@@ -38,7 +38,7 @@ import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.ExecutedTask;
-import tr.org.liderahenk.liderconsole.core.rest.utils.CommandUtils;
+import tr.org.liderahenk.liderconsole.core.rest.utils.TaskRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -165,7 +165,7 @@ public class ExecutedTaskEditor extends EditorPart {
 				// Query task details and populate dialog with it.
 				try {
 					ExecutedTask task = getSelectedTask();
-					Command command = CommandUtils.getTaskCommand(task.getId());
+					Command command = TaskRestUtils.getCommand(task.getId());
 					ExecutedTaskDialog dialog = new ExecutedTaskDialog(parent.getShell(), task, command);
 					dialog.open();
 				} catch (Exception e) {
@@ -343,14 +343,13 @@ public class ExecutedTaskEditor extends EditorPart {
 	}
 
 	private void populateTable(boolean useParams) {
-		// TODO add status param!
 		try {
 			List<ExecutedTask> tasks = null;
 			if (useParams) {
-				tasks = CommandUtils.listExecutedTasks(txtPluginName.getText(), txtPluginVersion.getText(),
+				tasks = TaskRestUtils.listExecutedTasks(txtPluginName.getText(), txtPluginVersion.getText(),
 						convertDate(dtCreateDateRangeStart), convertDate(dtCreateDateRangeEnd), null, null);
 			} else {
-				tasks = CommandUtils.listExecutedTasks(null, null, null, null, null, null);
+				tasks = TaskRestUtils.listExecutedTasks(null, null, null, null, null, null);
 			}
 			if (tasks != null) {
 				tableViewer.setInput(tasks);

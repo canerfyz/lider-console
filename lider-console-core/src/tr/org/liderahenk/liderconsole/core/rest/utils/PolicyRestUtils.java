@@ -1,7 +1,10 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
@@ -10,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.model.Command;
+import tr.org.liderahenk.liderconsole.core.model.ExecutedPolicy;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
@@ -216,6 +221,93 @@ public class PolicyRestUtils {
 
 		Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
 		return false;
+	}
+
+	/**
+	 * Send GET request to server in order to retrieve applied policies.
+	 * 
+	 * @param label
+	 * @param createDateRangeStart
+	 * @param createDateRangeEnd
+	 * @param status
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<ExecutedPolicy> listAppliedPolicies(String label, Date createDateRangeStart,
+			Date createDateRangeEnd, Integer status) throws Exception {
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/list/executed?");
+
+		// Append optional parameters
+		List<String> params = new ArrayList<String>();
+		if (label != null) {
+			params.add("label=" + label);
+		}
+		if (createDateRangeStart != null) {
+			params.add("createDateRangeStart=" + createDateRangeStart.getTime());
+		}
+		if (createDateRangeEnd != null) {
+			params.add("createDateRangeEnd=" + createDateRangeEnd.getTime());
+		}
+		if (status != null) {
+			params.add("status=" + status);
+		}
+		if (!params.isEmpty()) {
+			url.append(StringUtils.join(params, "&"));
+		}
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		// Send GET request to server
+		IResponse response = RestClient.get(url.toString());
+		List<ExecutedPolicy> policies = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("policies") != null) {
+			policies = new ObjectMapper().readValue(response.getResultMap().get("policies").toString(),
+					new TypeReference<List<ExecutedPolicy>>() {
+					});
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return policies;
+	}
+
+	/**
+	 * Send GET request to server in order to retrieve desired task command with
+	 * its details (command executions and results).
+	 * 
+	 * @param policyId
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<Command> listCommands(Long policyId) throws Exception {
+		if (policyId == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/command/").append(policyId).append("/get");
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		IResponse response = RestClient.get(url.toString());
+		List<Command> commands = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("commands") != null) {
+			commands = new ObjectMapper().readValue(response.getResultMap().get("commands").toString(),
+					new TypeReference<List<Command>>() {
+					});
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return commands;
 	}
 
 	/**
