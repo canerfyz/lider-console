@@ -198,6 +198,42 @@ public class TaskRestUtils {
 	}
 
 	/**
+	 * Send GET request to server in order to retrieve commands related to
+	 * tasks.
+	 * 
+	 * @param maxResults
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<Command> listCommands(Integer maxResults) throws Exception {
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/command/list?");
+
+		// Append optional parameters
+		if (maxResults != null) {
+			url.append("maxResults=" + maxResults);
+		}
+
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		IResponse response = RestClient.get(url.toString());
+		List<Command> commands = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("commands") != null) {
+			commands = new ObjectMapper().readValue(response.getResultMap().get("commands").toString(),
+					new TypeReference<List<Command>>() {
+					});
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return commands;
+	}
+
+	/**
 	 * 
 	 * @return base URL for task actions
 	 */

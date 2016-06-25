@@ -33,6 +33,8 @@ import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
+import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.dialogs.AppliedPolicyDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
@@ -321,9 +323,10 @@ public class AppliedPolicyEditor extends EditorPart {
 			List<ExecutedPolicy> policies = null;
 			if (useParams) {
 				policies = PolicyRestUtils.listAppliedPolicies(txtLabel.getText(), convertDate(dtCreateDateRangeStart),
-						convertDate(dtCreateDateRangeEnd), null);
+						convertDate(dtCreateDateRangeEnd), null, null);
 			} else {
-				policies = PolicyRestUtils.listAppliedPolicies(null, null, null, null);
+				policies = PolicyRestUtils.listAppliedPolicies(null, null, null, null,
+						ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.APPLIED_POLICIES_MAX_SIZE));
 			}
 			if (policies != null) {
 				tableViewer.setInput(policies);

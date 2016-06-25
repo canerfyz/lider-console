@@ -80,17 +80,23 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		// Create date
 		Text txtCreateDate = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
 		txtCreateDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		txtCreateDate.setText(task.getCreateDate().toString());
+		txtCreateDate.setText(command.getCreateDate().toString());
 
-		// Status label
-		Label lblStatus = new Label(composite, SWT.NONE);
-		lblStatus.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblStatus.setText(Messages.getString("STATUS"));
+		String statusMessage = generateStatusMessage(task);
+		if (statusMessage != null && !statusMessage.isEmpty()) {
+			// Status label
+			Label lblStatus = new Label(composite, SWT.NONE);
+			lblStatus.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+			lblStatus.setText(Messages.getString("STATUS"));
 
-		// Status
-		Text txtStatus = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
-		txtStatus.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		txtStatus.setText(generateStatusMessage(task));
+			// Status
+			Text txtStatus = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
+			txtStatus.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			txtStatus.setText(statusMessage);
+		} else {
+			new Label(composite, SWT.NONE);
+			new Label(composite, SWT.NONE);
+		}
 
 		Button btnTaskParams = new Button(composite, SWT.PUSH);
 		btnTaskParams.setText(Messages.getString("SHOW_TASK_PARAMETERS"));

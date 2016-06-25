@@ -234,7 +234,7 @@ public class PolicyRestUtils {
 	 * @throws Exception
 	 */
 	public static List<ExecutedPolicy> listAppliedPolicies(String label, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status) throws Exception {
+			Date createDateRangeEnd, Integer status, Integer maxResults) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
@@ -253,6 +253,9 @@ public class PolicyRestUtils {
 		}
 		if (status != null) {
 			params.add("status=" + status);
+		}
+		if (maxResults != null) {
+			params.add("maxResults=" + maxResults);
 		}
 		if (!params.isEmpty()) {
 			url.append(StringUtils.join(params, "&"));

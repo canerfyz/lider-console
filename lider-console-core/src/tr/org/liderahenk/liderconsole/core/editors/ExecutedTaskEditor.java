@@ -33,6 +33,8 @@ import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
+import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.dialogs.ExecutedTaskDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
@@ -167,6 +169,7 @@ public class ExecutedTaskEditor extends EditorPart {
 					ExecutedTask task = getSelectedTask();
 					Command command = TaskRestUtils.getCommand(task.getId());
 					ExecutedTaskDialog dialog = new ExecutedTaskDialog(parent.getShell(), task, command);
+					dialog.create();
 					dialog.open();
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
@@ -349,7 +352,8 @@ public class ExecutedTaskEditor extends EditorPart {
 				tasks = TaskRestUtils.listExecutedTasks(txtPluginName.getText(), txtPluginVersion.getText(),
 						convertDate(dtCreateDateRangeStart), convertDate(dtCreateDateRangeEnd), null, null);
 			} else {
-				tasks = TaskRestUtils.listExecutedTasks(null, null, null, null, null, null);
+				tasks = TaskRestUtils.listExecutedTasks(null, null, null, null, null,
+						ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.EXECUTED_TASKS_MAX_SIZE));
 			}
 			if (tasks != null) {
 				tableViewer.setInput(tasks);

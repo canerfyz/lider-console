@@ -106,8 +106,9 @@ public class LiderConstants {
 		public static final String GROUP_LDAP_OBJ_CLS = "group.ldap.object.classes";
 		public static final String LDAP_REST_ADDRESS_ATTR = "ldap.rest.address.attribute";
 		public static final String CONFIG_LDAP_DN_PREFIX = "config.ldap.dn.prefix";
-		public static final String SEARCH_GROUP_VIEW_MAX_SIZE = "search.group.view.max.size";
-		public static final String TASK_OVERVIEW_MAX_SIZE = "task.overview.max.size";
+		public static final String SEARCH_GROUPS_MAX_SIZE = "search.groups.max.size";
+		public static final String EXECUTED_TASKS_MAX_SIZE = "executed.tasks.max.size";
+		public static final String APPLIED_POLICIES_MAX_SIZE = "applied.policies.max.size";
 	}
 
 	public static class FILES {

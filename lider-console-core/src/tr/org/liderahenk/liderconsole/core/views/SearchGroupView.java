@@ -10,7 +10,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewSite;
@@ -29,6 +33,7 @@ import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.labelproviders.SearchGroupViewLabelProvider;
 import tr.org.liderahenk.liderconsole.core.model.SearchGroup;
 import tr.org.liderahenk.liderconsole.core.rest.utils.SearchGroupRestUtils;
+import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 
 /**
  * View part for search groups.
@@ -40,6 +45,7 @@ public class SearchGroupView extends ViewPart {
 
 	private static final Logger logger = LoggerFactory.getLogger(TaskOverview.class);
 
+	private Button btnRefresh;
 	private TreeViewer treeViewer;
 
 	/**
@@ -56,7 +62,28 @@ public class SearchGroupView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		parent.setLayout(new GridLayout(1, false));
+
+		// Refresh button
+		btnRefresh = new Button(parent, SWT.NONE);
+		btnRefresh.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
+		btnRefresh.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+		btnRefresh.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				refresh();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		// Search groups
+		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER);
 		treeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		treeViewer.setContentProvider(new SearchGroupViewContentProvider());
 		treeViewer.setLabelProvider(new SearchGroupViewLabelProvider());
@@ -126,15 +153,7 @@ public class SearchGroupView extends ViewPart {
 							return Status.OK_STATUS;
 						}
 						if (RestSettings.isAvailable()) {
-							final List<SearchGroup> searhGroups = SearchGroupRestUtils.list(null, ConfigProvider
-									.getInstance().getInt(LiderConstants.CONFIG.SEARCH_GROUP_VIEW_MAX_SIZE));
-							Display.getDefault().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									treeViewer.setInput(searhGroups);
-									treeViewer.refresh();
-								}
-							});
+							refresh();
 						}
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
@@ -148,5 +167,21 @@ public class SearchGroupView extends ViewPart {
 			job.schedule();
 		}
 	};
+
+	private void refresh() {
+		try {
+			final List<SearchGroup> searhGroups = SearchGroupRestUtils.list(null,
+					ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.SEARCH_GROUPS_MAX_SIZE));
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					treeViewer.setInput(searhGroups);
+					treeViewer.refresh();
+				}
+			});
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
 
 }

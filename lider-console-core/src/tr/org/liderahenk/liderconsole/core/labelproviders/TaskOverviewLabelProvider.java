@@ -63,8 +63,8 @@ public class TaskOverviewLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if (element instanceof Command) {
 			Command command = (Command) element;
-			// TODO get also plugin name & version
-			return command.getTask().getCommandClsId() + " - " + command.getTask().getCreateDate();
+			return command.getTask().getPlugin().getName() + " - " + command.getTask().getCommandClsId() + " - "
+					+ command.getTask().getCreateDate();
 		} else if (element instanceof CommandExecution) {
 			CommandExecution execution = (CommandExecution) element;
 			return execution.getDn().substring(0, 30);

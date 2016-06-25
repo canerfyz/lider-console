@@ -13,6 +13,8 @@ public class Task implements Serializable {
 
 	private Long id;
 
+	private Plugin plugin;
+
 	private String commandClsId;
 
 	private Map<String, Object> parameterMap;
@@ -29,6 +31,14 @@ public class Task implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Plugin getPlugin() {
+		return plugin;
+	}
+
+	public void setPlugin(Plugin plugin) {
+		this.plugin = plugin;
 	}
 
 	public String getCommandClsId() {
