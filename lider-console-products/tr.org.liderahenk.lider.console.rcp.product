@@ -38,7 +38,7 @@ Apache Software Foundation http://apache.org/
       startupMessageRect="5,269,450,20"
       startupForegroundColor="FFFFFF" />
    <launcher>
-      <linux icon="../lider-console-rcp/icons/LiderConsole_48.xpm"/>
+      <linux icon="../lider-console-rcp/icons/liderahenk-48.xpm"/>
       <solaris/>
       <win useIco="false">
          <bmp/>
