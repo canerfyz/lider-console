@@ -13,6 +13,7 @@ public class Messages extends NLS {
 	public static String ApplicationActionBarAdvisor_OPEN_PERSPECTIVE;
 	public static String ApplicationActionBarAdvisor_SHOW_VIEW;
 	public static String ApplicationActionBarAdvisor_WINDOW;
+	public static String ApplicationWorkbenchWindowAdvisor_LABEL;
 	static {
 		// Initialise resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

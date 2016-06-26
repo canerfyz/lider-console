@@ -189,7 +189,6 @@ public class TaskRestUtils {
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("command") != null) {
 			command = new ObjectMapper().readValue(response.getResultMap().get("command").toString(), Command.class);
-			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
@@ -225,7 +224,6 @@ public class TaskRestUtils {
 			commands = new ObjectMapper().readValue(response.getResultMap().get("commands").toString(),
 					new TypeReference<List<Command>>() {
 					});
-			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}

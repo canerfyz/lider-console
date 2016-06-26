@@ -178,21 +178,11 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				lastEditorTitle = activeEditor.getTitleToolTip();
 				title = NLS.bind("{0}", lastEditorTitle); //$NON-NLS-1$
 			}
-			IPerspectiveDescriptor persp = currentPage.getPerspective();
-			String label = ""; //$NON-NLS-1$
-			if (persp != null) {
-				label = persp.getLabel();
-			}
-			IAdaptable input = currentPage.getInput();
-			if (input != null) {
-				label = currentPage.getLabel();
-			}
-			if (label != null && !label.equals("")) { //$NON-NLS-1$
-				if (title != null && !title.equals("")) {
-					title = NLS.bind("{0} - {1}", label, title); //$NON-NLS-1$
-				} else {
-					title = NLS.bind("{0}", label);
-				}
+			String label = Messages.ApplicationWorkbenchWindowAdvisor_LABEL;
+			if (title != null && !title.equals("")) {
+				title = NLS.bind("{0} - {1}", label, title); //$NON-NLS-1$
+			} else {
+				title = NLS.bind("{0}", label);
 			}
 		}
 

@@ -16,7 +16,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.actions.ContributionItemFactory;
-import org.eclipse.ui.actions.NewWizardDropDownAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -38,8 +37,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	private IWorkbenchAction preferencesAction;
 	private IWorkbenchAction helpAction;
 	private IWorkbenchAction dynamicHelpAction;
-	private IWorkbenchAction newAction;
-	private IWorkbenchAction newDropDownAction;
 	private IWorkbenchAction importAction;
 	private IWorkbenchAction exportAction;
 	private IWorkbenchAction propertiesAction;
@@ -73,12 +70,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	 * disposal of the actions when the window is closed.
 	 */
 	protected void makeActions(IWorkbenchWindow window) {
-
-		newAction = ActionFactory.NEW.create(window);
-		register(newAction);
-		newAction.setText(Messages.ApplicationActionBarAdvisor_NEW);
-
-		newDropDownAction = new NewWizardDropDownAction(window);
 
 		closeAction = ActionFactory.CLOSE.create(window);
 		register(closeAction);
@@ -185,7 +176,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
 		previousAction = ActionFactory.PREVIOUS.create(window);
 		register(previousAction);
-
 	}
 
 	protected void fillMenuBar(IMenuManager menuBar) {
@@ -220,7 +210,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		menuBar.add(hiddenMenu);
 
 		// Populating File Menu
-		fileMenu.add(newAction);
 		fileMenu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 		fileMenu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
 		fileMenu.add(new Separator());
@@ -300,7 +289,6 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		}
 
 		// Help
-		// helpMenu.add( introAction );
 		helpMenu.add(new Separator());
 		helpMenu.add(helpAction);
 		helpMenu.add(dynamicHelpAction);
@@ -324,15 +312,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	protected void fillCoolBar(ICoolBarManager coolBar) {
 		// add main tool bar
 		IToolBarManager toolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-		toolbar.add(newDropDownAction);
-		toolbar.add(saveAction);
 		toolbar.add(printAction);
-		toolbar.add(preferencesAction);
 		coolBar.add(new ToolBarContributionItem(toolbar, Application.ADS_PLUGIN_ID + ".toolbar")); //$NON-NLS-1$
-
-		// add marker for additions
-		coolBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-
 		// add navigation tool bar
 		// some actions are added from org.eclipse.ui.editor to the
 		// HISTORY_GROUP

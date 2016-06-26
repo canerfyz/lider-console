@@ -305,7 +305,6 @@ public class PolicyRestUtils {
 			commands = new ObjectMapper().readValue(response.getResultMap().get("commands").toString(),
 					new TypeReference<List<Command>>() {
 					});
-			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}

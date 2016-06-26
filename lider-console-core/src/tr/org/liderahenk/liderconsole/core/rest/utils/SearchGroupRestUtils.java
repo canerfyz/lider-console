@@ -87,7 +87,6 @@ public class SearchGroupRestUtils {
 			searchGroups = new ObjectMapper().readValue(response.getResultMap().get("searchGroups").toString(),
 					new TypeReference<List<SearchGroup>>() {
 					});
-			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
