@@ -497,7 +497,7 @@
 	    <perspective
 	          class="tr.org.liderahenk.liderconsole.core.perspectives.MainPerspective"
 	          fixed="true"
-	          icon="icons/32/pardusAhenk.png"
+	          icon="icons/32/liderahenk.png"
 	          id="tr.org.liderahenk.liderconsole.core.perspectives.MainPerspective"
 	          name="%view.main.perspective">
 	    </perspective>

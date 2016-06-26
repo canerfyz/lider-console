@@ -24,7 +24,7 @@
             name="tr.org.liderahenk.liderconsole.rcp">
          <property
                name="windowImages"
-               value="icons/LiderConsole_16.png,icons/LiderConsole_32.png,icons/LiderConsole_48.png,icons/LiderConsole_64.png">
+               value="icons/liderahenk-16.png,icons/liderahenk-32.png">
          </property>
          <property
                name="appName"

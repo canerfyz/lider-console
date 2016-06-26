@@ -8,7 +8,7 @@
       <text>
          Lider - Ahenk Merkezi Yonetim Sistemi
 
-Version: 1.0
+Version: 1.0.0
 
 (c) Copyright Tübitak, 2014.  All rights reserved.
 Visit http://www.tubitak.org.tr/
@@ -30,7 +30,7 @@ Apache Software Foundation http://apache.org/
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/tr.org.liderahenk.liderconsole.rcp/icons/LiderConsole_16.png" i32="/tr.org.liderahenk.liderconsole.rcp/icons/LiderConsole_32.png" i48="/tr.org.liderahenk.liderconsole.rcp/icons/LiderConsole_48.png" i64="/tr.org.liderahenk.liderconsole.rcp/icons/LiderConsole_64.png"/>
+   <windowImages i16="/tr.org.liderahenk.liderconsole.rcp/icons/liderahenk-16.png" i32="/tr.org.liderahenk.liderconsole.rcp/icons/liderahenk-32.png"/>
 
    <splash
       location="tr.org.liderahenk.liderconsole.rcp"
@@ -805,11 +805,15 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.net"/>
       <plugin id="org.eclipse.core.net.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.net.linux.x86_64.nl_tr" fragment="true"/>
+      <plugin id="org.eclipse.core.net.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
+      <plugin id="org.eclipse.core.resources.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.core.runtime"/>
       <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.core.variables"/>
       <plugin id="org.eclipse.e4.core.commands"/>
+      <plugin id="org.eclipse.e4.core.commands.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.core.contexts"/>
       <plugin id="org.eclipse.e4.core.di"/>
       <plugin id="org.eclipse.e4.core.di.annotations"/>
@@ -818,19 +822,30 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.e4.emf.xpath"/>
       <plugin id="org.eclipse.e4.ui.bindings"/>
       <plugin id="org.eclipse.e4.ui.css.core"/>
+      <plugin id="org.eclipse.e4.ui.css.core.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.css.swt"/>
+      <plugin id="org.eclipse.e4.ui.css.swt.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.css.swt.theme"/>
+      <plugin id="org.eclipse.e4.ui.css.swt.theme.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.di"/>
+      <plugin id="org.eclipse.e4.ui.di.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.model.workbench"/>
+      <plugin id="org.eclipse.e4.ui.model.workbench.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.services"/>
+      <plugin id="org.eclipse.e4.ui.services.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.swt.gtk" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.widgets"/>
+      <plugin id="org.eclipse.e4.ui.widgets.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.workbench"/>
       <plugin id="org.eclipse.e4.ui.workbench.addons.swt"/>
+      <plugin id="org.eclipse.e4.ui.workbench.addons.swt.nl_tr" fragment="true"/>
+      <plugin id="org.eclipse.e4.ui.workbench.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.workbench.renderers.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench.renderers.swt.cocoa" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.workbench.swt"/>
+      <plugin id="org.eclipse.e4.ui.workbench.swt.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.workbench3"/>
+      <plugin id="org.eclipse.e4.ui.workbench3.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.ecf"/>
       <plugin id="org.eclipse.ecf.filetransfer"/>
       <plugin id="org.eclipse.ecf.identity"/>
@@ -855,35 +870,65 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.equinox.frameworkadmin"/>
       <plugin id="org.eclipse.equinox.frameworkadmin.equinox"/>
       <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
+      <plugin id="org.eclipse.equinox.p2.artifact.repository.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.console"/>
+      <plugin id="org.eclipse.equinox.p2.console.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
+      <plugin id="org.eclipse.equinox.p2.core.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.director"/>
       <plugin id="org.eclipse.equinox.p2.director.app"/>
+      <plugin id="org.eclipse.equinox.p2.director.app.nl_tr" fragment="true"/>
+      <plugin id="org.eclipse.equinox.p2.director.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.directorywatcher"/>
+      <plugin id="org.eclipse.equinox.p2.directorywatcher.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.discovery"/>
       <plugin id="org.eclipse.equinox.p2.discovery.compatibility"/>
+      <plugin id="org.eclipse.equinox.p2.discovery.compatibility.nl_tr" fragment="true"/>
+      <plugin id="org.eclipse.equinox.p2.discovery.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.engine"/>
+      <plugin id="org.eclipse.equinox.p2.engine.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.extensionlocation"/>
+      <plugin id="org.eclipse.equinox.p2.extensionlocation.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.garbagecollector"/>
+      <plugin id="org.eclipse.equinox.p2.garbagecollector.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
+      <plugin id="org.eclipse.equinox.p2.jarprocessor.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.metadata"/>
+      <plugin id="org.eclipse.equinox.p2.metadata.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
+      <plugin id="org.eclipse.equinox.p2.metadata.repository.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.operations"/>
+      <plugin id="org.eclipse.equinox.p2.operations.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.publisher"/>
       <plugin id="org.eclipse.equinox.p2.publisher.eclipse"/>
+      <plugin id="org.eclipse.equinox.p2.publisher.eclipse.nl_tr" fragment="true"/>
+      <plugin id="org.eclipse.equinox.p2.publisher.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins"/>
+      <plugin id="org.eclipse.equinox.p2.reconciler.dropins.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.repository"/>
+      <plugin id="org.eclipse.equinox.p2.repository.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.repository.tools"/>
+      <plugin id="org.eclipse.equinox.p2.repository.tools.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.touchpoint.eclipse"/>
+      <plugin id="org.eclipse.equinox.p2.touchpoint.eclipse.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.touchpoint.natives"/>
+      <plugin id="org.eclipse.equinox.p2.touchpoint.natives.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.transport.ecf"/>
+      <plugin id="org.eclipse.equinox.p2.transport.ecf.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.ui"/>
       <plugin id="org.eclipse.equinox.p2.ui.discovery"/>
+      <plugin id="org.eclipse.equinox.p2.ui.discovery.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.ui.importexport"/>
+      <plugin id="org.eclipse.equinox.p2.ui.importexport.nl_tr" fragment="true"/>
+      <plugin id="org.eclipse.equinox.p2.ui.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.ui.sdk"/>
+      <plugin id="org.eclipse.equinox.p2.ui.sdk.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.ui.sdk.scheduler"/>
+      <plugin id="org.eclipse.equinox.p2.ui.sdk.scheduler.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.updatechecker"/>
+      <plugin id="org.eclipse.equinox.p2.updatechecker.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.p2.updatesite"/>
+      <plugin id="org.eclipse.equinox.p2.updatesite.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.region" fragment="true"/>
       <plugin id="org.eclipse.equinox.registry"/>
@@ -904,24 +949,14 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.ltk.core.refactoring"/>
       <plugin id="org.eclipse.ltk.ui.refactoring"/>
-      <plugin id="org.eclipse.oomph.base"/>
-      <plugin id="org.eclipse.oomph.base.edit"/>
-      <plugin id="org.eclipse.oomph.p2"/>
-      <plugin id="org.eclipse.oomph.p2.core"/>
-      <plugin id="org.eclipse.oomph.p2.doc"/>
-      <plugin id="org.eclipse.oomph.p2.edit"/>
-      <plugin id="org.eclipse.oomph.p2.ui"/>
-      <plugin id="org.eclipse.oomph.preferences"/>
-      <plugin id="org.eclipse.oomph.setup"/>
-      <plugin id="org.eclipse.oomph.setup.edit"/>
-      <plugin id="org.eclipse.oomph.setup.p2"/>
-      <plugin id="org.eclipse.oomph.setup.p2.edit"/>
-      <plugin id="org.eclipse.oomph.ui"/>
-      <plugin id="org.eclipse.oomph.util"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
+      <plugin id="org.eclipse.osgi.compatibility.state.nl_tr" fragment="true"/>
+      <plugin id="org.eclipse.osgi.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.osgi.services.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.osgi.util"/>
+      <plugin id="org.eclipse.osgi.util.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
@@ -935,12 +970,16 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.swt.gtk.linux.s390x" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86_64.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.solaris.sparc" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.solaris.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.team.core"/>
+      <plugin id="org.eclipse.team.core.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.team.ui"/>
+      <plugin id="org.eclipse.team.ui.nl_tr" fragment="true"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.browser"/>
