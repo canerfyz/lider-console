@@ -131,42 +131,74 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyExecutionSelectHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyExecutionSelect">
-		   <enabledWhen>
-				<and>
-		          <with
-		                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
-		             <equals
-		                   value="true">
-		             </equals>
-		          </with>
-				<with
-	                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isEntrySelected">
-	             	<equals
-		                   value="true">
-		            </equals>
-	          	</with>
-		       </and>
-		    </enabledWhen>
+               <enabledWhen>
+					<and>
+						<with
+			                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
+			             	<equals
+			                   value="true">
+			             	</equals>
+			          	</with>
+			          	<iterate operator="or">
+			          		<or>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSingleEntrySelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isMultipleEntriesSelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+							</or>	          
+			          	</iterate>
+			       </and>
+               </enabledWhen>
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.PolicyExecutionNewHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.PolicyExecutionNew">
-		   <enabledWhen>
-				<and>
-		          <with
-		                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
-		             <equals
-		                   value="true">
-		             </equals>
-		          </with>
-				<with
-	                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isEntrySelected">
-	             	<equals
-		                   value="true">
-		            </equals>
-	          	</with>
-		       </and>
-		    </enabledWhen>
+               <enabledWhen>
+					<and>
+						<with
+			                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
+			             	<equals
+			                   value="true">
+			             	</equals>
+			          	</with>
+			          	<iterate operator="or">
+			          		<or>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSingleEntrySelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isMultipleEntriesSelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+							</or>	          
+			          	</iterate>
+			       </and>
+               </enabledWhen>
       </handler>
    </extension>
    
@@ -298,18 +330,34 @@
                   style="push">
                <visibleWhen>
 					<and>
-			          <with
+						<with
 			                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
-			             <equals
+			             	<equals
 			                   value="true">
-			             </equals>
-			          </with>
-					<with
-		                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isEntrySelected">
-		             	<equals
-			                   value="true">
-			            </equals>
-		          	</with>
+			             	</equals>
+			          	</with>
+			          	<iterate operator="or">
+			          		<or>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSingleEntrySelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isMultipleEntriesSelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+							</or>	          
+			          	</iterate>
 			       </and>
                </visibleWhen>
             </command>
@@ -320,18 +368,34 @@
                   style="push">
                <visibleWhen>
 					<and>
-			          <with
+						<with
 			                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.available">
-			             <equals
+			             	<equals
 			                   value="true">
-			             </equals>
-			          </with>
-					<with
-		                variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isEntrySelected">
-		             	<equals
-			                   value="true">
-			            </equals>
-		          	</with>
+			             	</equals>
+			          	</with>
+			          	<iterate operator="or">
+			          		<or>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSingleEntrySelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isMultipleEntriesSelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+								<with
+		                			variable="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected">
+		             				<equals
+			                   			value="true">
+			            			</equals>
+		          				</with>
+							</or>	          
+			          	</iterate>
 			       </and>
                </visibleWhen>
             </command>
