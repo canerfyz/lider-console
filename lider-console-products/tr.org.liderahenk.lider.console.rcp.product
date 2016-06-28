@@ -22,7 +22,7 @@ Apache Software Foundation http://apache.org/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-nl tr
+      <programArgs>-nl tr --launcher.GTK_version 2
       </programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.7 -XX:MaxPermSize=256m -Xms40m -Xmx512m
       </vmArgs>
@@ -44,7 +44,6 @@ Apache Software Foundation http://apache.org/
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
