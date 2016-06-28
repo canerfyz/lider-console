@@ -21,6 +21,7 @@ public class LiderConstants {
 
 	public static final class VIEWS {
 		public static final String BROWSER_VIEW = "org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView";
+		public static final String SEARCH_GROUP_VIEW = "tr.org.liderahenk.liderconsole.core.views.SearchGroupView";
 	}
 
 	public static final class EDITORS {
@@ -74,6 +75,10 @@ public class LiderConstants {
 		 * Thrown when 'task' notification received
 		 */
 		public static final String SEARCH_GROUP_CREATED = "search_group_created";
+		/**
+		 * Thrown when Lide & LDAP connection opened or closed
+		 */
+		public static final String CHECK_LIDER_STATUS = "check_lider_status";
 	}
 
 	/**
@@ -109,6 +114,58 @@ public class LiderConstants {
 		public static final String SEARCH_GROUPS_MAX_SIZE = "search.groups.max.size";
 		public static final String EXECUTED_TASKS_MAX_SIZE = "executed.tasks.max.size";
 		public static final String APPLIED_POLICIES_MAX_SIZE = "applied.policies.max.size";
+	}
+
+	/**
+	 * Expressions used to evaluate LDAP-related conditions.
+	 * 
+	 * @see tr.org.liderahenk.liderconsole.core.sourceproviders.
+	 *      LiderSourceProvider
+	 *
+	 */
+	public static final class EXPRESSIONS {
+		/**
+		 * Returns true, if LDAP & Lider connection is established, false
+		 * otherwise.
+		 */
+		public final static String LIDER_AVAILABLE_STATE = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.available";
+		/**
+		 * Returns true if selected entry come from a search result, false
+		 * otherwise.
+		 */
+		public final static String SEARCH_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected";
+		/**
+		 * Returns privileges for selected entry.
+		 */
+		public final static String PRIVILEGES_FOR_SELECTED_ITEM = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.privilegesForSelectedItem";
+		/**
+		 * Returns true if multiple LDAP entries selected, false otherwise.
+		 */
+		public final static String MULTIPLE_ENTRIES_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isMultipleEntriesSelected";
+		/**
+		 * Returns true if one LDAP entry selected, false otherwise.
+		 */
+		public final static String SINGLE_ENTRY_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSingleEntrySelected";
+		/**
+		 * Returns true if selected entry belongs to an agent, false otherwise.
+		 * NOTE: These expression is only meaningful, if single entry selected
+		 */
+		public final static String AGENT_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isAhenkSelected";
+		/**
+		 * Returns true if selected entry belongs to a user, false otherwise.
+		 * NOTE: These expression is only meaningful, if single entry selected
+		 */
+		public final static String USER_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isLdapUserSelected";
+
+		/**
+		 * Convenience method for expression array.
+		 * 
+		 * @return an array of all expressions.
+		 */
+		public static String[] getExpressions() {
+			return new String[] { LIDER_AVAILABLE_STATE, SINGLE_ENTRY_SELECTED, MULTIPLE_ENTRIES_SELECTED,
+					SEARCH_SELECTED, AGENT_SELECTED, USER_SELECTED, PRIVILEGES_FOR_SELECTED_ITEM };
+		}
 	}
 
 	public static class FILES {
