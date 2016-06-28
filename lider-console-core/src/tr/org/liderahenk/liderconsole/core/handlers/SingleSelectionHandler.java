@@ -14,6 +14,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.model.SearchGroupEntry;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -57,8 +58,9 @@ public abstract class SingleSelectionHandler extends AbstractHandler {
 					dn = ((IEntry) selectedElement).getDn().toString();
 				} else if (selectedElement instanceof ISearch) {
 					dn = ((ISearch) selectedElement).getName();
+				} else if (selectedElement instanceof SearchGroupEntry) {
+					dn = ((SearchGroupEntry) selectedElement).getDn();
 				}
-
 			}
 
 		}

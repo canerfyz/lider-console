@@ -149,11 +149,13 @@ public class LiderConstants {
 		/**
 		 * Returns true if selected entry belongs to an agent, false otherwise.
 		 * NOTE: These expression is only meaningful, if single entry selected
+		 * OR all of the entries belong to agents.
 		 */
 		public final static String AGENT_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isAhenkSelected";
 		/**
 		 * Returns true if selected entry belongs to a user, false otherwise.
 		 * NOTE: These expression is only meaningful, if single entry selected
+		 * OR all of the entries belong to users.
 		 */
 		public final static String USER_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isLdapUserSelected";
 

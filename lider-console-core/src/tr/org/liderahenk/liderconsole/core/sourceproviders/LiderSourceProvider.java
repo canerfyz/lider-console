@@ -30,7 +30,10 @@ import org.osgi.service.event.EventHandler;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
+import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
+import tr.org.liderahenk.liderconsole.core.model.SearchGroup;
+import tr.org.liderahenk.liderconsole.core.model.SearchGroupEntry;
 
 /**
  * LiderSourceProvider provides expressions that can be used to restrict the
@@ -78,6 +81,7 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 		map.put(LiderConstants.EXPRESSIONS.SINGLE_ENTRY_SELECTED, singleEntrySelected);
 		map.put(LiderConstants.EXPRESSIONS.PRIVILEGES_FOR_SELECTED_ITEM, privilegesForSelectedItem);
 		// These two expressions are only meaningful, if single entry selected
+		// OR all of the entries belong to same DN type (agent or user).
 		map.put(LiderConstants.EXPRESSIONS.AGENT_SELECTED, agentEntrySelected);
 		map.put(LiderConstants.EXPRESSIONS.USER_SELECTED, userEntrySelected);
 		return map;
@@ -104,6 +108,9 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 			if (selection instanceof IStructuredSelection) {
 
 				boolean isFirst = true;
+				boolean prevUserEntrySelected = false;
+				boolean prevAgentEntrySelected = false;
+
 				// Iterate over all selected entries
 				IStructuredSelection sselection = (IStructuredSelection) selection;
 				Iterator iterator = sselection.iterator();
@@ -114,7 +121,6 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 						// Single entry or multiple entries?
 						singleEntrySelected = !iterator.hasNext();
 						multipleEntriesSelected = iterator.hasNext();
-						isFirst = false;
 					}
 
 					if (selectedItem instanceof SearchResult) {
@@ -130,14 +136,14 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 						privilegesForSelectedItem.addAll(UserSettings.getPrivilegesFor(entry.getDn().getName()));
 
 						// User or agent entry?
-						// (Set their value only if single entry selected)
-						if (singleEntrySelected && !(selectedItem instanceof BaseDNEntry)) {
+						// (Set their value only if single entry selected OR all
+						// of the entries belong to same DN type)
+						if (!(selectedItem instanceof BaseDNEntry)) {
 							Collection<ObjectClass> classes = entry.getObjectClassDescriptions();
-							if (LdapUtils.getInstance().isUser(classes)) {
-								userEntrySelected = true;
-							} else if (LdapUtils.getInstance().isAgent(classes)) {
-								agentEntrySelected = true;
-							}
+							prevUserEntrySelected = (prevUserEntrySelected || isFirst)
+									& LdapUtils.getInstance().isUser(classes);
+							prevAgentEntrySelected = (prevAgentEntrySelected || isFirst)
+									& LdapUtils.getInstance().isAgent(classes);
 						}
 					} else if (selectedItem instanceof ISearch) {
 						ISearch search = (ISearch) selectedItem;
@@ -155,8 +161,32 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 						}
 
 						searchSelected = true;
+					} else if (selectedItem instanceof SearchGroupEntry) {
+						SearchGroupEntry entry = (SearchGroupEntry) selectedItem;
+
+						// Calculate the privileges for the entry
+						privilegesForSelectedItem.addAll(UserSettings.getPrivilegesFor(entry.getDn()));
+
+						// User or agent entry?
+						// (Set their value only if single entry selected OR all
+						// of the entries belong to same DN type)
+						prevUserEntrySelected = (prevUserEntrySelected || isFirst) & (entry.getDnType() == DNType.USER);
+						prevAgentEntrySelected = (prevAgentEntrySelected || isFirst)
+								& (entry.getDnType() == DNType.AHENK);
+					} else if (selectedItem instanceof SearchGroup) {
+						SearchGroup searchGroup = (SearchGroup) selectedItem;
+
+						// Calculate privileges for all entries
+						for (SearchGroupEntry entry : searchGroup.getEntries()) {
+							privilegesForSelectedItem.addAll(UserSettings.getPrivilegesFor(entry.getDn()));
+						}
 					}
+
+					isFirst = false;
 				}
+
+				agentEntrySelected = prevAgentEntrySelected;
+				userEntrySelected = prevUserEntrySelected;
 			}
 
 			// Single entry selected

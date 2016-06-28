@@ -187,6 +187,9 @@ public class LdapConnectionListener implements IConnectionListener {
 
 				if (restFulAddress != null && !restFulAddress.isEmpty()) {
 
+					// TODO we should set this after reading system configs
+					// that way we can ensure that both LDAP and Lider
+					// connection established successfully!
 					RestSettings.setServerUrl(restFulAddress);
 					IResponse response = null;
 

@@ -19,6 +19,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
+import tr.org.liderahenk.liderconsole.core.model.SearchGroup;
+import tr.org.liderahenk.liderconsole.core.model.SearchGroupEntry;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -68,6 +70,19 @@ public abstract class MultipleSelectionHandler extends AbstractHandler {
 						addChildDNs(((IEntry) selectedItem).getDn().toString(), dnSet);
 					} else if (selectedItem instanceof ISearch) {
 						addChildDNs(((ISearch) selectedItem).getName(), dnSet);
+					} else if (selectedItem instanceof SearchGroupEntry) {
+						// No need to search for children since this is a leaf
+						// node.
+						dnSet.add(((SearchGroupEntry) selectedItem).getDn());
+					} else if (selectedItem instanceof SearchGroup) {
+						if (((SearchGroup) selectedItem).getEntries() != null
+								&& !((SearchGroup) selectedItem).getEntries().isEmpty()) {
+							for (SearchGroupEntry entry : ((SearchGroup) selectedItem).getEntries()) {
+								// No need to search for children since this is
+								// a leaf node.
+								dnSet.add(entry.getDn());
+							}
+						}
 					}
 				}
 			}
