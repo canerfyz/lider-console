@@ -117,12 +117,20 @@ public class ReportViewDialog extends DefaultLiderDialog {
 		try {
 			List<ReportTemplate> templates = ReportRestUtils.listTemplates(null);
 			if (templates != null) {
+				boolean selected = false;
 				for (int i = 0; i < templates.size(); i++) {
 					ReportTemplate template = templates.get(i);
 					cmbTemplate.add(template.getName() + " - " + template.getCreateDate());
 					cmbTemplate.setData(i + "", template);
+					if (!selected && selectedView != null && selectedView.getTemplate() != null
+							&& template.getId().equals(selectedView.getTemplate().getId())) {
+						cmbTemplate.select(i);
+						selected = true;
+					}
 				}
-				cmbTemplate.select(0); // select first template by default
+				if (!selected) {
+					cmbTemplate.select(0); // select first template by default
+				}
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
