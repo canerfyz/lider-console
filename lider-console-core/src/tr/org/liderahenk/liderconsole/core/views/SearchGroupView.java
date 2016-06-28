@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,6 +18,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -39,6 +41,7 @@ import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
  * View part for search groups.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @see tr.org.liderahenk.liderconsole.core.sourceproviders.LiderSourceProvider
  *
  */
 public class SearchGroupView extends ViewPart {
@@ -87,6 +90,17 @@ public class SearchGroupView extends ViewPart {
 		treeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		treeViewer.setContentProvider(new SearchGroupViewContentProvider());
 		treeViewer.setLabelProvider(new SearchGroupViewLabelProvider());
+
+		// Context menu
+		// Create a menu manager and create context menu
+		MenuManager menuManager = new MenuManager();
+		Menu menu = menuManager.createContextMenu(treeViewer.getTree());
+		// Set the menu on the SWT widget
+		treeViewer.getTree().setMenu(menu);
+		// Register the menu
+		getSite().registerContextMenu(menuManager, treeViewer);
+		// Make the viewer selection available
+		getSite().setSelectionProvider(treeViewer);
 	}
 
 	@Override
