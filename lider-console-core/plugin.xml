@@ -277,6 +277,18 @@
                </visibleWhen>
 		 </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:tr.org.liderahenk.liderconsole.core.views.SearchGroupView?after=additions">
+         <menu
+               id="tr.org.liderahenk.liderconsole.menus.ApplyPolicy"
+               label="%menu.label.apply.policy">
+         </menu>
+         <!-- Plugins may contribute to this menu: -->
+         <menu
+               id="tr.org.liderahenk.liderconsole.menus.ApplyTask"
+               label="%menu.label.apply.task">
+         </menu>
+      </menuContribution>
 	  <menuContribution
 		locationURI="popup:tr.org.liderahenk.liderconsole.menus.ApplyPolicy?after=additions">
 			<command
@@ -452,7 +464,15 @@
                priorityLevel="workbench">
          </variable>
          <variable
-               name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isEntrySelected"
+               name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected"
+               priorityLevel="workbench">
+         </variable>
+         <variable
+               name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSingleEntrySelected"
+               priorityLevel="workbench">
+         </variable>
+         <variable
+               name="tr.org.liderahenk.liderconsole.core.sourceproviders.main.isMultipleEntriesSelected"
                priorityLevel="workbench">
          </variable>
          <variable
