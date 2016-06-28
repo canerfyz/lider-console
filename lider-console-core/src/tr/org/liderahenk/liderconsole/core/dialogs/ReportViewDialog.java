@@ -131,6 +131,22 @@ public class ReportViewDialog extends DefaultLiderDialog {
 				if (!selected) {
 					cmbTemplate.select(0); // select first template by default
 				}
+				cmbTemplate.addSelectionListener(new SelectionListener() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						// Empty (column & parameter) tables, otherwise this may
+						// lead to
+						// invalid referenced column/parameter
+						tvCol.setInput(new ArrayList<ReportViewColumn>(0));
+						tvCol.refresh();
+						tvParam.setInput(new ArrayList<ReportViewParameter>(0));
+						tvParam.refresh();
+					}
+
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+					}
+				});
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -148,21 +164,6 @@ public class ReportViewDialog extends DefaultLiderDialog {
 			cmbType.add(type.getMessage());
 			cmbType.setData(i + "", type);
 		}
-		cmbType.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Empty (column & parameter) tables, otherwise this may lead to
-				// invalid referenced column/parameter
-				tvCol.setInput(new ArrayList<ReportViewColumn>(0));
-				tvCol.refresh();
-				tvParam.setInput(new ArrayList<ReportViewParameter>(0));
-				tvParam.refresh();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
 		cmbType.select(0);
 
 		// View Parameters
