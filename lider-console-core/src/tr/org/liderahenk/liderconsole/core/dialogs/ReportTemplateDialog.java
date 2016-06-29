@@ -383,7 +383,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		btnEditCol.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (null == getSelectedParam()) {
+				if (null == getSelectedColumn()) {
 					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
 					return;
 				}
@@ -405,7 +405,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		btnDeleteCol.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (null == getSelectedParam()) {
+				if (null == getSelectedColumn()) {
 					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
 					return;
 				}
@@ -438,8 +438,8 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 				if (firstElement instanceof ReportTemplateColumn) {
 					setSelectedColumn((ReportTemplateColumn) firstElement);
 				}
-				btnEditParam.setEnabled(true);
-				btnDeleteParam.setEnabled(true);
+				btnEditCol.setEnabled(true);
+				btnDeleteCol.setEnabled(true);
 			}
 		});
 		tvCol.addDoubleClickListener(new IDoubleClickListener() {

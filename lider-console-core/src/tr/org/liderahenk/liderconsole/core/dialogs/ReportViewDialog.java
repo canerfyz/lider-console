@@ -432,7 +432,7 @@ public class ReportViewDialog extends DefaultLiderDialog {
 		btnDeleteCol.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (null == getSelectedParam()) {
+				if (null == getSelectedColumn()) {
 					Notifier.warning(null, Messages.getString("PLEASE_SELECT_RECORD"));
 					return;
 				}
