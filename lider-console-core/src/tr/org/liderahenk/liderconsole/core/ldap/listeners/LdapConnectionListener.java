@@ -207,10 +207,16 @@ public class LdapConnectionListener implements IConnectionListener {
 							// Initialise UID map before connecting to
 							// XMPP server.
 							LdapUtils.getInstance().getUidMap(conn, monitor);
-							XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
-									config.get("xmppServiceName").toString(), config.get("xmppHost").toString(),
-									new Integer(config.get("xmppPort").toString()));
-							Notifier.success(null, Messages.getString("LIDER_CONNECTION_OPENED"));
+							try {
+								XMPPClient.getInstance().connect(UserSettings.USER_ID, UserSettings.USER_PASSWORD,
+										config.get("xmppServiceName").toString(), config.get("xmppHost").toString(),
+										new Integer(config.get("xmppPort").toString()));
+								Notifier.success(null, Messages.getString("LIDER_CONNECTION_OPENED"));
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
+								Notifier.error(null, Messages.getString("XMPP_CONNECTION_ERROR") + "\n" + Messages.getString("CHECK_XMPP_SERVER"));
+								return;
+							}
 						} else {
 							Notifier.error(null, Messages.getString("XMPP_CONNECTION_ERROR"));
 						}

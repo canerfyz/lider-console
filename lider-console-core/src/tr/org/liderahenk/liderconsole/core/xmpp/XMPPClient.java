@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.xmpp.listeners.TaskNotificationListener;
@@ -102,8 +103,9 @@ public class XMPPClient {
 	 * @param host
 	 *            (or server name)
 	 * @param port
+	 * @throws Exception 
 	 */
-	public void connect(String userName, String password, String serviceName, String host, int port) {
+	public void connect(String userName, String password, String serviceName, String host, int port) throws Exception {
 		logger.info("XMPP service initialization is started");
 		setParameters(userName, password, serviceName, host, port);
 		createXmppTcpConfiguration(serviceName, host, port);
@@ -153,8 +155,9 @@ public class XMPPClient {
 
 	/**
 	 * Connect to XMPP server
+	 * @throws Exception 
 	 */
-	private void connect() {
+	private void connect() throws Exception {
 		connection = new XMPPTCPConnection(config);
 		// Retry connection if it fails.
 		while (!connection.isConnected() && retryCount < maxRetryConnectionCount) {
@@ -164,8 +167,10 @@ public class XMPPClient {
 					connection.connect();
 				} catch (SmackException e) {
 					e.printStackTrace();
+					throw new Exception(e.getMessage());
 				} catch (IOException e) {
 					e.printStackTrace();
+					throw new Exception(e.getMessage());
 				}
 			} catch (XMPPException e) {
 				logger.error("Cannot connect to XMPP server.");
