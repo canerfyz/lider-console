@@ -11,6 +11,7 @@
 package tr.org.liderahenk.liderconsole.core.widgets;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -24,13 +25,18 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.views.SystemLogsView;
 import tr.org.liderahenk.liderconsole.core.widgets.NotifierColorsFactory.NotifierTheme;
 
 /**
- * This class provides a notifier window, which is a window that appears in the bottom of the screen.
+ * This class provides a notifier window, which is a window that appears in the
+ * bottom of the screen.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
@@ -45,32 +51,35 @@ public class Notifier {
 	private static final int FADE_OUT_STEP = 8;
 
 	private static final int STEP = 5;
-	
+
 	public static void error(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
 		notify(image, title, text, NotifierTheme.ERROR_THEME);
 	}
-	
+
 	public static void warning(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
 		notify(image, title, text, NotifierTheme.WARNING_THEME);
 	}
-	
+
 	public static void info(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
 		notify(image, title, text, NotifierTheme.INFO_THEME);
 	}
-	
+
 	public static void success(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
 		notify(image, title, text, NotifierTheme.SUCCESS_THEME);
 	}
 
 	/**
-	 * Starts a notification. A window will appear in the bottom of the screen, then will disappear after 4.5 s
+	 * Starts a notification. A window will appear in the bottom of the screen,
+	 * then will disappear after 4.5 s
 	 * 
-	 * @param title the title of the popup window
-	 * @param text the text of the notification
+	 * @param title
+	 *            the title of the popup window
+	 * @param text
+	 *            the text of the notification
 	 * 
 	 */
 	public static void notify(final String title, final String text) {
@@ -78,11 +87,16 @@ public class Notifier {
 	}
 
 	/**
-	 * Starts a notification. A window will appear in the bottom of the screen, then will disappear after 4.5 s
+	 * Starts a notification. A window will appear in the bottom of the screen,
+	 * then will disappear after 4.5 s
 	 * 
-	 * @param image the image to display (if <code>null</code>, a default image is displayed)
-	 * @param title the title of the popup window
-	 * @param text the text of the notification
+	 * @param image
+	 *            the image to display (if <code>null</code>, a default image is
+	 *            displayed)
+	 * @param title
+	 *            the title of the popup window
+	 * @param text
+	 *            the text of the notification
 	 * 
 	 */
 	public static void notify(final Image image, final String title, final String text) {
@@ -91,11 +105,16 @@ public class Notifier {
 	}
 
 	/**
-	 * Starts a notification. A window will appear in the bottom of the screen, then will disappear after 4.5 s
+	 * Starts a notification. A window will appear in the bottom of the screen,
+	 * then will disappear after 4.5 s
 	 * 
-	 * @param title the title of the popup window
-	 * @param text the text of the notification
-	 * @param theme the graphical theme. If <code>null</code>, the yellow theme is used
+	 * @param title
+	 *            the title of the popup window
+	 * @param text
+	 *            the text of the notification
+	 * @param theme
+	 *            the graphical theme. If <code>null</code>, the yellow theme is
+	 *            used
 	 * 
 	 * @see NotifierTheme
 	 */
@@ -104,12 +123,19 @@ public class Notifier {
 	}
 
 	/**
-	 * Starts a notification. A window will appear in the bottom of the screen, then will disappear after 4.5 s
+	 * Starts a notification. A window will appear in the bottom of the screen,
+	 * then will disappear after 4.5 s
 	 * 
-	 * @param image the image to display (if <code>null</code>, a default image is displayed)
-	 * @param title the title of the popup window
-	 * @param text the text of the notification
-	 * @param theme the graphical theme. If <code>null</code>, the yellow theme is used
+	 * @param image
+	 *            the image to display (if <code>null</code>, a default image is
+	 *            displayed)
+	 * @param title
+	 *            the title of the popup window
+	 * @param text
+	 *            the text of the notification
+	 * @param theme
+	 *            the graphical theme. If <code>null</code>, the yellow theme is
+	 *            used
 	 * 
 	 * @see NotifierTheme
 	 */
@@ -117,22 +143,68 @@ public class Notifier {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				final Shell shell = createNotificationWindow(image, title, text, NotifierColorsFactory.getColorsForTheme(theme));
-				makeShellAppears(shell);				
+				writeToSysLog(title, text, theme);
+
+				final Shell shell = createNotificationWindow(image, title, text,
+						NotifierColorsFactory.getColorsForTheme(theme));
+				makeShellAppears(shell);
 			}
+
 		});
 	}
+
+	private static void writeToSysLog(String title, String text, NotifierTheme theme) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
+		SystemLogsView logView = (SystemLogsView) page.findView(LiderConstants.VIEWS.SYSTEM_LOGS_VIEW);
+		
+		StyledText textArea = logView.getTextArea();
+		String logType;
+		Color color;
+		if (theme.equals(NotifierTheme.ERROR_THEME)) {
+			logType = "ERROR";
+			color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
+		} else if (theme.equals(NotifierTheme.INFO_THEME)) {
+			logType = "INFO";
+			color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_CYAN);
+		} else if (theme.equals(NotifierTheme.SUCCESS_THEME)) {
+			logType = "SUCCESS";
+			color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);
+		} else {
+			logType = "WARNING";
+			color = new Color(Display.getCurrent(), 255, 127, 0);
+		}
+
+		int currentSize = textArea.getCharCount();
+
+		String logMessage = logType + " | " + title + " - " + text + "\n";
+		textArea.append(logMessage);
+
+		int modifiedSize = textArea.getCharCount();
+
+		StyleRange style = new StyleRange();
+		style.start = currentSize;
+		style.length = modifiedSize - currentSize;
+		style.foreground = color;
+		textArea.setStyleRange(style);
+	}
+
 
 	/**
 	 * Creates a notification window
 	 * 
-	 * @param image image. If <code>null</code>, a default image is used
-	 * @param title title, the title of the window
-	 * @param text text of the window
-	 * @param colors color set
+	 * @param image
+	 *            image. If <code>null</code>, a default image is used
+	 * @param title
+	 *            title, the title of the window
+	 * @param text
+	 *            text of the window
+	 * @param colors
+	 *            color set
 	 * @return the notification window as a shell object
 	 */
-	private static Shell createNotificationWindow(final Image image, final String title, final String text, final NotifierColors colors) {
+	private static Shell createNotificationWindow(final Image image, final String title, final String text,
+			final NotifierColors colors) {
 		final Shell shell = new Shell(SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);
 		shell.setLayout(new GridLayout(2, false));
 		shell.setBackgroundMode(SWT.INHERIT_FORCE);
@@ -159,9 +231,12 @@ public class Notifier {
 	/**
 	 * Creates the title part of the window
 	 * 
-	 * @param shell the window
-	 * @param title the title
-	 * @param colors the color set
+	 * @param shell
+	 *            the window
+	 * @param title
+	 *            the title
+	 * @param colors
+	 *            the color set
 	 */
 	private static void createTitle(final Shell shell, final String title, final NotifierColors colors) {
 		final Label titleLabel = new Label(shell, SWT.NONE);
@@ -170,8 +245,9 @@ public class Notifier {
 		titleLabel.setLayoutData(gdLabel);
 		final Color titleColor = colors.titleColor;
 		titleLabel.setForeground(titleColor);
-		
-		final Font titleFont = SWTResourceManager.getFont(titleLabel.getFont().getFontData()[0].getName(), FONT_SIZE, SWT.BOLD);
+
+		final Font titleFont = SWTResourceManager.getFont(titleLabel.getFont().getFontData()[0].getName(), FONT_SIZE,
+				SWT.BOLD);
 		titleLabel.setFont(titleFont);
 		titleLabel.setText(title == null ? new String() : title);
 	}
@@ -179,8 +255,10 @@ public class Notifier {
 	/**
 	 * Creates the image part of the window
 	 * 
-	 * @param shell the window
-	 * @param image the image
+	 * @param shell
+	 *            the window
+	 * @param image
+	 *            the image
 	 */
 	private static void createImage(final Shell shell, final Image image) {
 		final Label labelImage = new Label(shell, SWT.NONE);
@@ -198,9 +276,12 @@ public class Notifier {
 	/**
 	 * Creates the text part of the window
 	 * 
-	 * @param shell the window
-	 * @param text the text
-	 * @param colors the color set
+	 * @param shell
+	 *            the window
+	 * @param text
+	 *            the text
+	 * @param colors
+	 *            the color set
 	 */
 	private static void createText(final Shell shell, final String text, final NotifierColors colors) {
 		final StyledText textLabel = new StyledText(shell, SWT.WRAP | SWT.READ_ONLY);
@@ -208,7 +289,7 @@ public class Notifier {
 		gdText.horizontalIndent = 15;
 		textLabel.setLayoutData(gdText);
 		textLabel.setEnabled(false);
-		
+
 		final Font textFont = SWTResourceManager.getFont(textLabel.getFont().getFontData()[0].getName(), 10, SWT.NONE);
 		textLabel.setFont(textFont);
 
@@ -222,8 +303,10 @@ public class Notifier {
 	/**
 	 * Creates the background of the window
 	 * 
-	 * @param shell the window
-	 * @param colors the color set of the window
+	 * @param shell
+	 *            the window
+	 * @param colors
+	 *            the color set of the window
 	 */
 	private static void createBackground(final Shell shell, final NotifierColors colors) {
 		shell.addListener(SWT.Resize, new Listener() {
@@ -263,7 +346,8 @@ public class Notifier {
 	}
 
 	/**
-	 * @param shell shell that will appear
+	 * @param shell
+	 *            shell that will appear
 	 */
 	private static void makeShellAppears(final Shell shell) {
 		if (shell == null || shell.isDisposed()) {
@@ -305,8 +389,10 @@ public class Notifier {
 	}
 
 	/**
-	 * @param shell shell that will disappear
-	 * @param fast if true, the fading is much faster
+	 * @param shell
+	 *            shell that will disappear
+	 * @param fast
+	 *            if true, the fading is much faster
 	 * @return a runnable
 	 */
 	private static Runnable fadeOut(final Shell shell, final boolean fast) {
@@ -337,9 +423,11 @@ public class Notifier {
 	}
 
 	/**
-	 * Add a listener to the shell in order to handle the clicks on the close button
+	 * Add a listener to the shell in order to handle the clicks on the close
+	 * button
 	 * 
-	 * @param shell associated shell
+	 * @param shell
+	 *            associated shell
 	 */
 	private static void createCloseAction(final Shell shell) {
 		shell.addListener(SWT.MouseUp, new Listener() {
@@ -350,7 +438,8 @@ public class Notifier {
 				final int xUpperLeftCorner = rect.width - 21;
 				final int yUpperLeftCorner = 13;
 
-				if (event.x >= xUpperLeftCorner && event.x <= xUpperLeftCorner + 8 && event.y >= yUpperLeftCorner && event.y <= yUpperLeftCorner + 8) {
+				if (event.x >= xUpperLeftCorner && event.x <= xUpperLeftCorner + 8 && event.y >= yUpperLeftCorner
+						&& event.y <= yUpperLeftCorner + 8) {
 					Display.getDefault().timerExec(0, fadeOut(shell, true));
 				}
 
