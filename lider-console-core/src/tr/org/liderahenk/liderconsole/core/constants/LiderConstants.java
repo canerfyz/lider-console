@@ -22,6 +22,7 @@ public class LiderConstants {
 	public static final class VIEWS {
 		public static final String BROWSER_VIEW = "org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView";
 		public static final String SEARCH_GROUP_VIEW = "tr.org.liderahenk.liderconsole.core.views.SearchGroupView";
+		public static final String SYSTEM_LOGS_VIEW = "tr.org.liderahenk.liderconsole.core.views.SystemLogsView";
 	}
 
 	public static final class EDITORS {
