@@ -177,7 +177,7 @@ public class Notifier {
 
 		int currentSize = textArea.getCharCount();
 
-		String logMessage = logType + " | " + title + " - " + text + "\n";
+		String logMessage = logType + " | " + (title != null ? title  + " - " : "") + text + "\n";
 		textArea.append(logMessage);
 
 		int modifiedSize = textArea.getCharCount();
