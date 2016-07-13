@@ -32,7 +32,7 @@ public class SystemLogsView extends ViewPart {
 
 		btnClear = new Button(parent, SWT.PUSH);
 		btnClear.setImage(
-				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/delete.png"));
 		btnClear.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
 		btnClear.addSelectionListener(new SelectionListener() {
 			@Override
