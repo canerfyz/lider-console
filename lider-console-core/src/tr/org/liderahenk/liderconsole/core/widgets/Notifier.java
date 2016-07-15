@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
@@ -157,6 +158,16 @@ public class Notifier {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		SystemLogsView logView = (SystemLogsView) page.findView(LiderConstants.VIEWS.SYSTEM_LOGS_VIEW);
+		
+		if (logView == null) {
+			try {
+				page.showView(LiderConstants.VIEWS.SYSTEM_LOGS_VIEW);
+				logView = (SystemLogsView) page.findView(LiderConstants.VIEWS.SYSTEM_LOGS_VIEW);
+			} catch (PartInitException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
 		
 		StyledText textArea = logView.getTextArea();
 		String logType;
