@@ -10,6 +10,8 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.ui.PlatformUI;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.ReconnectionManager;
+import org.jivesoftware.smack.ReconnectionManager.ReconnectionPolicy;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
@@ -102,7 +104,7 @@ public class XMPPClient {
 	 * @param host
 	 *            (or server name)
 	 * @param port
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void connect(String userName, String password, String serviceName, String host, int port) throws Exception {
 		logger.info("XMPP service initialization is started");
@@ -154,7 +156,8 @@ public class XMPPClient {
 
 	/**
 	 * Connect to XMPP server
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	private void connect() throws Exception {
 		connection = new XMPPTCPConnection(config);
@@ -205,6 +208,11 @@ public class XMPPClient {
 	 * Configure XMPP connection to use provided ping timeout and reply timeout.
 	 */
 	private void setServerSettings() {
+		// Enable auto-connect
+		ReconnectionManager.getInstanceFor(connection).enableAutomaticReconnection();
+		// Set reconnection policy to increasing delay
+		ReconnectionManager.getInstanceFor(connection)
+				.setReconnectionPolicy(ReconnectionPolicy.RANDOM_INCREASING_DELAY);
 		PingManager.getInstanceFor(connection).setPingInterval(pingTimeout);
 		// Specifies when incoming message delivery receipt requests
 		// should be automatically acknowledged with a receipt.
