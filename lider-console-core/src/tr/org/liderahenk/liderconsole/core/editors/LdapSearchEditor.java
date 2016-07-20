@@ -131,7 +131,7 @@ public class LdapSearchEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		
+
 		sc = new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		sc.setLayout(new GridLayout(1, false));
@@ -246,7 +246,7 @@ public class LdapSearchEditor extends EditorPart {
 			}
 		});
 		btnCreateSearchGroup.setEnabled(false);
-		
+
 		btnSearch = new Button(composite, SWT.PUSH);
 		btnSearch.setImage(new Image(parent.getDisplay(), this.getClass().getResourceAsStream("/icons/16/filter.png")));
 		btnSearch.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));

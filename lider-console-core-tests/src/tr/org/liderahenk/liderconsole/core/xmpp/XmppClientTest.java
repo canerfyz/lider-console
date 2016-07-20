@@ -9,10 +9,10 @@ public class XmppClientTest {
 
 	@Test
 	public void connect() {
-		XMPPClient.getInstance().connect(PropertyLoader.getInstance().get("xmpp.user.name"),
-				PropertyLoader.getInstance().get("xmpp.user.pwd"),
-				PropertyLoader.getInstance().get("xmpp.service.name"), PropertyLoader.getInstance().get("xmpp.host"),
-				PropertyLoader.getInstance().getInt("xmpp.user.port"));
+//		XMPPClient.getInstance().connect(PropertyLoader.getInstance().get("xmpp.user.name"),
+//				PropertyLoader.getInstance().get("xmpp.user.pwd"),
+//				PropertyLoader.getInstance().get("xmpp.service.name"), PropertyLoader.getInstance().get("xmpp.host"),
+//				PropertyLoader.getInstance().getInt("xmpp.user.port"));
 	}
 
 	@Test
