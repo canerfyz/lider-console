@@ -118,8 +118,7 @@ public class SystemLogsView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		textArea.setFocus();
 	}
 
 	public StyledText getTextArea() {

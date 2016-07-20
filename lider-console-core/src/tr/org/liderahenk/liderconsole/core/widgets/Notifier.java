@@ -31,6 +31,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.views.SystemLogsView;
 import tr.org.liderahenk.liderconsole.core.widgets.NotifierColorsFactory.NotifierTheme;
@@ -158,7 +159,7 @@ public class Notifier {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		SystemLogsView logView = (SystemLogsView) page.findView(LiderConstants.VIEWS.SYSTEM_LOGS_VIEW);
-		
+
 		if (logView == null) {
 			try {
 				page.showView(LiderConstants.VIEWS.SYSTEM_LOGS_VIEW);
@@ -168,27 +169,27 @@ public class Notifier {
 				return;
 			}
 		}
-		
+
 		StyledText textArea = logView.getTextArea();
 		String logType;
 		Color color;
 		if (theme.equals(NotifierTheme.ERROR_THEME)) {
-			logType = "ERROR";
+			logType = Messages.getString("ERROR");
 			color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_RED);
 		} else if (theme.equals(NotifierTheme.INFO_THEME)) {
-			logType = "INFO";
+			logType = Messages.getString("INFO");
 			color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_CYAN);
 		} else if (theme.equals(NotifierTheme.SUCCESS_THEME)) {
-			logType = "SUCCESS";
+			logType = Messages.getString("SUCCESS");
 			color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);
 		} else {
-			logType = "WARNING";
+			logType = Messages.getString("WARNING");
 			color = new Color(Display.getCurrent(), 255, 127, 0);
 		}
 
 		int currentSize = textArea.getCharCount();
 
-		String logMessage = logType + " | " + (title != null ? title  + " - " : "") + text + "\n";
+		String logMessage = logType + " | " + (title != null ? title + " - " : "") + text + "\n";
 		textArea.append(logMessage);
 
 		int modifiedSize = textArea.getCharCount();
@@ -199,7 +200,6 @@ public class Notifier {
 		style.foreground = color;
 		textArea.setStyleRange(style);
 	}
-
 
 	/**
 	 * Creates a notification window
