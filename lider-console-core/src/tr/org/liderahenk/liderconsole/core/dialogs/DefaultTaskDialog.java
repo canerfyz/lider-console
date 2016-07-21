@@ -239,4 +239,8 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		}
 	}
 
+	public Set<String> getDnSet() {
+		return dnSet;
+	}
+
 }
