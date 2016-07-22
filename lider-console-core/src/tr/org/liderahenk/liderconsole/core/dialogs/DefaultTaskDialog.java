@@ -3,9 +3,12 @@ package tr.org.liderahenk.liderconsole.core.dialogs;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -20,6 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +52,9 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 
 	private Button btnExecuteNow;
 	private Button btnExecuteScheduled;
+
+	private IEventBroker eventBroker;
+	private List<EventHandler> handlers;
 
 	private Set<String> dnSet;
 
@@ -236,6 +244,31 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 			e.printStackTrace();
 			Notifier.error(null, Messages.getString("ERROR_ON_VALIDATE"));
 			return false;
+		}
+	}
+
+	public void openWithEventBroker() {
+		super.setBlockOnOpen(true);
+		super.open();
+		unsubscribeEventHandlers();
+	}
+
+	public void subscribeEventHandler(EventHandler handler) {
+		if (eventBroker == null) {
+			eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
+		}
+		eventBroker.subscribe(getPluginName().toUpperCase(Locale.ENGLISH), handler);
+		if (handlers == null) {
+			handlers = new ArrayList<EventHandler>();
+		}
+		handlers.add(handler);
+	}
+
+	public void unsubscribeEventHandlers() {
+		if (handlers != null && !handlers.isEmpty() && eventBroker != null) {
+			for (EventHandler handler : handlers) {
+				eventBroker.unsubscribe(handler);
+			}
 		}
 	}
 
