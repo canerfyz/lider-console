@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -370,9 +371,7 @@ public class PolicyDefinitionEditor extends EditorPart {
 	private void populateTable() {
 		try {
 			List<Policy> policies = PolicyRestUtils.list(null, null);
-			if (policies != null) {
-				tableViewer.setInput(policies);
-			}
+			tableViewer.setInput(policies != null ? policies : new ArrayList<Policy>());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

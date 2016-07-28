@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -188,7 +189,7 @@ public class ReportViewEditor extends EditorPart {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		btnGenerateReport = new Button(composite, SWT.NONE);
 		btnGenerateReport.setText(Messages.getString("GENERATE_REPORT"));
 		btnGenerateReport.setImage(
@@ -373,9 +374,7 @@ public class ReportViewEditor extends EditorPart {
 	private void populateTable() {
 		try {
 			List<ReportView> views = ReportRestUtils.listViews(null);
-			if (views != null) {
-				tableViewer.setInput(views);
-			}
+			tableViewer.setInput(views != null ? views : new ArrayList<ReportView>());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -307,9 +308,7 @@ public class DefaultProfileEditor extends EditorPart {
 			ProfileEditorInput editorInput = (ProfileEditorInput) getEditorInput();
 			List<Profile> profiles = ProfileRestUtils.list(editorInput.getPluginName(), editorInput.getPluginVersion(),
 					null, null);
-			if (profiles != null) {
-				tableViewer.setInput(profiles);
-			}
+			tableViewer.setInput(profiles != null ? profiles : new ArrayList<Profile>());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

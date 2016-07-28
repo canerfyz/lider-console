@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -353,9 +354,7 @@ public class ReportTemplateEditor extends EditorPart {
 	private void populateTable() {
 		try {
 			List<ReportTemplate> templates = ReportRestUtils.listTemplates(null);
-			if (templates != null) {
-				tableViewer.setInput(templates);
-			}
+			tableViewer.setInput(templates != null ? templates : new ArrayList<ReportTemplate>());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

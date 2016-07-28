@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -328,10 +329,8 @@ public class AppliedPolicyEditor extends EditorPart {
 				policies = PolicyRestUtils.listAppliedPolicies(null, null, null, null,
 						ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.APPLIED_POLICIES_MAX_SIZE));
 			}
-			if (policies != null) {
-				tableViewer.setInput(policies);
-				tableViewer.refresh();
-			}
+			tableViewer.setInput(policies != null ? policies : new ArrayList<ExecutedPolicy>());
+			tableViewer.refresh();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

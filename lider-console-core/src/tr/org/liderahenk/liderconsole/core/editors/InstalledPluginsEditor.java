@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -244,7 +245,7 @@ public class InstalledPluginsEditor extends EditorPart {
 				return Messages.getString("UNTITLED");
 			}
 		});
-		
+
 		// Task plugin
 		TableViewerColumn taskPluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("TASK_PLUGIN"), 100);
@@ -268,9 +269,7 @@ public class InstalledPluginsEditor extends EditorPart {
 	private void populateTable() {
 		try {
 			List<Plugin> plugins = PluginRestUtils.list(null, null);
-			if (plugins != null) {
-				tableViewer.setInput(plugins);
-			}
+			tableViewer.setInput(plugins != null ? plugins : new ArrayList<Plugin>());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

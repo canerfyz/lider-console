@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -340,9 +341,7 @@ public class AgentInfoEditor extends EditorPart {
 	private void populateTable() {
 		try {
 			List<Agent> agents = AgentRestUtils.list(null, null);
-			if (agents != null) {
-				tableViewer.setInput(agents);
-			}
+			tableViewer.setInput(agents != null ? agents : new ArrayList<Agent>());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
