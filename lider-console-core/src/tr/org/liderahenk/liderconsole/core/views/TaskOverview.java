@@ -1,6 +1,7 @@
 package tr.org.liderahenk.liderconsole.core.views;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,8 +53,11 @@ public class TaskOverview extends ViewPart {
 
 	private static final Logger logger = LoggerFactory.getLogger(TaskOverview.class);
 
+	// Widgets
 	private Button btnRefresh;
 	private TreeViewer treeViewer;
+	// contains Command items
+	private List<Command> items;
 
 	/**
 	 * System-wide event broker
@@ -130,28 +134,29 @@ public class TaskOverview extends ViewPart {
 		@Override
 		public void handleEvent(final Event event) {
 			Job job = new Job("TASK_NOTIFICATION") {
-				@SuppressWarnings("unchecked")
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					monitor.beginTask("Task", 100);
 					try {
-						if (treeViewer == null) {
+						if (treeViewer == null || items == null) {
 							return Status.OK_STATUS;
 						}
 						TaskNotification task = (TaskNotification) event.getProperty("org.eclipse.e4.data");
-						final List<Command> items = new ArrayList<Command>();
-						// Restore previous items
-						if (treeViewer.getInput() != null) {
-							items.addAll((List<Command>) treeViewer.getInput());
-						}
 						// Add new item
 						items.add(task.getCommand());
 						// Refresh tree
 						Display.getDefault().asyncExec(new Runnable() {
 							@Override
 							public void run() {
+								if (treeViewer == null) {
+									return;
+								}
+								while (treeViewer.isBusy()) {
+									// Wait for other refresh() method to
+									// finish!
+								}
 								treeViewer.setInput(items);
-								treeViewer.refresh();
+								treeViewer.refresh(false);
 							}
 						});
 					} catch (Exception e) {
@@ -171,41 +176,47 @@ public class TaskOverview extends ViewPart {
 		@Override
 		public void handleEvent(final Event event) {
 			Job job = new Job("TASK_STATUS_NOTIFICATION") {
-				@SuppressWarnings("unchecked")
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					monitor.beginTask("Task", 100);
 					try {
+						if (treeViewer == null || items == null || items.isEmpty()) {
+							return Status.OK_STATUS;
+						}
+						Thread.sleep(5000);
 						TaskStatusNotification task = (TaskStatusNotification) event.getProperty("org.eclipse.e4.data");
 						CommandExecution relatedExecution = task.getCommandExecution();
-						final List<Command> items = new ArrayList<Command>();
-						// Restore previous items
-						if (treeViewer.getInput() != null) {
-							items.addAll((List<Command>) treeViewer.getInput());
+						// Find related command execution...
+						while (treeViewer.isBusy()) {
+							// Wait for other refresh() method
+							// to finish!
 						}
-						if (!items.isEmpty()) {
-							// Find related command execution...
-							for (Command command : items) {
-								if (command.getCommandExecutions() != null
-										&& !command.getCommandExecutions().isEmpty()) {
-									for (CommandExecution execution : command.getCommandExecutions()) {
-										if (execution.equals(relatedExecution)) {
-											// ...and append execution result to
-											// it.
-											execution.getCommandExecutionResults().add(task.getResult());
-										}
+						for (Command command : items) {
+							// Find related command item...
+							if (command.getCommandExecutions() != null && !command.getCommandExecutions().isEmpty()) {
+								for (CommandExecution execution : command.getCommandExecutions()) {
+									if (execution.equals(relatedExecution)) {
+										// ...and append execution result to it.
+										execution.getCommandExecutionResults().add(task.getResult());
 									}
 								}
 							}
-							// Refresh tree
-							Display.getDefault().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									treeViewer.setInput(items);
-									treeViewer.refresh();
-								}
-							});
 						}
+						// Refresh tree
+						Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								if (treeViewer == null) {
+									return;
+								}
+								while (treeViewer.isBusy()) {
+									// Wait for other refresh() method
+									// to finish!
+								}
+								treeViewer.setInput(items);
+								treeViewer.refresh(false);
+							}
+						});
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}
@@ -246,20 +257,36 @@ public class TaskOverview extends ViewPart {
 		}
 	};
 
+	/**
+	 * Refresh tree viewer with Command items
+	 */
 	private void refresh() {
 		try {
-			final List<Command> items = TaskRestUtils
+			final List<Command> tmp = TaskRestUtils
 					.listCommands(ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.EXECUTED_TASKS_MAX_SIZE));
-			if (items != null && !items.isEmpty()) {
-				// Refresh tree
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						treeViewer.setInput(items);
-						treeViewer.refresh();
-					}
-				});
+			if (tmp == null || tmp.isEmpty()) {
+				return;
 			}
+			// Populate synchronized items list
+			if (items == null) {
+				items = Collections.synchronizedList(new ArrayList<Command>());
+			}
+			items.clear();
+			items.addAll(tmp);
+			// Refresh tree
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (treeViewer == null) {
+						return;
+					}
+					while (treeViewer.isBusy()) {
+						// Wait for other refresh() method to finish!
+					}
+					treeViewer.setInput(items);
+					treeViewer.refresh(false);
+				}
+			});
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

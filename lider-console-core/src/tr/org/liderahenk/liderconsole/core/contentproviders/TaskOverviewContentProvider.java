@@ -13,12 +13,9 @@ public class TaskOverviewContentProvider implements ITreeContentProvider {
 
 	private List<Command> rootElements;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof List<?> && !((List<?>) inputElement).isEmpty()
-				&& ((List<?>) inputElement).get(0) instanceof Command) {
-			rootElements = (List<Command>) inputElement;
+		if (rootElements != null) {
 			return rootElements.toArray(new Command[rootElements.size()]);
 		}
 		return null;
@@ -86,13 +83,21 @@ public class TaskOverviewContentProvider implements ITreeContentProvider {
 		return children == null ? false : children.length > 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (newInput instanceof List<?> && !((List<?>) newInput).isEmpty()
+				&& ((List<?>) newInput).get(0) instanceof Command) {
+			rootElements = (List<Command>) newInput;
+		}
 	}
 
 	@Override
 	public void dispose() {
 		// Nothing to dispose
+		if (rootElements != null) {
+			rootElements.clear();
+		}
 	}
 
 }
