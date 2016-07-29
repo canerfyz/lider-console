@@ -30,6 +30,7 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.liderconsole.core.comparators.TaskOverviewComparator;
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.contentproviders.TaskOverviewContentProvider;
@@ -100,6 +101,7 @@ public class TaskOverview extends ViewPart {
 		treeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		treeViewer.setContentProvider(new TaskOverviewContentProvider());
 		treeViewer.setLabelProvider(new TaskOverviewLabelProvider());
+		treeViewer.setComparator(new TaskOverviewComparator());
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
