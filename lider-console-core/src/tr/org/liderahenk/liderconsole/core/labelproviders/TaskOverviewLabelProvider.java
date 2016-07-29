@@ -14,6 +14,11 @@ import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecutionResult;
 import tr.org.liderahenk.liderconsole.core.xmpp.enums.StatusCode;
 
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class TaskOverviewLabelProvider implements ILabelProvider {
 
 	private List<ILabelProviderListener> listeners;

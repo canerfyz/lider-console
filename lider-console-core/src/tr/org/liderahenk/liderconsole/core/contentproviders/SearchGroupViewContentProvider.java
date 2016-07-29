@@ -9,6 +9,11 @@ import org.eclipse.jface.viewers.Viewer;
 import tr.org.liderahenk.liderconsole.core.model.SearchGroup;
 import tr.org.liderahenk.liderconsole.core.model.SearchGroupEntry;
 
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class SearchGroupViewContentProvider implements ITreeContentProvider {
 
 	private List<SearchGroup> rootElements;

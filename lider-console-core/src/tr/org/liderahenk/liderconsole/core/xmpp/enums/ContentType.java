@@ -52,4 +52,8 @@ public enum ContentType {
 				IMAGE_PNG, IMAGE_JPEG, TEXT_PLAIN, TEXT_HTML });
 	}
 
+	public static List<ContentType> getImageContentTypes() {
+		return Arrays.asList(new ContentType[] { IMAGE_PNG, IMAGE_JPEG });
+	}
+
 }

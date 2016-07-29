@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +101,38 @@ public class AgentRestUtils {
 		}
 
 		return agent;
+	}
+
+	/**
+	 * Send GET request to server in order to list online users of an agent.
+	 * 
+	 * @param dn
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<String> getOnlineUsers(String dn) throws Exception {
+		if (dn == null) {
+			throw new IllegalArgumentException("DN was null.");
+		}
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/").append(dn).append("/onlineusers");
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		IResponse response = RestClient.get(URLEncoder.encode(url.toString(), "UTF-8"));
+		List<String> onlineUsers = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("onlineUsers") != null) {
+			onlineUsers = new ObjectMapper().readValue(response.getResultMap().get("onlineUsers").toString(),
+					new TypeReference<List<String>>() {
+					});
+			Notifier.success(null, Messages.getString("RECORD_LISTED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return onlineUsers;
 	}
 
 	/**

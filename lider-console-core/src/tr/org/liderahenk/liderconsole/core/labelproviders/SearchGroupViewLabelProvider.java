@@ -11,6 +11,11 @@ import org.eclipse.swt.widgets.Display;
 import tr.org.liderahenk.liderconsole.core.model.SearchGroup;
 import tr.org.liderahenk.liderconsole.core.model.SearchGroupEntry;
 
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class SearchGroupViewLabelProvider implements ILabelProvider {
 
 	private List<ILabelProviderListener> listeners;

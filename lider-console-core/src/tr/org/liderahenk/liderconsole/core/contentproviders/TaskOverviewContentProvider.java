@@ -9,6 +9,11 @@ import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecutionResult;
 
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class TaskOverviewContentProvider implements ITreeContentProvider {
 
 	private List<Command> rootElements;
