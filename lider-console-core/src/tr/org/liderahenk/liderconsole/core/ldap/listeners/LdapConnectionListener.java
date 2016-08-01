@@ -194,7 +194,7 @@ public class LdapConnectionListener implements IConnectionListener {
 					IResponse response = null;
 
 					try {
-						response = TaskRestUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG", true);
+						response = TaskRestUtils.execute("LIDER-CONFIG", "1.0.0", "GET-SYSTEM-CONFIG", false);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 						Notifier.error(null, Messages.getString("REST_SERVER_ACCESS_ERROR", restFulAddress));

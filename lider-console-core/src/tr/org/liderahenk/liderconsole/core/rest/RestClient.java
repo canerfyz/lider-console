@@ -39,17 +39,15 @@ import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 /**
  * RestClient provides utility methods for sending requests to Lider Server and
  * handling their responses. Instead of this class, it is recommended that
- * plugin developers should use {@link ProfileRestUtils}, {@link PolicyRestUtils} or
- * {@link TaskRestUtils} according to their needs.
+ * plugin developers should use {@link ProfileRestUtils},
+ * {@link PolicyRestUtils} or {@link TaskRestUtils} according to their needs.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-@SuppressWarnings("restriction")
 public class RestClient {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(RestClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(RestClient.class);
 
 	/**
 	 * Content type header
@@ -84,21 +82,13 @@ public class RestClient {
 	private static HttpClient httpClient = null;
 
 	static {
-		RequestConfig config = RequestConfig
-				.custom()
+		RequestConfig config = RequestConfig.custom()
 				.setConnectionRequestTimeout(
-						ConfigProvider
-								.getInstance()
-								.getInt(LiderConstants.CONFIG.REST_CONN_REQUEST_TIMEOUT))
-				.setConnectTimeout(
-						ConfigProvider.getInstance().getInt(
-								LiderConstants.CONFIG.REST_CONNECT_TIMEOUT))
-				.setSocketTimeout(
-						ConfigProvider.getInstance().getInt(
-								LiderConstants.CONFIG.REST_SOCKET_TIMEOUT))
+						ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.REST_CONN_REQUEST_TIMEOUT))
+				.setConnectTimeout(ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.REST_CONNECT_TIMEOUT))
+				.setSocketTimeout(ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.REST_SOCKET_TIMEOUT))
 				.build();
-		httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config)
-				.build();
+		httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
 	}
 
 	/**
@@ -117,15 +107,12 @@ public class RestClient {
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
-	public static IResponse post(final IRequest request, final String url)
-			throws Exception {
+	public static IResponse post(final IRequest request, final String url) throws Exception {
 
-		IProgressService progressService = PlatformUI.getWorkbench()
-				.getProgressService();
+		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		progressService.runInUI(progressService, new IRunnableWithProgress() {
 			@Override
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 				monitor.beginTask(Messages.getString("SENDING_REQUEST"), 100);
 				CloseableHttpResponse httpResponse = null;
@@ -137,41 +124,33 @@ public class RestClient {
 					httpPost.setHeader(ACCEPT_HEADER, ACCEPT_MIME_TYPE);
 
 					// Convert IRequest instance to JSON and pass as HttpEntity
-					StringEntity entity = new StringEntity(URLEncoder.encode(
-							request.toJson(), "UTF-8"), StandardCharsets.UTF_8);
+					StringEntity entity = new StringEntity(URLEncoder.encode(request.toJson(), "UTF-8"),
+							StandardCharsets.UTF_8);
 					entity.setContentEncoding("UTF-8");
 					entity.setContentType(CONTENT_MIME_TYPE);
 					httpPost.setEntity(entity);
 
 					httpPost.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
-					httpPost.setHeader(PASSWORD_HEADER,
-							UserSettings.USER_PASSWORD);
+					httpPost.setHeader(PASSWORD_HEADER, UserSettings.USER_PASSWORD);
 
 					monitor.worked(20);
 
-					httpResponse = (CloseableHttpResponse) httpClient
-							.execute(httpPost);
+					httpResponse = (CloseableHttpResponse) httpClient.execute(httpPost);
 					if (httpResponse.getStatusLine().getStatusCode() != 200) {
-						logger.warn(
-								"REST failure. Status code: {} Reason: {} ",
-								new Object[] {
-										httpResponse.getStatusLine()
-												.getStatusCode(),
-										httpResponse.getStatusLine()
-												.getReasonPhrase() });
+						logger.warn("REST failure. Status code: {} Reason: {} ",
+								new Object[] { httpResponse.getStatusLine().getStatusCode(),
+										httpResponse.getStatusLine().getReasonPhrase() });
 					} else { // Status OK
 
 						BufferedReader bufferredReader = new BufferedReader(
-								new InputStreamReader(httpResponse.getEntity()
-										.getContent()));
+								new InputStreamReader(httpResponse.getEntity().getContent()));
 						StringBuilder buffer = new StringBuilder();
 						String line;
 						while ((line = bufferredReader.readLine()) != null) {
 							buffer.append(line);
 						}
 
-						response = new ObjectMapper().readValue(
-								buffer.toString(), RestResponse.class);
+						response = new ObjectMapper().readValue(buffer.toString(), RestResponse.class);
 					}
 
 					if (response != null) {
@@ -207,12 +186,10 @@ public class RestClient {
 	 */
 	public static IResponse get(final String url) throws Exception {
 
-		IProgressService progressService = PlatformUI.getWorkbench()
-				.getProgressService();
+		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		progressService.runInUI(progressService, new IRunnableWithProgress() {
 			@Override
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 				monitor.beginTask(Messages.getString("SENDING_REQUEST"), 100);
 				CloseableHttpResponse httpResponse = null;
@@ -224,32 +201,24 @@ public class RestClient {
 					httpGet.setHeader(ACCEPT_HEADER, ACCEPT_MIME_TYPE);
 
 					httpGet.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
-					httpGet.setHeader(PASSWORD_HEADER,
-							UserSettings.USER_PASSWORD);
+					httpGet.setHeader(PASSWORD_HEADER, UserSettings.USER_PASSWORD);
 
-					httpResponse = (CloseableHttpResponse) httpClient
-							.execute(httpGet);
+					httpResponse = (CloseableHttpResponse) httpClient.execute(httpGet);
 					if (httpResponse.getStatusLine().getStatusCode() != 200) {
-						logger.warn(
-								"REST failure. Status code: {} Reason: {} ",
-								new Object[] {
-										httpResponse.getStatusLine()
-												.getStatusCode(),
-										httpResponse.getStatusLine()
-												.getReasonPhrase() });
+						logger.warn("REST failure. Status code: {} Reason: {} ",
+								new Object[] { httpResponse.getStatusLine().getStatusCode(),
+										httpResponse.getStatusLine().getReasonPhrase() });
 					} else {
 
 						BufferedReader bufferredReader = new BufferedReader(
-								new InputStreamReader(httpResponse.getEntity()
-										.getContent()));
+								new InputStreamReader(httpResponse.getEntity().getContent()));
 						StringBuilder buffer = new StringBuilder();
 						String line;
 						while ((line = bufferredReader.readLine()) != null) {
 							buffer.append(line);
 						}
 
-						response = new ObjectMapper().readValue(
-								buffer.toString(), RestResponse.class);
+						response = new ObjectMapper().readValue(buffer.toString(), RestResponse.class);
 					}
 
 					if (response != null) {

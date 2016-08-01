@@ -240,18 +240,6 @@
 	          tooltip="%command.agent.info">
         </command>
 		<command
-	          commandId="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
-	          id="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
-	          icon="icons/16/report.png"
-	          tooltip="%command.report.template">
-        </command>
-		<command
-	          commandId="tr.org.liderahenk.liderconsole.core.commands.ReportView"
-	          id="tr.org.liderahenk.liderconsole.core.commands.ReportView"
-	          icon="icons/16/report.png"
-	          tooltip="%command.report.view">
-        </command>
-		<command
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
 	          id="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
 	          icon="icons/16/task-done.png"
@@ -274,6 +262,26 @@
 	          id="tr.org.liderahenk.liderconsole.commands.InstalledPlugins"
 	          icon="icons/16/server.png"
 	          tooltip="%command.installed.plugins">
+        </command>
+		<menu
+               id="tr.org.liderahenk.liderconsole.menus.Reporting"
+               label="%menu.label.reporting"
+               icon="icons/16/report.png">
+		</menu>
+	  </menuContribution>
+      <menuContribution
+            locationURI="menu:tr.org.liderahenk.liderconsole.menus.Reporting?after=additions">
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
+	          id="tr.org.liderahenk.liderconsole.core.commands.ReportTemplate"
+	          icon="icons/16/report.png"
+	          tooltip="%command.report.template">
+        </command>
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.ReportView"
+	          id="tr.org.liderahenk.liderconsole.core.commands.ReportView"
+	          icon="icons/16/report.png"
+	          tooltip="%command.report.view">
         </command>
 	  </menuContribution>
       <menuContribution
