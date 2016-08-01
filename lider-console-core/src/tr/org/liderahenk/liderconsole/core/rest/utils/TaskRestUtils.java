@@ -57,7 +57,7 @@ public class TaskRestUtils {
 				Notifier.success(null, Messages.getString("TASK_EXECUTED"));
 			} else {
 				Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
-				// Throw an exception that will be used to inform Lider Console 
+				// Throw an exception that will be used to inform Lider Console
 				// users about Lider server and Rest service status.
 				throw new Exception();
 			}
@@ -232,6 +232,38 @@ public class TaskRestUtils {
 		}
 
 		return commands;
+	}
+
+	/**
+	 * Send GET request to server in order to retrieve response data containing
+	 * a file.
+	 * 
+	 * @param commandExecutionResultId
+	 * @return
+	 * @throws Exception
+	 */
+	public static byte[] getResponseData(Long commandExecutionResultId) throws Exception {
+		if (commandExecutionResultId == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/responsedata/").append(commandExecutionResultId).append("/get");
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		IResponse response = RestClient.get(url.toString());
+		byte[] responseData = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("responseData") != null) {
+			responseData = new ObjectMapper().readValue(response.getResultMap().get("responseData").toString(),
+					byte[].class);
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
+		}
+
+		return responseData;
 	}
 
 	/**

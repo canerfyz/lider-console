@@ -3,6 +3,8 @@ package tr.org.liderahenk.liderconsole.core.xmpp.enums;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+
 /**
  * Common content types used to indicate type of the stored content in the
  * database.
@@ -54,6 +56,38 @@ public enum ContentType {
 
 	public static List<ContentType> getImageContentTypes() {
 		return Arrays.asList(new ContentType[] { IMAGE_PNG, IMAGE_JPEG });
+	}
+
+	public static int getSWTConstant(ContentType type) {
+		switch (type) {
+		case IMAGE_JPEG:
+			return SWT.IMAGE_JPEG;
+		case IMAGE_PNG:
+			return SWT.IMAGE_PNG;
+		default:
+			return -1;
+		}
+	}
+
+	public static String getFileExtension(ContentType type) {
+		switch (type) {
+		case APPLICATION_PDF:
+			return "pdf";
+		case APPLICATION_VND_MS_EXCEL:
+			return "xlsx";
+		case APPLICATION_MS_WORD:
+			return "docx";
+		case IMAGE_PNG:
+			return "png";
+		case IMAGE_JPEG:
+			return "jpg";
+		case TEXT_PLAIN:
+			return "txt";
+		case TEXT_HTML:
+			return "html";
+		default:
+			return "";
+		}
 	}
 
 }
