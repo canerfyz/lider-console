@@ -61,7 +61,8 @@ public class AgentRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("agents") != null) {
-			agents = new ObjectMapper().readValue(response.getResultMap().get("agents").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			agents = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("agents")),
 					new TypeReference<List<Agent>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
@@ -94,7 +95,8 @@ public class AgentRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("agent") != null) {
-			agent = new ObjectMapper().readValue(response.getResultMap().get("agent").toString(), Agent.class);
+			ObjectMapper mapper = new ObjectMapper();
+			agent = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("agent")), Agent.class);
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
@@ -124,7 +126,8 @@ public class AgentRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("onlineUsers") != null) {
-			onlineUsers = new ObjectMapper().readValue(response.getResultMap().get("onlineUsers").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			onlineUsers = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("onlineUsers")),
 					new TypeReference<List<String>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
