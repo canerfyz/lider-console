@@ -10,6 +10,10 @@
  *******************************************************************************/
 package tr.org.liderahenk.liderconsole.core.widgets;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -54,24 +58,60 @@ public class Notifier {
 
 	private static final int STEP = 5;
 
+	public static void error(final String title, final String text, final String description) {
+		if (description.isEmpty()) {
+			error(title, text);
+		} else {
+			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
+			notify(image, title, text, description, NotifierTheme.ERROR_THEME);
+		}
+	}
+	
+	public static void warning(final String title, final String text, final String description) {
+		if (description.isEmpty()) {
+			warning(title, text);
+		} else {
+			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
+			notify(image, title, text, description, NotifierTheme.WARNING_THEME);
+		}
+	}
+
+	public static void info(final String title, final String text, final String description) {
+		if (description.isEmpty()) {
+			info(title, text);
+		} else {
+			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
+			notify(image, title, text, description, NotifierTheme.INFO_THEME);
+		}
+	}
+
+	public static void success(final String title, final String text, final String description) {
+		if (description.isEmpty()) {
+			success(title, text);
+		} else {
+			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
+			notify(image, title, text, description, NotifierTheme.SUCCESS_THEME);
+		}
+	}
+	
 	public static void error(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-		notify(image, title, text, NotifierTheme.ERROR_THEME);
+		notify(image, title, text, null, NotifierTheme.ERROR_THEME);
 	}
 
 	public static void warning(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-		notify(image, title, text, NotifierTheme.WARNING_THEME);
+		notify(image, title, text, null, NotifierTheme.WARNING_THEME);
 	}
 
 	public static void info(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-		notify(image, title, text, NotifierTheme.INFO_THEME);
+		notify(image, title, text, null, NotifierTheme.INFO_THEME);
 	}
 
 	public static void success(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-		notify(image, title, text, NotifierTheme.SUCCESS_THEME);
+		notify(image, title, text, null, NotifierTheme.SUCCESS_THEME);
 	}
 
 	/**
@@ -85,7 +125,7 @@ public class Notifier {
 	 * 
 	 */
 	public static void notify(final String title, final String text) {
-		notify(null, title, text, NotifierTheme.INFO_THEME);
+		notify(null, title, text, null, NotifierTheme.INFO_THEME);
 	}
 
 	/**
@@ -102,7 +142,7 @@ public class Notifier {
 	 * 
 	 */
 	public static void notify(final Image image, final String title, final String text) {
-		notify(image, title, text, NotifierTheme.INFO_THEME);
+		notify(image, title, text, null, NotifierTheme.INFO_THEME);
 
 	}
 
@@ -121,7 +161,7 @@ public class Notifier {
 	 * @see NotifierTheme
 	 */
 	public static void notify(final String title, final String text, final NotifierTheme theme) {
-		notify(null, title, text, theme);
+		notify(null, title, text, null, theme);
 	}
 
 	/**
@@ -141,11 +181,11 @@ public class Notifier {
 	 * 
 	 * @see NotifierTheme
 	 */
-	public static void notify(final Image image, final String title, final String text, final NotifierTheme theme) {
+	public static void notify(final Image image, final String title, final String text, final String description, final NotifierTheme theme) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				writeToSysLog(title, text, theme);
+				writeToSysLog(title, text, description, theme);
 
 				final Shell shell = createNotificationWindow(image, title, text,
 						NotifierColorsFactory.getColorsForTheme(theme));
@@ -155,7 +195,7 @@ public class Notifier {
 		});
 	}
 
-	private static void writeToSysLog(String title, String text, NotifierTheme theme) {
+	private static void writeToSysLog(String title, String text, String description, NotifierTheme theme) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		SystemLogsView logView = (SystemLogsView) page.findView(LiderConstants.VIEWS.SYSTEM_LOGS_VIEW);
@@ -189,9 +229,16 @@ public class Notifier {
 
 		int currentSize = textArea.getCharCount();
 
-		String logMessage = logType + " | " + (title != null ? title + " - " : "") + text + "\n";
+		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+		Date date = new Date();
+		
+		String logMessage = dateFormat.format(date) + "  |  [" +logType + "]  |  " + (title != null ? title + " - " : "") + text + "\n";
+		
+		if (description != null && !description.isEmpty()) {
+			logMessage += "\t" + description + "\n";
+		}
 		textArea.append(logMessage);
-
+		
 		int modifiedSize = textArea.getCharCount();
 
 		StyleRange style = new StyleRange();
