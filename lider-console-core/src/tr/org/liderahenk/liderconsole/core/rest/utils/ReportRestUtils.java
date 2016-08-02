@@ -31,6 +31,36 @@ public class ReportRestUtils {
 	private static final Logger logger = LoggerFactory.getLogger(ReportRestUtils.class);
 
 	/**
+	 * Send POST request to server in order to export report as PDF
+	 * 
+	 * @param report
+	 * @return
+	 */
+	public static byte[] exportPdf(ReportGenerationRequest report) throws Exception {
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/export/pdf");
+		logger.debug("Sending request: {} to URL: {}", new Object[] { report, url.toString() });
+
+		// Send POST request to server
+		IResponse response = RestClient.post(report, url.toString());
+		byte[] pdf = null;
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK
+				&& response.getResultMap().get("report") != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			pdf = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("report")),
+					new TypeReference<byte[]>() {
+					});
+			Notifier.success(null, Messages.getString("REPORT_GENERATED"));
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+		}
+
+		return pdf;
+	}
+
+	/**
 	 * Send POST request to server in order to generate report
 	 * 
 	 * @param report

@@ -1,7 +1,9 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
+import java.io.FileOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +20,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -28,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.model.ReportExportType;
 import tr.org.liderahenk.liderconsole.core.model.ReportView;
 import tr.org.liderahenk.liderconsole.core.model.ReportViewColumn;
 import tr.org.liderahenk.liderconsole.core.model.ReportViewParameter;
@@ -43,6 +48,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 	// Model
 	private ReportView selectedView;
 	// Widgets
+	private Combo cmbExportType;
 	private Composite paramContainer;
 	private Composite tableContainer;
 	private Button btnGenerateReport;
@@ -64,18 +70,35 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parent.setLayout(new GridLayout(1, false));
 
-		// Report parameters label
-		Label lblParam = new Label(parent, SWT.NONE);
-		lblParam.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
-		lblParam.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblParam.setText(Messages.getString("REPORT_PARAMETERS"));
+		Composite innerComposite = new Composite(parent, SWT.NONE);
+		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		innerComposite.setLayout(new GridLayout(2, false));
 
-		paramContainer = new Composite(parent, SWT.BORDER);
-		paramContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		paramContainer.setLayout(new GridLayout(2, false));
+		Label lblExportType = new Label(innerComposite, SWT.NONE);
+		lblExportType.setText(Messages.getString("EXPORT_TYPE"));
+
+		cmbExportType = new Combo(innerComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		cmbExportType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		ReportExportType[] types = ReportExportType.values();
+		for (int i = 0; i < types.length; i++) {
+			ReportExportType type = types[i];
+			cmbExportType.add(type.getMessage());
+			cmbExportType.setData(i + "", type);
+		}
+		cmbExportType.select(0);
 
 		Set<ReportViewParameter> params = selectedView.getViewParams();
-		if (params != null) {
+		if (params != null && !params.isEmpty()) {
+
+			// Report parameters label
+			Label lblParam = new Label(parent, SWT.NONE);
+			lblParam.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
+			lblParam.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+			lblParam.setText(Messages.getString("REPORT_PARAMETERS"));
+
+			paramContainer = new Composite(parent, SWT.BORDER);
+			paramContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			paramContainer.setLayout(new GridLayout(2, false));
 			for (ReportViewParameter param : params) {
 				// Param label
 				Label lbl = new Label(paramContainer, SWT.NONE);
@@ -122,6 +145,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		} else {
 			lblResult.setVisible(false);
 			disposePrev(tableContainer);
+			Notifier.warning(null, Messages.getString("EMPTY_REPORT"));
 		}
 	}
 
@@ -158,17 +182,17 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 					@Override
 					public String getText(Object element) {
 						if (element instanceof Object[]) {
-							Object[] convertToObjectArray = convertToObjectArray(element);
-							return convertToObjectArray[c.getReferencedCol().getColumnOrder() - 1] == null
-									? Messages.getString("UNTITLED")
-									: convertToObjectArray[c.getReferencedCol().getColumnOrder() - 1].toString();
+							Object[] fields = convertToObjectArray(element);
+							int index = c.getReferencedCol().getColumnOrder() - 1;
+							return (index >= fields.length || fields[index] == null) ? Messages.getString("UNTITLED")
+									: fields[index].toString();
 						}
 						return Messages.getString("UNTITLED");
 					}
 				});
 			}
 		} else {
-			// No column defined in the template, we should display all the
+			// No column defined in the view, we should display all the
 			// fields!
 			for (int i = 0; i < list.get(0).length; i++) {
 				TableViewerColumn column = SWTResourceManager.createTableViewerColumn(tableViewer, "",
@@ -222,15 +246,17 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 				if (!validateInputs()) {
 					return;
 				}
+
 				// Collect parameter values
 				Map<String, Object> paramValues = new HashMap<String, Object>();
-
-				Control[] children = paramContainer.getChildren();
-				for (Control control : children) {
-					if (control instanceof Text) {
-						Text t = (Text) control;
-						String key = t.getData().toString();
-						paramValues.put(key, t.getText());
+				if (paramContainer != null && paramContainer.getChildren() != null) {
+					Control[] children = paramContainer.getChildren();
+					for (Control control : children) {
+						if (control instanceof Text) {
+							Text t = (Text) control;
+							String key = t.getData().toString();
+							paramValues.put(key, t.getText());
+						}
 					}
 				}
 
@@ -240,8 +266,32 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 				report.setParamValues(paramValues);
 
 				try {
-					List<Object[]> list = ReportRestUtils.generateView(report);
-					generateTable(list);
+					ReportExportType type = (ReportExportType) getSelectedValue(cmbExportType);
+					if (type == ReportExportType.DISPLAY_TABLE) {
+						List<Object[]> list = ReportRestUtils.generateView(report);
+						generateTable(list);
+					} else if (type == ReportExportType.PDF_FILE) {
+						byte[] pdf = ReportRestUtils.exportPdf(report);
+						if (pdf == null) {
+							Notifier.warning(null, Messages.getString("EMPTY_REPORT"));
+							return;
+						}
+						final DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+						dialog.setMessage(Messages.getString("SELECT_DOWNLOAD_DIR"));
+						String path = dialog.open();
+						if (path == null || path.isEmpty()) {
+							return;
+						}
+						if (!path.endsWith("/")) {
+							path += "/";
+						}
+						// Save report
+						FileOutputStream fos = new FileOutputStream(
+								path + selectedView.getName() + (new Date().getTime()) + ".pdf");
+						fos.write(pdf);
+						fos.close();
+						Notifier.success(null, Messages.getString("REPORT_SAVED"));
+					}
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
 					Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
@@ -258,6 +308,15 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 	@Override
 	protected Point getInitialSize() {
 		return new Point(800, 600);
+	}
+
+	private Object getSelectedValue(Combo combo) {
+		int selectionIndex = combo.getSelectionIndex();
+		if (selectionIndex > -1 && combo.getItem(selectionIndex) != null
+				&& combo.getData(selectionIndex + "") != null) {
+			return combo.getData(selectionIndex + "");
+		}
+		return null;
 	}
 
 }
