@@ -229,7 +229,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 	/**
 	 * Handles validation result of task data.
 	 */
-	private boolean validateTaskData() {
+	protected boolean validateTaskData() {
 		try {
 			validateBeforeExecution();
 			return true;
