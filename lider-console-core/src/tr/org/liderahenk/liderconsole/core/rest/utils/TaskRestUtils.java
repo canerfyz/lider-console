@@ -56,7 +56,7 @@ public class TaskRestUtils {
 			if (response != null && response.getStatus() == RestResponseStatus.OK) {
 				Notifier.success(null, Messages.getString("TASK_EXECUTED"));
 			} else {
-				Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+				Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"), Messages.getString("CHECK_BUNDLE"));
 				// Throw an exception that will be used to inform Lider Console
 				// users about Lider server and Rest service status.
 				throw new Exception();
