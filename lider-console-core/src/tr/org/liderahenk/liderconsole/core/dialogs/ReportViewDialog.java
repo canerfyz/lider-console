@@ -489,6 +489,20 @@ public class ReportViewDialog extends DefaultLiderDialog {
 	}
 
 	private void createTableColumnsForCols() {
+
+		TableViewerColumn nameColumn = SWTResourceManager.createTableViewerColumn(tvCol,
+				Messages.getString("COLUMN_NAME"), 200);
+		nameColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ReportViewColumn) {
+					ReportTemplateColumn referencedCol = ((ReportViewColumn) element).getReferencedCol();
+					return referencedCol.getColumnOrder() + " - " + referencedCol.getName();
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
 		TableViewerColumn typeColumn = SWTResourceManager.createTableViewerColumn(tvCol,
 				Messages.getString("COLUMN_TYPE"), 200);
 		typeColumn.setLabelProvider(new ColumnLabelProvider() {
