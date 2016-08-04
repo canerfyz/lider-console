@@ -72,7 +72,7 @@ public class ReportViewColumnDialog extends DefaultLiderTitleAreaDialog {
 			for (int i = 0; i < columns.size(); i++) {
 				ReportTemplateColumn col = columns.get(i);
 				cmbReferencedColumn.add(col.getColumnOrder() + " - " + col.getName());
-				cmbReferencedColumn.setData(i + "", col.getId());
+				cmbReferencedColumn.setData(i + "", col);
 				if (!selected && column != null && column.getReferencedColumnId().equals(col.getId())) {
 					cmbReferencedColumn.select(i);
 					selected = true;
@@ -151,7 +151,7 @@ public class ReportViewColumnDialog extends DefaultLiderTitleAreaDialog {
 		column.setLegend(txtLegend.getText());
 		column.setTimestamp(new Date());
 		column.setWidth(spnWidth.getSelection());
-		column.setReferencedColumnId((Long) getSelectedValue(cmbReferencedColumn));
+		column.setReferencedCol((ReportTemplateColumn) getSelectedValue(cmbReferencedColumn));
 		column.setType((ViewColumnType) getSelectedValue(cmbType));
 
 		// Get previous parameters...

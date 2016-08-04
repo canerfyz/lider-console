@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -16,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.model.ParameterType;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplateParameter;
 import tr.org.liderahenk.liderconsole.core.model.ReportViewParameter;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -70,7 +73,7 @@ public class ReportViewParamDialog extends DefaultLiderTitleAreaDialog {
 			for (int i = 0; i < params.size(); i++) {
 				ReportTemplateParameter param = params.get(i);
 				cmbReferencedParam.add(param.getKey() + " - " + param.getLabel());
-				cmbReferencedParam.setData(i + "", param.getId());
+				cmbReferencedParam.setData(i + "", param);
 				if (!selected && parameter != null && parameter.getReferencedParameterId().equals(param.getId())) {
 					cmbReferencedParam.select(i);
 					selected = true;
@@ -80,6 +83,16 @@ public class ReportViewParamDialog extends DefaultLiderTitleAreaDialog {
 				cmbReferencedParam.select(0);
 			}
 		}
+		cmbReferencedParam.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleSelection();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 
 		// Label
 		Label lblLabel = new Label(composite, SWT.NONE);
@@ -101,7 +114,21 @@ public class ReportViewParamDialog extends DefaultLiderTitleAreaDialog {
 			txtValue.setText(parameter.getValue());
 		}
 
+		handleSelection();
 		return composite;
+	}
+
+	protected void handleSelection() {
+		ReportTemplateParameter param = (ReportTemplateParameter) getSelectedValue(cmbReferencedParam);
+		if (param != null) {
+			txtLabel.setText(param.getLabel());
+			if (param.getDefaultValue() != null) {
+				txtValue.setText(param.getDefaultValue());
+			}
+			if (param.getType() == ParameterType.DATE) {
+				txtValue.setToolTipText("yyyy-MM-dd HH:mm:ss");
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -124,7 +151,7 @@ public class ReportViewParamDialog extends DefaultLiderTitleAreaDialog {
 		parameter.setLabel(txtLabel.getText());
 		parameter.setTimestamp(new Date());
 		parameter.setValue(txtValue.getText());
-		parameter.setReferencedParameterId((Long) getSelectedValue(cmbReferencedParam));
+		parameter.setReferencedParameterId(((ReportTemplateParameter) getSelectedValue(cmbReferencedParam)).getId());
 
 		// Get previous parameters...
 		List<ReportViewParameter> params = (List<ReportViewParameter>) tableViewer.getInput();

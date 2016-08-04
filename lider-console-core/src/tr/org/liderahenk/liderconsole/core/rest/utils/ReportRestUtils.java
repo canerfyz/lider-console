@@ -111,7 +111,16 @@ public class ReportRestUtils {
 			return true;
 		}
 
-		Notifier.error(null, Messages.getString("ERROR_ON_VALIDATION"));
+		List<String> messages = response.getMessages();
+		if (messages != null) {
+			StringBuilder error = new StringBuilder();
+			for (String message : messages) {
+				error.append(message).append("\n");
+			}
+			Notifier.error(null, Messages.getString("ERROR_ON_VALIDATION"), error.toString());
+		} else {
+			Notifier.error(null, Messages.getString("ERROR_ON_VALIDATION"));
+		}
 		return false;
 	}
 
@@ -423,7 +432,7 @@ public class ReportRestUtils {
 		IResponse response = RestClient.get(url.toString());
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK) {
-			Notifier.error(null, Messages.getString("RECORD_DELETED"));
+			Notifier.success(null, Messages.getString("RECORD_DELETED"));
 			return true;
 		}
 

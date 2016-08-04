@@ -2,7 +2,7 @@ package tr.org.liderahenk.liderconsole.core.dialogs;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,12 +60,12 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 
 	public DefaultTaskDialog(Shell parentShell, Set<String> dnSet) {
 		super(parentShell);
-		this.dnSet = dnSet;
+		this.dnSet = new LinkedHashSet<String>(dnSet);
 	}
 
 	public DefaultTaskDialog(Shell parentShell, String dn) {
 		super(parentShell);
-		this.dnSet = new HashSet<String>();
+		this.dnSet = new LinkedHashSet<String>();
 		dnSet.add(dn);
 	}
 
