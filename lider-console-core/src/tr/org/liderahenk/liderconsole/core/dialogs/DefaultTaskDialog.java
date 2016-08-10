@@ -60,7 +60,9 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 
 	public DefaultTaskDialog(Shell parentShell, Set<String> dnSet) {
 		super(parentShell);
-		this.dnSet = new LinkedHashSet<String>(dnSet);
+		this.dnSet = new LinkedHashSet<String>();
+		if (dnSet != null)
+			this.dnSet.addAll(dnSet);
 	}
 
 	public DefaultTaskDialog(Shell parentShell, String dn) {

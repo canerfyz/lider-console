@@ -4,6 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -49,6 +51,12 @@ public class SystemLogsView extends ViewPart {
 		textArea = new StyledText(parent, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
 		textArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 		textArea.setEditable(false);
+		textArea.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				textArea.setSelection(textArea.getCharCount() - 1);
+			}
+		});
 
 		// Add a menu which pops up when right clicked.
 		final Menu rightClickMenu = new Menu(textArea);
