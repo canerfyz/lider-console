@@ -1034,6 +1034,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="0" />
+      <property name="eclipse.log.level" value="ERROR" />
    </configurations>
 
    <preferencesInfo>
