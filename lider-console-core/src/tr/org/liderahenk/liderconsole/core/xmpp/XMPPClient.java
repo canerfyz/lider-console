@@ -90,6 +90,7 @@ public class XMPPClient {
 	private TaskStatusNotificationListener taskStatusNotificationListener;
 
 	private XMPPTCPConnection connection;
+	private Roster roster;
 	private XMPPTCPConnectionConfiguration config;
 
 	public static synchronized XMPPClient getInstance() {
@@ -244,7 +245,7 @@ public class XMPPClient {
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
 		// Hook roster listener
 		rosterListener = new RosterListenerImpl();
-		Roster roster = Roster.getInstanceFor(connection);
+		roster = Roster.getInstanceFor(connection);
 		roster.setSubscriptionMode(SubscriptionMode.accept_all);
 		// Wait for roster!
 		if (!roster.isLoaded())
@@ -268,7 +269,6 @@ public class XMPPClient {
 			@Override
 			public void run() {
 				List<String> onlineUsers = new ArrayList<String>();
-				Roster roster = Roster.getInstanceFor(connection);
 				Collection<RosterEntry> entries = roster.getEntries();
 				Map<String, String> uidMap = LdapUtils.getInstance().getUidMap(LdapConnectionListener.getConnection(),
 						LdapConnectionListener.getMonitor());
