@@ -49,6 +49,10 @@ import tr.org.liderahenk.liderconsole.core.widgets.NotifierColorsFactory.Notifie
  */
 public class Notifier {
 
+	public enum NotifierMode {
+		SYSLOG_AND_POPUP, ONLY_POPUP, ONLY_SYSLOG
+	};
+
 	private static final int FONT_SIZE = 10;
 	private static final int MAX_DURATION_FOR_OPENING = 500;
 	private static final int DISPLAY_TIME = 4500;
@@ -62,17 +66,19 @@ public class Notifier {
 		if (description.isEmpty()) {
 			error(title, text);
 		} else {
-			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-			notify(image, title, text, description, NotifierTheme.ERROR_THEME);
+			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
+					"icons/32/warning.png");
+			notify(image, title, text, description, NotifierTheme.ERROR_THEME, NotifierMode.SYSLOG_AND_POPUP);
 		}
 	}
-	
+
 	public static void warning(final String title, final String text, final String description) {
 		if (description.isEmpty()) {
 			warning(title, text);
 		} else {
-			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-			notify(image, title, text, description, NotifierTheme.WARNING_THEME);
+			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
+					"icons/32/warning.png");
+			notify(image, title, text, description, NotifierTheme.WARNING_THEME, NotifierMode.SYSLOG_AND_POPUP);
 		}
 	}
 
@@ -80,8 +86,9 @@ public class Notifier {
 		if (description.isEmpty()) {
 			info(title, text);
 		} else {
-			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-			notify(image, title, text, description, NotifierTheme.INFO_THEME);
+			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
+					"icons/32/warning.png");
+			notify(image, title, text, description, NotifierTheme.INFO_THEME, NotifierMode.SYSLOG_AND_POPUP);
 		}
 	}
 
@@ -89,29 +96,30 @@ public class Notifier {
 		if (description.isEmpty()) {
 			success(title, text);
 		} else {
-			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-			notify(image, title, text, description, NotifierTheme.SUCCESS_THEME);
+			Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
+					"icons/32/warning.png");
+			notify(image, title, text, description, NotifierTheme.SUCCESS_THEME, NotifierMode.SYSLOG_AND_POPUP);
 		}
 	}
-	
+
 	public static void error(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-		notify(image, title, text, null, NotifierTheme.ERROR_THEME);
+		notify(image, title, text, null, NotifierTheme.ERROR_THEME, NotifierMode.SYSLOG_AND_POPUP);
 	}
 
 	public static void warning(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-		notify(image, title, text, null, NotifierTheme.WARNING_THEME);
+		notify(image, title, text, null, NotifierTheme.WARNING_THEME, NotifierMode.SYSLOG_AND_POPUP);
 	}
 
 	public static void info(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-		notify(image, title, text, null, NotifierTheme.INFO_THEME);
+		notify(image, title, text, null, NotifierTheme.INFO_THEME, NotifierMode.SYSLOG_AND_POPUP);
 	}
 
 	public static void success(final String title, final String text) {
 		Image image = SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/32/warning.png");
-		notify(image, title, text, null, NotifierTheme.SUCCESS_THEME);
+		notify(image, title, text, null, NotifierTheme.SUCCESS_THEME, NotifierMode.SYSLOG_AND_POPUP);
 	}
 
 	/**
@@ -125,7 +133,7 @@ public class Notifier {
 	 * 
 	 */
 	public static void notify(final String title, final String text) {
-		notify(null, title, text, null, NotifierTheme.INFO_THEME);
+		notify(null, title, text, null, NotifierTheme.INFO_THEME, NotifierMode.SYSLOG_AND_POPUP);
 	}
 
 	/**
@@ -142,8 +150,7 @@ public class Notifier {
 	 * 
 	 */
 	public static void notify(final Image image, final String title, final String text) {
-		notify(image, title, text, null, NotifierTheme.INFO_THEME);
-
+		notify(image, title, text, null, NotifierTheme.INFO_THEME, NotifierMode.SYSLOG_AND_POPUP);
 	}
 
 	/**
@@ -161,7 +168,7 @@ public class Notifier {
 	 * @see NotifierTheme
 	 */
 	public static void notify(final String title, final String text, final NotifierTheme theme) {
-		notify(null, title, text, null, theme);
+		notify(null, title, text, null, theme, NotifierMode.SYSLOG_AND_POPUP);
 	}
 
 	/**
@@ -181,20 +188,31 @@ public class Notifier {
 	 * 
 	 * @see NotifierTheme
 	 */
-	public static void notify(final Image image, final String title, final String text, final String description, final NotifierTheme theme) {
+	public static void notify(final Image image, final String title, final String text, final String description,
+			final NotifierTheme theme, final NotifierMode mode) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				writeToSysLog(title, text, description, theme);
-
-				final Shell shell = createNotificationWindow(image, title, text,
-						NotifierColorsFactory.getColorsForTheme(theme));
-				makeShellAppears(shell);
+				if (mode == NotifierMode.SYSLOG_AND_POPUP || mode == NotifierMode.ONLY_SYSLOG) {
+					writeToSysLog(title, text, description, theme);
+				}
+				if (mode == NotifierMode.SYSLOG_AND_POPUP || mode == NotifierMode.ONLY_POPUP) {
+					final Shell shell = createNotificationWindow(image, title, text,
+							NotifierColorsFactory.getColorsForTheme(theme));
+					makeShellAppears(shell);
+				}
 			}
 
 		});
 	}
 
+	/**
+	 * 
+	 * @param title
+	 * @param text
+	 * @param description
+	 * @param theme
+	 */
 	private static void writeToSysLog(String title, String text, String description, NotifierTheme theme) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
@@ -231,14 +249,15 @@ public class Notifier {
 
 		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 		Date date = new Date();
-		
-		String logMessage = dateFormat.format(date) + "  |  [" +logType + "]  |  " + (title != null ? title + " - " : "") + text + "\n";
-		
+
+		String logMessage = dateFormat.format(date) + "  |  [" + logType + "]  |  "
+				+ (title != null ? title + " - " : "") + text + "\n";
+
 		if (description != null && !description.isEmpty()) {
 			logMessage += "\t" + description + "\n";
 		}
 		textArea.append(logMessage);
-		
+
 		int modifiedSize = textArea.getCharCount();
 
 		StyleRange style = new StyleRange();

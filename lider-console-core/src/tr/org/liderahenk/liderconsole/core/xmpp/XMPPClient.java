@@ -14,12 +14,15 @@ import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.ReconnectionManager.ReconnectionPolicy;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.SmackException.NotLoggedInException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.Roster.SubscriptionMode;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -33,8 +36,12 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier.NotifierMode;
+import tr.org.liderahenk.liderconsole.core.widgets.NotifierColorsFactory.NotifierTheme;
 import tr.org.liderahenk.liderconsole.core.xmpp.listeners.TaskNotificationListener;
 import tr.org.liderahenk.liderconsole.core.xmpp.listeners.TaskStatusNotificationListener;
 
@@ -223,8 +230,12 @@ public class XMPPClient {
 
 	/**
 	 * Hook packet and connection listeners
+	 * 
+	 * @throws NotConnectedException
+	 * @throws NotLoggedInException
+	 * @throws InterruptedException
 	 */
-	private void addListeners() {
+	private void addListeners() throws NotLoggedInException, NotConnectedException, InterruptedException {
 		// Hook connection listener
 		connectionListener = new XMPPConnectionListener();
 		connection.addConnectionListener(connectionListener);
@@ -233,7 +244,12 @@ public class XMPPClient {
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
 		// Hook roster listener
 		rosterListener = new RosterListenerImpl();
-		Roster.getInstanceFor(connection).addRosterListener(rosterListener);
+		Roster roster = Roster.getInstanceFor(connection);
+		roster.setSubscriptionMode(SubscriptionMode.accept_all);
+		// Wait for roster!
+		if (!roster.isLoaded())
+			roster.reloadAndWait();
+		roster.addRosterListener(rosterListener);
 		// Hook task notification listener
 		taskNotificationListener = new TaskNotificationListener();
 		connection.addAsyncStanzaListener(taskNotificationListener, taskNotificationListener);
@@ -419,7 +435,6 @@ public class XMPPClient {
 
 		@Override
 		public void presenceChanged(Presence presence) {
-
 			String jid = presence.getFrom().substring(0, presence.getFrom().indexOf('@'));
 			Map<String, String> uidMap = LdapUtils.getInstance().getUidMap(LdapConnectionListener.getConnection(),
 					LdapConnectionListener.getMonitor());
@@ -428,8 +443,12 @@ public class XMPPClient {
 							LdapConnectionListener.getMonitor());
 			if (dn != null && !dn.isEmpty()) {
 				if (presence.getType() == Type.available) {
+					Notifier.notify(null, null, Messages.getString("ROSTER_ONLINE", dn), null, NotifierTheme.INFO_THEME,
+							NotifierMode.ONLY_SYSLOG);
 					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
 				} else if (presence.getType() == Type.unavailable) {
+					Notifier.notify(null, null, Messages.getString("ROSTER_OFFLINE", dn), null,
+							NotifierTheme.INFO_THEME, NotifierMode.ONLY_SYSLOG);
 					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
 				}
 			}

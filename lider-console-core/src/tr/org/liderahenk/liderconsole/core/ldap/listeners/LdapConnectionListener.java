@@ -15,6 +15,7 @@ import org.apache.directory.studio.connection.core.jobs.CloseConnectionsRunnable
 import org.apache.directory.studio.connection.core.jobs.StudioConnectionJob;
 import org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
@@ -60,11 +61,25 @@ public class LdapConnectionListener implements IConnectionListener {
 		if (windows != null && windows.length > 0) {
 
 			IWorkbenchWindow window = windows[0];
-
+			
 			// This code block is used to paint initially 'offline' icons on
 			// LDAP user and agent entries.
 			BrowserView browserView = (BrowserView) window.getActivePage().findView(LiderConstants.VIEWS.BROWSER_VIEW);
 			if (browserView != null) {
+
+				IContributionItem[] cmItems = browserView.getMainWidget().getContextMenuManager().getItems();
+				if (cmItems != null) {
+					for (IContributionItem item : cmItems) {
+						System.out.println("Context menu: " + item);
+					}
+				}
+
+				IContributionItem[] tmItems = browserView.getMainWidget().getToolBarManager().getItems();
+				if (tmItems != null) {
+					for (IContributionItem item : tmItems) {
+						System.out.println("Toolbar manager: " + item);
+					}
+				}
 
 				final Tree tree = browserView.getMainWidget().getViewer().getTree();
 				final TreePaintListener paintListener = new TreePaintListener(tree);
@@ -214,7 +229,8 @@ public class LdapConnectionListener implements IConnectionListener {
 								Notifier.success(null, Messages.getString("LIDER_CONNECTION_OPENED"));
 							} catch (Exception e) {
 								logger.error(e.getMessage(), e);
-								Notifier.error(null, Messages.getString("XMPP_CONNECTION_ERROR") + "\n" + Messages.getString("CHECK_XMPP_SERVER"));
+								Notifier.error(null, Messages.getString("XMPP_CONNECTION_ERROR") + "\n"
+										+ Messages.getString("CHECK_XMPP_SERVER"));
 								return;
 							}
 						} else {

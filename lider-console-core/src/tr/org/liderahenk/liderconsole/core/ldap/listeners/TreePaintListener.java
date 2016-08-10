@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.event.EventHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
@@ -34,6 +36,8 @@ import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
  *
  */
 public class TreePaintListener implements Listener {
+
+	private static final Logger logger = LoggerFactory.getLogger(TreePaintListener.class);
 
 	private Boolean globalState = false;
 	private final Image offlineImage;
@@ -64,8 +68,7 @@ public class TreePaintListener implements Listener {
 					try {
 						tree.redraw();
 					} catch (Exception e) {
-						// On system shutdown, tree object might already be
-						// disposed!
+						logger.error(e.getMessage(), e);
 					}
 				}
 			}
@@ -78,8 +81,7 @@ public class TreePaintListener implements Listener {
 					try {
 						tree.redraw();
 					} catch (Exception e) {
-						// On system shutdown, tree object might already be
-						// disposed!
+						logger.error(e.getMessage(), e);
 					}
 				}
 			}
@@ -99,8 +101,7 @@ public class TreePaintListener implements Listener {
 				try {
 					tree.redraw();
 				} catch (Exception e) {
-					// On system shutdown, tree object might already be
-					// disposed!
+					logger.error(e.getMessage(), e);
 				}
 			}
 		});
@@ -111,8 +112,7 @@ public class TreePaintListener implements Listener {
 				try {
 					tree.redraw();
 				} catch (Exception e) {
-					// On system shutdown, tree object might already be
-					// disposed!
+					logger.error(e.getMessage(), e);
 				}
 			}
 		});
