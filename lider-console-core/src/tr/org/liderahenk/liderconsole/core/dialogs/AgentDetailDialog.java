@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.model.Agent;
 import tr.org.liderahenk.liderconsole.core.model.AgentProperty;
 import tr.org.liderahenk.liderconsole.core.model.UserSession;
@@ -241,7 +243,10 @@ public class AgentDetailDialog extends DefaultLiderDialog {
 	 */
 	private Agent findAgent(String dn) {
 		try {
-			List<Agent> agents = AgentRestUtils.list(null, dn);
+			String uid = dn == null ? null
+					: LdapUtils.getInstance().findAttributeValueByDn(dn, "uid", LdapConnectionListener.getConnection(),
+							LdapConnectionListener.getMonitor());
+			List<Agent> agents = AgentRestUtils.list(null, null, uid);
 			return agents != null && agents.size() > 0 ? agents.get(0) : null;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

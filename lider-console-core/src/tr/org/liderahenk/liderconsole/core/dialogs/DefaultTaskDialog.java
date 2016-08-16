@@ -165,43 +165,44 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		// TODO activate related python library in Ahenk!
 		// Schedule task to be executed
-		btnExecuteScheduled = createButton(parent, 5001, Messages.getString("EXECUTE_SCHEDULED"), false);
-		btnExecuteScheduled.setImage(
-				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/task-wait.png"));
-		GridData gridData = new GridData();
-		gridData.widthHint = 140;
-		btnExecuteScheduled.setLayoutData(gridData);
-		btnExecuteScheduled.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// Validation of task data
-				if (validateTaskData()) {
-					SchedulerDialog dialog = new SchedulerDialog(Display.getDefault().getActiveShell());
-					dialog.create();
-					if (dialog.open() != Window.OK) {
-						return;
-					}
-					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
-							Messages.getString("TASK_EXEC_SCHEDULED_TITLE"),
-							Messages.getString("TASK_EXEC_SCHEDULED_MESSAGE"))) {
-						try {
-							TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
-									getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(),
-									dialog.getCronExpression(), new Date());
-							TaskRestUtils.execute(task);
-						} catch (Exception e1) {
-							logger.error(e1.getMessage(), e1);
-							Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
-						}
-					}
-				}
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+//		btnExecuteScheduled = createButton(parent, 5001, Messages.getString("EXECUTE_SCHEDULED"), false);
+//		btnExecuteScheduled.setImage(
+//				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/task-wait.png"));
+//		GridData gridData = new GridData();
+//		gridData.widthHint = 140;
+//		btnExecuteScheduled.setLayoutData(gridData);
+//		btnExecuteScheduled.addSelectionListener(new SelectionListener() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				// Validation of task data
+//				if (validateTaskData()) {
+//					SchedulerDialog dialog = new SchedulerDialog(Display.getDefault().getActiveShell());
+//					dialog.create();
+//					if (dialog.open() != Window.OK) {
+//						return;
+//					}
+//					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+//							Messages.getString("TASK_EXEC_SCHEDULED_TITLE"),
+//							Messages.getString("TASK_EXEC_SCHEDULED_MESSAGE"))) {
+//						try {
+//							TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
+//									getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(),
+//									dialog.getCronExpression(), new Date());
+//							TaskRestUtils.execute(task);
+//						} catch (Exception e1) {
+//							logger.error(e1.getMessage(), e1);
+//							Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+//						}
+//					}
+//				}
+//			}
+//
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {
+//			}
+//		});
 		// Close
 		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("CANCEL"), true);
 	}

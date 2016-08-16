@@ -799,4 +799,10 @@ public class LdapUtils {
 		conn.getConnectionWrapper().modifyEntry(dn, mods, null, monitor, null);
 	}
 
+	public void destroy() {
+		if (uidMap != null) {
+			uidMap.clear();
+		}
+	}
+
 }

@@ -37,7 +37,7 @@ public class AgentRestUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<Agent> list(String hostname, String dn) throws Exception {
+	public static List<Agent> list(String hostname, String dn, String uid) throws Exception {
 		// Build URL
 		StringBuilder url = getBaseUrl();
 		url.append("/list?");
@@ -49,6 +49,9 @@ public class AgentRestUtils {
 		}
 		if (dn != null) {
 			params.add("dn=" + dn);
+		}
+		if (uid != null) {
+			params.add("uid=" + uid);
 		}
 		if (!params.isEmpty()) {
 			url.append(StringUtils.join(params, "&"));
