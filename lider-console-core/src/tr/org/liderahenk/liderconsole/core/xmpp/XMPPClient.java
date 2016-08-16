@@ -156,6 +156,8 @@ public class XMPPClient {
 	 * @param serviceName
 	 */
 	private void createXmppTcpConfiguration(String serviceName, String host, int port) {
+		PingManager.setDefaultPingInterval(pingTimeout);
+		ReconnectionManager.setEnabledPerDefault(true);
 		config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
 				.setSecurityMode(SecurityMode.disabled) // TODO SSL Conf.
 				.setDebuggerEnabled(logger.isDebugEnabled()).build();
