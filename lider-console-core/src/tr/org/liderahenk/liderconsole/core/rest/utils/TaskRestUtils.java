@@ -54,9 +54,16 @@ public class TaskRestUtils {
 		IResponse response = RestClient.post(task, url.toString());
 		if (showNotification) {
 			if (response != null && response.getStatus() == RestResponseStatus.OK) {
-//				Notifier.success(null, Messages.getString("TASK_EXECUTED"));
-			} else {
-				Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"), Messages.getString("CHECK_BUNDLE"));
+				// Notifier.success(null, Messages.getString("TASK_EXECUTED"));
+			} else if (response != null && response.getStatus() == RestResponseStatus.ERROR) {
+				// Handle missing bundle (and missing ICommand service) message
+				// here:
+				if (response.getMessages() != null && !response.getMessages().isEmpty()
+						&& response.getMessages().get(0).contains("No matching command found")) {
+					Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"), Messages.getString("CHECK_BUNDLE"));
+				} else {
+					Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+				}
 				// Throw an exception that will be used to inform Lider Console
 				// users about Lider server and Rest service status.
 				throw new Exception();

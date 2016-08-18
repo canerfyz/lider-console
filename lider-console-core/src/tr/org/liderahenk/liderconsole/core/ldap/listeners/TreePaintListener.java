@@ -115,7 +115,9 @@ public class TreePaintListener implements Listener {
 				// Connection closed by user
 				if (!RestSettings.isAvailable()) {
 					globalState = false;
-					onlineInfo.clear();
+					for (Entry<String, Boolean> k : onlineInfo.entrySet()) {
+						k.setValue(false);
+					}
 				} else {
 					globalState = true;
 				}
