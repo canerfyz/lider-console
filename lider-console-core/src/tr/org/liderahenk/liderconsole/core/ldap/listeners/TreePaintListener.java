@@ -92,12 +92,6 @@ public class TreePaintListener implements Listener {
 				for (Entry<String, Boolean> k : onlineInfo.entrySet()) {
 					k.setValue(false);
 				}
-			}
-		});
-		eventBroker.subscribe("xmpp_temporaryoffline", new EventHandler() {
-			public void handleEvent(org.osgi.service.event.Event event) {
-				globalState = false;
-				onlineInfo.put(UserSettings.USER_DN, false);
 				try {
 					tree.redraw();
 				} catch (Exception e) {
@@ -116,11 +110,14 @@ public class TreePaintListener implements Listener {
 				}
 			}
 		});
-		eventBroker.subscribe("check_lider_status", new EventHandler() {
+		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.CHECK_LIDER_STATUS, new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
+				// Connection closed by user
 				if (!RestSettings.isAvailable()) {
 					globalState = false;
 					onlineInfo.clear();
+				} else {
+					globalState = true;
 				}
 			}
 		});
