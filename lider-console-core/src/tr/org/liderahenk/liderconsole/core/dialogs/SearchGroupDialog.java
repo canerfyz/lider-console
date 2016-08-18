@@ -95,6 +95,7 @@ public class SearchGroupDialog extends DefaultLiderDialog {
 			SearchGroup searhGroup = SearchGroupRestUtils.add(sg);
 			// Fire an event to refresh search group view
 			eventBroker.post(LiderConstants.EVENT_TOPICS.SEARCH_GROUP_CREATED, searhGroup);
+			this.close();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
