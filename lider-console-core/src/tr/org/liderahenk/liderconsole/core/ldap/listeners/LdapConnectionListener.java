@@ -82,6 +82,7 @@ public class LdapConnectionListener implements IConnectionListener {
 
 	@Override
 	public void connectionClosed(Connection conn, StudioProgressMonitor mon) {
+		LdapUtils.getInstance().destroy();
 		closeAllEditors();
 
 		XMPPClient.getInstance().disconnect();

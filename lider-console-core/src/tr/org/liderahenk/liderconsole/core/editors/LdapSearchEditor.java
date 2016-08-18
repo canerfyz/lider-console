@@ -758,7 +758,7 @@ public class LdapSearchEditor extends EditorPart {
 	private void queryAgents() {
 		try {
 			if (agents == null) {
-				agents = AgentRestUtils.list(null, null);
+				agents = AgentRestUtils.list(null, null, null);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

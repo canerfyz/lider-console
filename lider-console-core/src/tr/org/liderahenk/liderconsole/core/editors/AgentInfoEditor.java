@@ -340,7 +340,7 @@ public class AgentInfoEditor extends EditorPart {
 	 */
 	private void populateTable() {
 		try {
-			List<Agent> agents = AgentRestUtils.list(null, null);
+			List<Agent> agents = AgentRestUtils.list(null, null, null);
 			tableViewer.setInput(agents != null ? agents : new ArrayList<Agent>());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
