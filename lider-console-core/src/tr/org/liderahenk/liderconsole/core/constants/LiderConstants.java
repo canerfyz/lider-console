@@ -110,6 +110,7 @@ public class LiderConstants {
 		public static final String USER_LDAP_PRIVILEGE_ATTR = "user.ldap.privilege.attribute";
 		public static final String AGENT_LDAP_OBJ_CLS = "agent.ldap.object.classes";
 		public static final String GROUP_LDAP_OBJ_CLS = "group.ldap.object.classes";
+		public static final String OU_LDAP_OBJ_CLS = "ou.ldap.object.classes";
 		public static final String LDAP_REST_ADDRESS_ATTR = "ldap.rest.address.attribute";
 		public static final String CONFIG_LDAP_DN_PREFIX = "config.ldap.dn.prefix";
 		public static final String SEARCH_GROUPS_MAX_SIZE = "search.groups.max.size";
@@ -159,6 +160,18 @@ public class LiderConstants {
 		 * OR all of the entries belong to users.
 		 */
 		public final static String USER_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isLdapUserSelected";
+		/**
+		 * Returns true if selected entry belongs to a group ('groupOfNames'),
+		 * false otherwise. NOTE: These expression is only meaningful, if single
+		 * entry selected OR all of the entries belong to groups.
+		 */
+		public final static String GROUP_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isLdapGroupSelected";
+		/**
+		 * Returns true if selected entry belongs to an organizational unit,
+		 * false otherwise. NOTE: These expression is only meaningful, if single
+		 * entry selected OR all of the entries belong to organizational units.
+		 */
+		public final static String OU_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isLdapOUSelected";
 
 		/**
 		 * Convenience method for expression array.
@@ -167,7 +180,8 @@ public class LiderConstants {
 		 */
 		public static String[] getExpressions() {
 			return new String[] { LIDER_AVAILABLE_STATE, SINGLE_ENTRY_SELECTED, MULTIPLE_ENTRIES_SELECTED,
-					SEARCH_SELECTED, AGENT_SELECTED, USER_SELECTED, PRIVILEGES_FOR_SELECTED_ITEM };
+					SEARCH_SELECTED, AGENT_SELECTED, USER_SELECTED, GROUP_SELECTED, OU_SELECTED,
+					PRIVILEGES_FOR_SELECTED_ITEM };
 		}
 	}
 

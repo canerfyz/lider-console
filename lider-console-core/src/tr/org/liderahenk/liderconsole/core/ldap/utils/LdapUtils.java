@@ -472,10 +472,10 @@ public class LdapUtils {
 		ArrayList<String> temp = new ArrayList<String>(
 				ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS));
 		for (Iterator<String> iterator = temp.iterator(); iterator.hasNext();) {
-			String agentObjCls = iterator.next();
+			String userObjCls = iterator.next();
 			for (ObjectClass c : classes) {
 				String cName = c.getName();
-				if (cName.equals(agentObjCls)) {
+				if (cName.equals(userObjCls)) {
 					iterator.remove();
 					break;
 				}
@@ -487,6 +487,40 @@ public class LdapUtils {
 	public boolean isUser(Attribute objectClass) {
 		return LdapUtils.getInstance().attributeHasValue(objectClass,
 				ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.USER_LDAP_OBJ_CLS));
+	}
+
+	public boolean isGroup(Collection<ObjectClass> classes) {
+		// Remove common elements from the list
+		ArrayList<String> temp = new ArrayList<String>(
+				ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.GROUP_LDAP_OBJ_CLS));
+		for (Iterator<String> iterator = temp.iterator(); iterator.hasNext();) {
+			String groupObjCls = iterator.next();
+			for (ObjectClass c : classes) {
+				String cName = c.getName();
+				if (cName.equals(groupObjCls)) {
+					iterator.remove();
+					break;
+				}
+			}
+		}
+		return temp.isEmpty();
+	}
+
+	public boolean isOu(Collection<ObjectClass> classes) {
+		// Remove common elements from the list
+		ArrayList<String> temp = new ArrayList<String>(
+				ConfigProvider.getInstance().getStringList(LiderConstants.CONFIG.OU_LDAP_OBJ_CLS));
+		for (Iterator<String> iterator = temp.iterator(); iterator.hasNext();) {
+			String ouObjCls = iterator.next();
+			for (ObjectClass c : classes) {
+				String cName = c.getName();
+				if (cName.equals(ouObjCls)) {
+					iterator.remove();
+					break;
+				}
+			}
+		}
+		return temp.isEmpty();
 	}
 
 	/**

@@ -51,6 +51,8 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 	private Boolean searchSelected = false;
 	private Boolean agentEntrySelected = false;
 	private Boolean userEntrySelected = false;
+	private Boolean groupEntrySelected = false;
+	private Boolean ouEntrySelected = false;
 	private List<String> privilegesForSelectedItem = new ArrayList<String>();
 
 	/**
@@ -80,10 +82,13 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 		map.put(LiderConstants.EXPRESSIONS.MULTIPLE_ENTRIES_SELECTED, multipleEntriesSelected);
 		map.put(LiderConstants.EXPRESSIONS.SINGLE_ENTRY_SELECTED, singleEntrySelected);
 		map.put(LiderConstants.EXPRESSIONS.PRIVILEGES_FOR_SELECTED_ITEM, privilegesForSelectedItem);
-		// These two expressions are only meaningful, if single entry selected
-		// OR all of the entries belong to same DN type (agent or user).
+		// These four expressions are only meaningful, if single entry selected
+		// OR all of the entries belong to same DN type (agent, user, group or
+		// ou).
 		map.put(LiderConstants.EXPRESSIONS.AGENT_SELECTED, agentEntrySelected);
 		map.put(LiderConstants.EXPRESSIONS.USER_SELECTED, userEntrySelected);
+		map.put(LiderConstants.EXPRESSIONS.GROUP_SELECTED, groupEntrySelected);
+		map.put(LiderConstants.EXPRESSIONS.OU_SELECTED, ouEntrySelected);
 		return map;
 	}
 
@@ -102,6 +107,8 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 			searchSelected = false;
 			agentEntrySelected = false;
 			userEntrySelected = false;
+			groupEntrySelected = false;
+			ouEntrySelected = false;
 			privilegesForSelectedItem = new ArrayList<String>();
 
 			// LDAP browser OR search group selection
@@ -110,6 +117,8 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 				boolean isFirst = true;
 				boolean prevUserEntrySelected = false;
 				boolean prevAgentEntrySelected = false;
+				boolean prevGroupEntrySelected = false;
+				boolean prevOuEntrySelected = false;
 
 				// Iterate over all selected entries
 				IStructuredSelection sselection = (IStructuredSelection) selection;
@@ -135,7 +144,7 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 						// Calculate the privileges for the entry
 						privilegesForSelectedItem.addAll(UserSettings.getPrivilegesFor(entry.getDn().getName()));
 
-						// User or agent entry?
+						// User, agent, group or ou entry?
 						// (Set their value only if single entry selected OR all
 						// of the entries belong to same DN type)
 						if (!(selectedItem instanceof BaseDNEntry)) {
@@ -144,6 +153,10 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 									& LdapUtils.getInstance().isUser(classes);
 							prevAgentEntrySelected = (prevAgentEntrySelected || isFirst)
 									& LdapUtils.getInstance().isAgent(classes);
+							prevGroupEntrySelected = (prevGroupEntrySelected || isFirst)
+									& LdapUtils.getInstance().isGroup(classes);
+							prevOuEntrySelected = (prevOuEntrySelected || isFirst)
+									& LdapUtils.getInstance().isOu(classes);
 						}
 					} else if (selectedItem instanceof ISearch) {
 						ISearch search = (ISearch) selectedItem;
@@ -167,12 +180,16 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 						// Calculate the privileges for the entry
 						privilegesForSelectedItem.addAll(UserSettings.getPrivilegesFor(entry.getDn()));
 
-						// User or agent entry?
+						// User, agent, group or ou entry?
 						// (Set their value only if single entry selected OR all
 						// of the entries belong to same DN type)
 						prevUserEntrySelected = (prevUserEntrySelected || isFirst) & (entry.getDnType() == DNType.USER);
 						prevAgentEntrySelected = (prevAgentEntrySelected || isFirst)
 								& (entry.getDnType() == DNType.AHENK);
+						prevGroupEntrySelected = (prevGroupEntrySelected || isFirst)
+								& (entry.getDnType() == DNType.GROUP);
+						prevOuEntrySelected = (prevOuEntrySelected || isFirst)
+								& (entry.getDnType() == DNType.ORGANIZATIONAL_UNIT);
 					} else if (selectedItem instanceof SearchGroup) {
 						SearchGroup searchGroup = (SearchGroup) selectedItem;
 
@@ -187,6 +204,8 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 
 				agentEntrySelected = prevAgentEntrySelected;
 				userEntrySelected = prevUserEntrySelected;
+				groupEntrySelected = prevGroupEntrySelected;
+				ouEntrySelected = prevOuEntrySelected;
 			}
 
 			// Single entry selected
@@ -210,6 +229,14 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 			// User selected
 			fireSourceChanged(ISources.WORKBENCH, LiderConstants.EXPRESSIONS.USER_SELECTED, userEntrySelected);
 			changedItems.put(LiderConstants.EXPRESSIONS.USER_SELECTED, userEntrySelected);
+
+			// Group selected
+			fireSourceChanged(ISources.WORKBENCH, LiderConstants.EXPRESSIONS.GROUP_SELECTED, groupEntrySelected);
+			changedItems.put(LiderConstants.EXPRESSIONS.GROUP_SELECTED, groupEntrySelected);
+
+			// Organization unit selected
+			fireSourceChanged(ISources.WORKBENCH, LiderConstants.EXPRESSIONS.OU_SELECTED, ouEntrySelected);
+			changedItems.put(LiderConstants.EXPRESSIONS.OU_SELECTED, ouEntrySelected);
 
 			// Privileges for selected item
 			fireSourceChanged(ISources.WORKBENCH, LiderConstants.EXPRESSIONS.PRIVILEGES_FOR_SELECTED_ITEM,
