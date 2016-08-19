@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
+import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.ParameterType;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplateParameter;
@@ -126,7 +128,7 @@ public class ReportViewParamDialog extends DefaultLiderTitleAreaDialog {
 				txtValue.setText(param.getDefaultValue());
 			}
 			if (param.getType() == ParameterType.DATE) {
-				txtValue.setToolTipText("yyyy-MM-dd HH:mm:ss");
+				txtValue.setToolTipText(ConfigProvider.getInstance().get(LiderConstants.CONFIG.DATE_FORMAT));
 			}
 		}
 	}

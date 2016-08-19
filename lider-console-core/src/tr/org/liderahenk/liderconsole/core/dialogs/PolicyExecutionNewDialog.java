@@ -1,8 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.dialogs;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -59,6 +57,7 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 	private Text txtLabel;
 	private Text txtDesc;
 	private DateTime dtActivationDate;
+	private DateTime dtActivationDateTime;
 	private Button btnEnableDate;
 
 	private List<Combo> comboList = null;
@@ -118,8 +117,8 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 		}
 		cmbDnType.select(3); // by default, select 'ALL'
 
-		Composite cmpDate = new Composite(composite, SWT.NONE);
-		cmpDate.setLayout(new GridLayout(2, false));
+		Composite cmpDate = new Composite(parent, SWT.NONE);
+		cmpDate.setLayout(new GridLayout(4, false));
 		cmpDate.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
 		// Activation date enable/disable checkbox
@@ -129,6 +128,7 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				dtActivationDate.setEnabled(btnEnableDate.getSelection());
+				dtActivationDateTime.setEnabled(btnEnableDate.getSelection());
 			}
 
 			@Override
@@ -142,9 +142,14 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 		lblActivationDate.setText(Messages.getString("ACTIVATION_DATE_LABEL"));
 
 		// Activation date
-		dtActivationDate = new DateTime(composite, SWT.CALENDAR | SWT.BORDER);
+		dtActivationDate = new DateTime(cmpDate, SWT.DROP_DOWN | SWT.BORDER);
 		dtActivationDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		dtActivationDate.setEnabled(btnEnableDate.getSelection());
+
+		// Activation time
+		dtActivationDateTime = new DateTime(cmpDate, SWT.DROP_DOWN | SWT.BORDER | SWT.TIME);
+		dtActivationDateTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		dtActivationDateTime.setEnabled(btnEnableDate.getSelection());
 
 		Label lblProfiles = new Label(parent, SWT.BOLD);
 		lblProfiles.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
@@ -290,7 +295,8 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 			policyExec.setId(savedPolicy.getId());
 			policyExec.setDnType(getSelectedDnType());
 			policyExec.setDnList(new ArrayList<String>(this.dnSet));
-			policyExec.setActivationDate(btnEnableDate.getSelection() ? convertDate(dtActivationDate) : null);
+			policyExec.setActivationDate(btnEnableDate.getSelection()
+					? SWTResourceManager.convertDate(dtActivationDate, dtActivationDateTime) : null);
 			logger.debug("Policy request: {}", policy);
 
 			try {
@@ -302,20 +308,6 @@ public class PolicyExecutionNewDialog extends DefaultLiderDialog {
 		}
 
 		close();
-	}
-
-	/**
-	 * Convert DateTime instance to java.util.Date instance
-	 * 
-	 * @param dtActivationDate2
-	 * @return
-	 */
-	private Date convertDate(DateTime dateTime) {
-		Calendar instance = Calendar.getInstance();
-		instance.set(Calendar.DAY_OF_MONTH, dateTime.getDay());
-		instance.set(Calendar.MONTH, dateTime.getMonth());
-		instance.set(Calendar.YEAR, dateTime.getYear());
-		return instance.getTime();
 	}
 
 	/**

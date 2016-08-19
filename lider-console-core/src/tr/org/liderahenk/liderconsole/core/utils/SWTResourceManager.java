@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +43,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -834,6 +837,31 @@ public class SWTResourceManager {
 	 */
 	public static Color getApplicationBackground() {
 		return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+	}
+
+	/**
+	 * Convert DateTime instances to java.util.Date instance
+	 * 
+	 * @param calendar
+	 * @param time
+	 * @return
+	 */
+	public static Date convertDate(DateTime calendar, DateTime time) {
+		if (calendar == null && time == null) {
+			return null;
+		}
+		Calendar instance = Calendar.getInstance();
+		if (calendar != null) {
+			instance.set(Calendar.DAY_OF_MONTH, calendar.getDay());
+			instance.set(Calendar.MONTH, calendar.getMonth());
+			instance.set(Calendar.YEAR, calendar.getYear());
+		}
+		if (time != null) {
+			instance.set(Calendar.HOUR, time.getHours());
+			instance.set(Calendar.MINUTE, time.getMinutes());
+			instance.set(Calendar.SECOND, time.getSeconds());
+		}
+		return instance.getTime();
 	}
 
 	////////////////////////////////////////////////////////////////////////////

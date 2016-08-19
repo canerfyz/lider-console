@@ -54,6 +54,12 @@ public class TaskRequest implements IRequest {
 	private String cronExpression;
 
 	/**
+	 * Optional parameter which can be used to activate the task on this date.
+	 * (Task will be sent to agents on this date)
+	 */
+	private Date activationDate;
+
+	/**
 	 * Timestamp of the request
 	 */
 	private Date timestamp;
@@ -61,8 +67,8 @@ public class TaskRequest implements IRequest {
 	public TaskRequest() {
 	}
 
-	public TaskRequest(List<String> dnList, DNType dnType, String pluginName, String pluginVersion,
-			String commandId, Map<String, Object> parameterMap, String cronExpression, Date timestamp) {
+	public TaskRequest(List<String> dnList, DNType dnType, String pluginName, String pluginVersion, String commandId,
+			Map<String, Object> parameterMap, String cronExpression, Date activationDate, Date timestamp) {
 		this.dnList = dnList;
 		this.dnType = dnType;
 		this.pluginName = pluginName;
@@ -70,6 +76,7 @@ public class TaskRequest implements IRequest {
 		this.commandId = commandId;
 		this.parameterMap = parameterMap;
 		this.cronExpression = cronExpression;
+		this.activationDate = activationDate;
 		this.timestamp = timestamp;
 	}
 
@@ -127,6 +134,14 @@ public class TaskRequest implements IRequest {
 
 	public void setCronExpression(String cronExpression) {
 		this.cronExpression = cronExpression;
+	}
+
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
 	}
 
 	public Date getTimestamp() {

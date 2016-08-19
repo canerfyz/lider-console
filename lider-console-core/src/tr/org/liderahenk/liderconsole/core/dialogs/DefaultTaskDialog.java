@@ -21,7 +21,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.event.EventHandler;
@@ -52,9 +54,13 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 
 	private Button btnExecuteNow;
 	private Button btnExecuteScheduled;
+	private DateTime dtActivationDate;
+	private DateTime dtActivationDateTime;
+	private Button btnEnableDate;
 
 	private IEventBroker eventBroker;
 	private List<EventHandler> handlers;
+	private boolean hideActivationDate;
 
 	private Set<String> dnSet;
 
@@ -63,12 +69,29 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		this.dnSet = new LinkedHashSet<String>();
 		if (dnSet != null)
 			this.dnSet.addAll(dnSet);
+		this.hideActivationDate = false;
 	}
 
 	public DefaultTaskDialog(Shell parentShell, String dn) {
 		super(parentShell);
 		this.dnSet = new LinkedHashSet<String>();
 		dnSet.add(dn);
+		this.hideActivationDate = false;
+	}
+
+	public DefaultTaskDialog(Shell parentShell, Set<String> dnSet, boolean hideActivationDate) {
+		super(parentShell);
+		this.dnSet = new LinkedHashSet<String>();
+		if (dnSet != null)
+			this.dnSet.addAll(dnSet);
+		this.hideActivationDate = hideActivationDate;
+	}
+
+	public DefaultTaskDialog(Shell parentShell, String dn, boolean hideActivationDate) {
+		super(parentShell);
+		this.dnSet = new LinkedHashSet<String>();
+		dnSet.add(dn);
+		this.hideActivationDate = hideActivationDate;
 	}
 
 	/**
@@ -126,13 +149,53 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 	}
 
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		container.setLayout(new GridLayout(1, false));
 		createTaskDialogArea(container);
+		if (!hideActivationDate) {
+			createTaskActivationDateArea(container);
+		}
 		return container;
+	}
+
+	private void createTaskActivationDateArea(final Composite parent) {
+		new Label(parent, SWT.NONE); // separate activate date from dialog area
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(4, false));
+		composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+
+		// Activation date enable/disable checkbox
+		btnEnableDate = new Button(composite, SWT.CHECK);
+		btnEnableDate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		btnEnableDate.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dtActivationDate.setEnabled(btnEnableDate.getSelection());
+				dtActivationDateTime.setEnabled(btnEnableDate.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		// Activation date label
+		Label lblActivationDate = new Label(composite, SWT.NONE);
+		lblActivationDate.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		lblActivationDate.setText(Messages.getString("ACTIVATION_DATE_LABEL"));
+
+		// Activation date
+		dtActivationDate = new DateTime(composite, SWT.DROP_DOWN | SWT.BORDER);
+		dtActivationDate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		dtActivationDate.setEnabled(btnEnableDate.getSelection());
+
+		// Activation time
+		dtActivationDateTime = new DateTime(composite, SWT.DROP_DOWN | SWT.BORDER | SWT.TIME);
+		dtActivationDateTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		dtActivationDateTime.setEnabled(btnEnableDate.getSelection());
 	}
 
 	@Override
@@ -151,6 +214,9 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 						try {
 							TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
 									getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(), null,
+									!hideActivationDate && btnEnableDate.getSelection()
+											? SWTResourceManager.convertDate(dtActivationDate, dtActivationDateTime)
+											: null,
 									new Date());
 							TaskRestUtils.execute(task);
 						} catch (Exception e1) {
@@ -188,7 +254,11 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 						try {
 							TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
 									getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(),
-									dialog.getCronExpression(), new Date());
+									dialog.getCronExpression(),
+									!hideActivationDate && btnEnableDate.getSelection()
+											? SWTResourceManager.convertDate(dtActivationDate, dtActivationDateTime)
+											: null,
+									new Date());
 							TaskRestUtils.execute(task);
 						} catch (Exception e1) {
 							logger.error(e1.getMessage(), e1);
