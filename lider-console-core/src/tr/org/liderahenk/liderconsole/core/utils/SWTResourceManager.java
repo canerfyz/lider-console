@@ -857,7 +857,7 @@ public class SWTResourceManager {
 			instance.set(Calendar.YEAR, calendar.getYear());
 		}
 		if (time != null) {
-			instance.set(Calendar.HOUR, time.getHours());
+			instance.set(Calendar.HOUR_OF_DAY, time.getHours());
 			instance.set(Calendar.MINUTE, time.getMinutes());
 			instance.set(Calendar.SECOND, time.getSeconds());
 		}
