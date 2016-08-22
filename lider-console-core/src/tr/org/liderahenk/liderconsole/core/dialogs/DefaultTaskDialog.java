@@ -24,8 +24,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,41 +59,42 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 	private DateTime dtActivationDate;
 	private DateTime dtActivationDateTime;
 	private Button btnEnableDate;
+	private ProgressBar progressBar;
 
-	private IEventBroker eventBroker;
-	private List<EventHandler> handlers;
+	private IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
+	private List<EventHandler> handlers = new ArrayList<EventHandler>();
+
+	private Set<String> dnSet = new LinkedHashSet<String>();
 	private boolean hideActivationDate;
-
-	private Set<String> dnSet;
 
 	public DefaultTaskDialog(Shell parentShell, Set<String> dnSet) {
 		super(parentShell);
-		this.dnSet = new LinkedHashSet<String>();
 		if (dnSet != null)
 			this.dnSet.addAll(dnSet);
 		this.hideActivationDate = false;
+		init();
 	}
 
 	public DefaultTaskDialog(Shell parentShell, String dn) {
 		super(parentShell);
-		this.dnSet = new LinkedHashSet<String>();
-		dnSet.add(dn);
+		this.dnSet.add(dn);
 		this.hideActivationDate = false;
+		init();
 	}
 
 	public DefaultTaskDialog(Shell parentShell, Set<String> dnSet, boolean hideActivationDate) {
 		super(parentShell);
-		this.dnSet = new LinkedHashSet<String>();
 		if (dnSet != null)
 			this.dnSet.addAll(dnSet);
 		this.hideActivationDate = hideActivationDate;
+		init();
 	}
 
 	public DefaultTaskDialog(Shell parentShell, String dn, boolean hideActivationDate) {
 		super(parentShell);
-		this.dnSet = new LinkedHashSet<String>();
-		dnSet.add(dn);
+		this.dnSet.add(dn);
 		this.hideActivationDate = hideActivationDate;
+		init();
 	}
 
 	/**
@@ -148,16 +151,50 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		setMessage(generateMsg(dnSet), IMessageProvider.INFORMATION);
 	}
 
+	public void openWithEventBroker() {
+		super.setBlockOnOpen(true);
+		super.open();
+		unsubscribeEventHandlers();
+	}
+
+	public void subscribeEventHandler(EventHandler handler) {
+		eventBroker.subscribe(getPluginName().toUpperCase(Locale.ENGLISH), handler);
+		handlers.add(handler);
+	}
+
+	public void unsubscribeEventHandlers() {
+		try {
+			if (handlers != null && !handlers.isEmpty() && eventBroker != null) {
+				for (EventHandler handler : handlers) {
+					eventBroker.unsubscribe(handler);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+
 	@Override
 	protected Control createDialogArea(final Composite parent) {
+		// Container
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		container.setLayout(new GridLayout(1, false));
+		// Task-related inputs
 		createTaskDialogArea(container);
+		// Activation date inputs
 		if (!hideActivationDate) {
 			createTaskActivationDateArea(container);
 		}
+		// Progress bar
+		progressBar = new ProgressBar(container, SWT.SMOOTH | SWT.INDETERMINATE);
+		progressBar.setSelection(0);
+		progressBar.setMaximum(100);
+		GridData gdProgress = new GridData(GridData.FILL_HORIZONTAL);
+		gdProgress.heightHint = 10;
+		progressBar.setLayoutData(gdProgress);
+		progressBar.setVisible(false);
 		return container;
 	}
 
@@ -165,7 +202,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		new Label(parent, SWT.NONE); // separate activate date from dialog area
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(4, false));
-		composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+		composite.setLayoutData(new GridData(SWT.BOTTOM, SWT.FILL, true, false));
 
 		// Activation date enable/disable checkbox
 		btnEnableDate = new Button(composite, SWT.CHECK);
@@ -212,6 +249,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
 							Messages.getString("TASK_EXEC_TITLE"), Messages.getString("TASK_EXEC_MESSAGE"))) {
 						try {
+							progressBar.setVisible(true);
 							TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
 									getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(), null,
 									!hideActivationDate && btnEnableDate.getSelection()
@@ -220,6 +258,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 									new Date());
 							TaskRestUtils.execute(task);
 						} catch (Exception e1) {
+							progressBar.setVisible(false);
 							logger.error(e1.getMessage(), e1);
 							Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 						}
@@ -252,6 +291,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 							Messages.getString("TASK_EXEC_SCHEDULED_TITLE"),
 							Messages.getString("TASK_EXEC_SCHEDULED_MESSAGE"))) {
 						try {
+							progressBar.setVisible(true);
 							TaskRequest task = new TaskRequest(new ArrayList<String>(dnSet), DNType.AHENK,
 									getPluginName(), getPluginVersion(), getCommandId(), getParameterMap(),
 									dialog.getCronExpression(),
@@ -261,6 +301,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 									new Date());
 							TaskRestUtils.execute(task);
 						} catch (Exception e1) {
+							progressBar.setVisible(false);
 							logger.error(e1.getMessage(), e1);
 							Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 						}
@@ -273,7 +314,17 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 			}
 		});
 		// Close
-		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("CANCEL"), true);
+		Button closeButton = createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("CANCEL"), true);
+		closeButton.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				unsubscribeEventHandlers();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 	}
 
 	/**
@@ -319,33 +370,43 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 		}
 	}
 
-	public void openWithEventBroker() {
-		super.setBlockOnOpen(true);
-		super.open();
-		unsubscribeEventHandlers();
-	}
-
-	public void subscribeEventHandler(EventHandler handler) {
-		if (eventBroker == null) {
-			eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
-		}
-		eventBroker.subscribe(getPluginName().toUpperCase(Locale.ENGLISH), handler);
-		if (handlers == null) {
-			handlers = new ArrayList<EventHandler>();
-		}
+	/**
+	 * Hook event handler for task status notifications, this event handler is
+	 * responsible for hiding the progress bar.
+	 */
+	private void init() {
+		EventHandler handler = new EventHandler() {
+			@Override
+			public void handleEvent(Event event) {
+				if (progressBar != null && !progressBar.isDisposed()) {
+					progressBar.setVisible(false);
+				}
+			}
+		};
+		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.TASK_STATUS_NOTIFICATION_RECEIVED, handler);
 		handlers.add(handler);
 	}
 
-	public void unsubscribeEventHandlers() {
-		if (handlers != null && !handlers.isEmpty() && eventBroker != null) {
-			for (EventHandler handler : handlers) {
-				eventBroker.unsubscribe(handler);
-			}
-		}
-	}
+	/*
+	 * Getters
+	 */
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Set<String> getDnSet() {
 		return dnSet;
+	}
+
+	/**
+	 * Provide getter for progress bar, so that extending classes can hide/show
+	 * it manually.
+	 * 
+	 * @return
+	 */
+	public ProgressBar getProgressBar() {
+		return progressBar;
 	}
 
 }
