@@ -90,7 +90,6 @@ public class LdapConnectionListener implements IConnectionListener {
 		RestSettings.setServerUrl(null);
 		UserSettings.setCurrentUserDn(null);
 		UserSettings.setCurrentUserPassword(null);
-		UserSettings.setCurrentUserPrivileges(null);
 
 		eventBroker.send("check_lider_status", null);
 
@@ -170,8 +169,6 @@ public class LdapConnectionListener implements IConnectionListener {
 			return;
 		}
 
-		Map<String, Map<String, Boolean>> privileges = LdapUtils.getInstance().findPrivileges(conn, monitor);
-		UserSettings.setCurrentUserPrivileges(privileges);
 		String configDn = ConfigProvider.getInstance().get(LiderConstants.CONFIG.CONFIG_LDAP_DN_PREFIX) + "," + baseDn;
 
 		StudioNamingEnumeration configEntries = LdapUtils.getInstance().search(configDn, LdapUtils.OBJECT_CLASS_FILTER,

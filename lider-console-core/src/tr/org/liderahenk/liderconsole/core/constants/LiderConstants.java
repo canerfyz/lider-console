@@ -138,10 +138,6 @@ public class LiderConstants {
 		 */
 		public final static String SEARCH_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isSearchSelected";
 		/**
-		 * Returns privileges for selected entry.
-		 */
-		public final static String PRIVILEGES_FOR_SELECTED_ITEM = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.privilegesForSelectedItem";
-		/**
 		 * Returns true if multiple LDAP entries selected, false otherwise.
 		 */
 		public final static String MULTIPLE_ENTRIES_SELECTED = "tr.org.liderahenk.liderconsole.core.sourceproviders.main.isMultipleEntriesSelected";
@@ -181,8 +177,7 @@ public class LiderConstants {
 		 */
 		public static String[] getExpressions() {
 			return new String[] { LIDER_AVAILABLE_STATE, SINGLE_ENTRY_SELECTED, MULTIPLE_ENTRIES_SELECTED,
-					SEARCH_SELECTED, AGENT_SELECTED, USER_SELECTED, GROUP_SELECTED, OU_SELECTED,
-					PRIVILEGES_FOR_SELECTED_ITEM };
+					SEARCH_SELECTED, AGENT_SELECTED, USER_SELECTED, GROUP_SELECTED, OU_SELECTED };
 		}
 	}
 

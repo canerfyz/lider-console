@@ -3,7 +3,6 @@ package tr.org.liderahenk.liderconsole.core.ldap.utils;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -13,7 +12,6 @@ import java.util.TreeMap;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
@@ -36,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
-import tr.org.liderahenk.liderconsole.core.current.UserSettings;
 import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
 
 /**
@@ -701,102 +698,6 @@ public class LdapUtils {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * 
-	 * @param privileges
-	 * @param liderPrivilege
-	 */
-	private static void calculatePrivilege(Map<String, Map<String, Boolean>> privileges, final String liderPrivilege) {
-		String[] splitPirivilegeInfo = liderPrivilege.split(":");
-		String pdn = splitPirivilegeInfo[0].substring(1);
-		Map<String, Boolean> dnprivileges;
-		if (privileges.containsKey(pdn)) {
-			dnprivileges = privileges.get(pdn);
-		} else {
-			dnprivileges = new HashMap<String, Boolean>();
-			privileges.put(pdn, dnprivileges);
-		}
-		String[] keys = splitPirivilegeInfo[1].split(",");
-		for (String key : keys) {
-			dnprivileges.put(key,
-					splitPirivilegeInfo[2].substring(0, splitPirivilegeInfo[2].length() - 1).equals("true"));
-		}
-	}
-
-	/**
-	 * 
-	 * @param privileges
-	 * @param dn
-	 * @param conn
-	 * @param monitor
-	 */
-	private void calculatePrivilegesFromGroups(Map<String, Map<String, Boolean>> privileges, String dn, Connection conn,
-			StudioProgressMonitor monitor) {
-		SearchControls searchControls = new SearchControls();
-		searchControls.setReturningAttributes(
-				new String[] { ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_PRIVILEGE_ATTR) });
-		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
-		StudioNamingEnumeration sr = conn.getConnectionWrapper().search(findBaseDn(conn),
-				"(&(objectClass=pardusLider)(member=" + dn + "))", searchControls, AliasDereferencingMethod.NEVER,
-				ReferralHandlingMethod.IGNORE, null, monitor, null);
-		try {
-			while (sr.hasMore()) {
-				SearchResult item = sr.next();
-				Attributes attrs = item.getAttributes();
-				Attribute attr = attrs
-						.get(ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_PRIVILEGE_ATTR));
-				if (attr != null) {
-					for (int i = 0; i < attr.size(); i++) {
-						Object val = attr.get(i);
-						calculatePrivilege(privileges, (String) val);
-					}
-				}
-			}
-		} catch (NamingException e) {
-			logger.error(e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * 
-	 * @param conn
-	 * @param monitor
-	 * @return
-	 */
-	public Map<String, Map<String, Boolean>> findPrivileges(Connection conn, StudioProgressMonitor monitor) {
-
-		Map<String, Map<String, Boolean>> retVal = new HashMap<String, Map<String, Boolean>>();
-		SearchControls searchControls = new SearchControls();
-		searchControls.setCountLimit(1);
-		searchControls.setReturningAttributes(
-				new String[] { ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_PRIVILEGE_ATTR) });
-		searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);
-
-		calculatePrivilegesFromGroups(retVal, UserSettings.USER_DN, conn, monitor);
-
-		StudioNamingEnumeration sr = conn.getConnectionWrapper().search(UserSettings.USER_DN, OBJECT_CLASS_FILTER,
-				searchControls, AliasDereferencingMethod.NEVER, ReferralHandlingMethod.IGNORE, null, monitor, null);
-		try {
-			while (sr.hasMore()) {
-				SearchResult item = sr.next();
-				Attributes attrs = item.getAttributes();
-				Attribute attr = attrs
-						.get(ConfigProvider.getInstance().get(LiderConstants.CONFIG.USER_LDAP_PRIVILEGE_ATTR));
-				if (attr != null) {
-					for (int i = 0; i < attr.size(); i++) {
-						Object val = attr.get(i);
-						calculatePrivilege(retVal, (String) val);
-					}
-				}
-			}
-		} catch (NamingException e) {
-			logger.error(e.getMessage(), e);
-		}
-
-		return retVal;
 	}
 
 	/**

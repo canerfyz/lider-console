@@ -1,10 +1,8 @@
 package tr.org.liderahenk.liderconsole.core.sourceproviders;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.directory.api.ldap.model.schema.ObjectClass;
@@ -29,7 +27,6 @@ import org.osgi.service.event.EventHandler;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
-import tr.org.liderahenk.liderconsole.core.current.UserSettings;
 import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.model.SearchGroup;
@@ -53,7 +50,6 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 	private Boolean userEntrySelected = false;
 	private Boolean groupEntrySelected = false;
 	private Boolean ouEntrySelected = false;
-	private List<String> privilegesForSelectedItem = new ArrayList<String>();
 
 	/**
 	 * System-wide event broker
@@ -81,7 +77,6 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 		map.put(LiderConstants.EXPRESSIONS.SEARCH_SELECTED, searchSelected);
 		map.put(LiderConstants.EXPRESSIONS.MULTIPLE_ENTRIES_SELECTED, multipleEntriesSelected);
 		map.put(LiderConstants.EXPRESSIONS.SINGLE_ENTRY_SELECTED, singleEntrySelected);
-		map.put(LiderConstants.EXPRESSIONS.PRIVILEGES_FOR_SELECTED_ITEM, privilegesForSelectedItem);
 		// These four expressions are only meaningful, if single entry selected
 		// OR all of the entries belong to same DN type (agent, user, group or
 		// ou).
@@ -109,7 +104,6 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 			userEntrySelected = false;
 			groupEntrySelected = false;
 			ouEntrySelected = false;
-			privilegesForSelectedItem = new ArrayList<String>();
 
 			// LDAP browser OR search group selection
 			if (selection instanceof IStructuredSelection) {
@@ -141,9 +135,6 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 					if (selectedItem instanceof IEntry) {
 						IEntry entry = (IEntry) selectedItem;
 
-						// Calculate the privileges for the entry
-						privilegesForSelectedItem.addAll(UserSettings.getPrivilegesFor(entry.getDn().getName()));
-
 						// User, agent, group or ou entry?
 						// (Set their value only if single entry selected OR all
 						// of the entries belong to same DN type)
@@ -169,16 +160,11 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 						for (ISearchResult iSearchResult : srs) {
 							Object selected = ((SearchResult) iSearchResult).getEntry();
 							IEntry selectedEntry = (IEntry) selected;
-							privilegesForSelectedItem
-									.addAll(UserSettings.getPrivilegesFor(selectedEntry.getDn().getName()));
 						}
 
 						searchSelected = true;
 					} else if (selectedItem instanceof SearchGroupEntry) {
 						SearchGroupEntry entry = (SearchGroupEntry) selectedItem;
-
-						// Calculate the privileges for the entry
-						privilegesForSelectedItem.addAll(UserSettings.getPrivilegesFor(entry.getDn()));
 
 						// User, agent, group or ou entry?
 						// (Set their value only if single entry selected OR all
@@ -192,11 +178,7 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 								& (entry.getDnType() == DNType.ORGANIZATIONAL_UNIT);
 					} else if (selectedItem instanceof SearchGroup) {
 						SearchGroup searchGroup = (SearchGroup) selectedItem;
-
-						// Calculate privileges for all entries
-						for (SearchGroupEntry entry : searchGroup.getEntries()) {
-							privilegesForSelectedItem.addAll(UserSettings.getPrivilegesFor(entry.getDn()));
-						}
+						// TODO search group expression!!!
 					}
 
 					isFirst = false;
@@ -237,11 +219,6 @@ public class LiderSourceProvider extends AbstractSourceProvider {
 			// Organization unit selected
 			fireSourceChanged(ISources.WORKBENCH, LiderConstants.EXPRESSIONS.OU_SELECTED, ouEntrySelected);
 			changedItems.put(LiderConstants.EXPRESSIONS.OU_SELECTED, ouEntrySelected);
-
-			// Privileges for selected item
-			fireSourceChanged(ISources.WORKBENCH, LiderConstants.EXPRESSIONS.PRIVILEGES_FOR_SELECTED_ITEM,
-					privilegesForSelectedItem);
-			changedItems.put(LiderConstants.EXPRESSIONS.PRIVILEGES_FOR_SELECTED_ITEM, privilegesForSelectedItem);
 
 			fireSourceChanged(ISources.WORKBENCH, changedItems);
 		}
