@@ -263,7 +263,7 @@ public class ReportTemplateEditor extends EditorPart {
 
 	/**
 	 * Apply filter to table rows. (Search text can be template name,
-	 * description or query)
+	 * description, query or report code)
 	 *
 	 */
 	public class TableFilter extends ViewerFilter {
@@ -281,7 +281,7 @@ public class ReportTemplateEditor extends EditorPart {
 			}
 			ReportTemplate template = (ReportTemplate) element;
 			return template.getName().matches(searchString) || template.getDescription().matches(searchString)
-					|| template.getQuery().matches(searchString);
+					|| template.getQuery().matches(searchString) || template.getCode().matches(searchString);
 		}
 	}
 

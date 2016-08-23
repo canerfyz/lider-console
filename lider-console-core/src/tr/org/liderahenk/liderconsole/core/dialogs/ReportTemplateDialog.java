@@ -50,6 +50,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 	private Text txtName;
 	private Text txtDesc;
 	private Text txtQuery;
+	private Text txtCode;
 	private TableViewer tvParam;
 	private TableViewer tvCol;
 	private Button btnAddParam;
@@ -114,6 +115,16 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		txtQuery.setLayoutData(data);
 		if (selectedTemplate != null) {
 			txtQuery.setText(selectedTemplate.getQuery());
+		}
+
+		// Report code
+		Label lblCode = new Label(composite, SWT.NONE);
+		lblCode.setText(Messages.getString("REPORT_CODE"));
+
+		txtCode = new Text(composite, SWT.BORDER);
+		txtCode.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		if (selectedTemplate != null) {
+			txtCode.setText(selectedTemplate.getCode());
 		}
 
 		// Validate
@@ -506,6 +517,7 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 		template.setDescription(txtDesc.getText());
 		template.setName(txtName.getText());
 		template.setQuery(txtQuery.getText());
+		template.setCode(txtCode.getText());
 		template.setTemplateColumns((List<ReportTemplateColumn>) tvCol.getInput());
 		template.setTemplateParams((List<ReportTemplateParameter>) tvParam.getInput());
 		logger.debug("Template request: {}", template);
@@ -543,7 +555,6 @@ public class ReportTemplateDialog extends DefaultLiderDialog {
 			Notifier.warning(null, Messages.getString("FILL_REPORT_QUERY_FIELD"));
 			return false;
 		}
-		// TODO check params!
 		return true;
 	}
 

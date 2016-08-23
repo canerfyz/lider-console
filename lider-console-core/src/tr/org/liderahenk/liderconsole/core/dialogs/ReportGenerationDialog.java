@@ -294,7 +294,6 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 					}
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
-					Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
 				}
 			}
 

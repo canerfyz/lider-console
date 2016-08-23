@@ -22,6 +22,8 @@ public class ReportTemplateRequest implements IRequest {
 
 	private String query;
 
+	private String code;
+
 	private List<ReportTemplateParameter> templateParams;
 
 	private List<ReportTemplateColumn> templateColumns;
@@ -60,6 +62,14 @@ public class ReportTemplateRequest implements IRequest {
 		this.query = query;
 	}
 
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public List<ReportTemplateParameter> getTemplateParams() {
 		return templateParams;
 	}
@@ -87,8 +97,8 @@ public class ReportTemplateRequest implements IRequest {
 	@Override
 	public String toString() {
 		return "ReportTemplateRequest [id=" + id + ", name=" + name + ", description=" + description + ", query="
-				+ query + ", templateParams=" + templateParams + ", templateColumns=" + templateColumns + ", timestamp="
-				+ timestamp + "]";
+				+ query + ", code=" + code + ", templateParams=" + templateParams + ", templateColumns="
+				+ templateColumns + ", timestamp=" + timestamp + "]";
 	}
 
 	@Override

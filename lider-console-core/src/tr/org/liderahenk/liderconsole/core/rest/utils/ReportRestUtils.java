@@ -35,6 +35,7 @@ public class ReportRestUtils {
 	 * 
 	 * @param report
 	 * @return
+	 * @throws Exception
 	 */
 	public static byte[] exportPdf(ReportGenerationRequest report) throws Exception {
 		// Build URL
@@ -53,8 +54,17 @@ public class ReportRestUtils {
 					new TypeReference<byte[]>() {
 					});
 			Notifier.success(null, Messages.getString("REPORT_GENERATED"));
-		} else {
-			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+		} else if (response != null && response.getStatus() == RestResponseStatus.ERROR) {
+			// Handle 'not authorized' message here:
+			if (response.getMessages() != null && !response.getMessages().isEmpty()
+					&& response.getMessages().get(0).contains("NOT_AUTHORIZED")) {
+				Notifier.error(null, Messages.getString("NOT_AUTHORIZED"), Messages.getString("NOT_AUTHORIZED_REPORT"));
+			} else {
+				Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+			}
+			// Throw an exception that will be used to inform Lider Console
+			// users about Lider server and Rest service status.
+			throw new Exception();
 		}
 
 		return pdf;
@@ -65,6 +75,7 @@ public class ReportRestUtils {
 	 * 
 	 * @param report
 	 * @return
+	 * @throws Exception
 	 */
 	public static List<Object[]> generateView(ReportGenerationRequest report) throws Exception {
 		// Build URL
@@ -82,8 +93,17 @@ public class ReportRestUtils {
 					new TypeReference<List<Object[]>>() {
 					});
 			Notifier.success(null, Messages.getString("REPORT_GENERATED"));
-		} else {
-			Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+		} else if (response != null && response.getStatus() == RestResponseStatus.ERROR) {
+			// Handle 'not authorized' message here:
+			if (response.getMessages() != null && !response.getMessages().isEmpty()
+					&& response.getMessages().get(0).contains("NOT_AUTHORIZED")) {
+				Notifier.error(null, Messages.getString("NOT_AUTHORIZED"), Messages.getString("NOT_AUTHORIZED_REPORT"));
+			} else {
+				Notifier.error(null, Messages.getString("ERROR_ON_EXECUTE"));
+			}
+			// Throw an exception that will be used to inform Lider Console
+			// users about Lider server and Rest service status.
+			throw new Exception();
 		}
 
 		return resultList;

@@ -25,6 +25,8 @@ public class ReportTemplate implements Serializable {
 
 	private String query;
 
+	private String code;
+
 	private Set<ReportTemplateParameter> templateParams;
 
 	private Set<ReportTemplateColumn> templateColumns;
@@ -36,7 +38,7 @@ public class ReportTemplate implements Serializable {
 	public ReportTemplate() {
 	}
 
-	public ReportTemplate(Long id, String name, String description, String query,
+	public ReportTemplate(Long id, String name, String description, String query, String code,
 			Set<ReportTemplateParameter> templateParams, Set<ReportTemplateColumn> templateColumns, Date createDate,
 			Date modifyDate) {
 		this.id = id;
@@ -79,6 +81,14 @@ public class ReportTemplate implements Serializable {
 
 	public void setQuery(String query) {
 		this.query = query;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public Set<ReportTemplateParameter> getTemplateParams() {
