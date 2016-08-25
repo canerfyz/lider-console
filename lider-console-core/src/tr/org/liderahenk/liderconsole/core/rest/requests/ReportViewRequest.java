@@ -29,6 +29,12 @@ public class ReportViewRequest implements IRequest {
 
 	private List<ReportViewColumn> viewColumns;
 
+	private Long alarmCheckPeriod;
+
+	private Long alarmRecordNumThreshold;
+
+	private String alarmMail;
+
 	private Date timestamp;
 
 	public Long getId() {
@@ -87,6 +93,30 @@ public class ReportViewRequest implements IRequest {
 		this.viewColumns = viewColumns;
 	}
 
+	public Long getAlarmCheckPeriod() {
+		return alarmCheckPeriod;
+	}
+
+	public void setAlarmCheckPeriod(Long alarmCheckPeriod) {
+		this.alarmCheckPeriod = alarmCheckPeriod;
+	}
+
+	public Long getAlarmRecordNumThreshold() {
+		return alarmRecordNumThreshold;
+	}
+
+	public void setAlarmRecordNumThreshold(Long alarmRecordNumThreshold) {
+		this.alarmRecordNumThreshold = alarmRecordNumThreshold;
+	}
+
+	public String getAlarmMail() {
+		return alarmMail;
+	}
+
+	public void setAlarmMail(String alarmMail) {
+		this.alarmMail = alarmMail;
+	}
+
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -99,7 +129,8 @@ public class ReportViewRequest implements IRequest {
 	public String toString() {
 		return "ReportViewRequest [id=" + id + ", templateId=" + templateId + ", name=" + name + ", description="
 				+ description + ", type=" + type + ", viewParams=" + viewParams + ", viewColumns=" + viewColumns
-				+ ", timestamp=" + timestamp + "]";
+				+ ", alarmCheckPeriod=" + alarmCheckPeriod + ", alarmRecordNumThreshold=" + alarmRecordNumThreshold
+				+ ", alarmMail=" + alarmMail + ", timestamp=" + timestamp + "]";
 	}
 
 	@Override

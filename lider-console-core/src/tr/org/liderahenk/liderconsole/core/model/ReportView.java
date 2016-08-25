@@ -31,6 +31,12 @@ public class ReportView implements Serializable {
 
 	private Set<ReportViewColumn> viewColumns;
 
+	private Long alarmCheckPeriod;
+
+	private Long alarmRecordNumThreshold;
+
+	private String alarmMail;
+
 	private Date createDate;
 
 	private Date modifyDate;
@@ -39,7 +45,8 @@ public class ReportView implements Serializable {
 	}
 
 	public ReportView(Long id, ReportTemplate template, String name, String description, ReportType type,
-			Set<ReportViewParameter> viewParams, Set<ReportViewColumn> viewColumns, Date createDate, Date modifyDate) {
+			Set<ReportViewParameter> viewParams, Set<ReportViewColumn> viewColumns, Long alarmCheckPeriod,
+			Long alarmRecordNumThreshold, String alarmMail, Date createDate, Date modifyDate) {
 		super();
 		this.id = id;
 		this.template = template;
@@ -48,6 +55,9 @@ public class ReportView implements Serializable {
 		this.type = type;
 		this.viewParams = viewParams;
 		this.viewColumns = viewColumns;
+		this.alarmCheckPeriod = alarmCheckPeriod;
+		this.alarmRecordNumThreshold = alarmRecordNumThreshold;
+		this.alarmMail = alarmMail;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 	}
@@ -106,6 +116,30 @@ public class ReportView implements Serializable {
 
 	public void setViewColumns(Set<ReportViewColumn> viewColumns) {
 		this.viewColumns = viewColumns;
+	}
+
+	public Long getAlarmCheckPeriod() {
+		return alarmCheckPeriod;
+	}
+
+	public void setAlarmCheckPeriod(Long alarmCheckPeriod) {
+		this.alarmCheckPeriod = alarmCheckPeriod;
+	}
+
+	public Long getAlarmRecordNumThreshold() {
+		return alarmRecordNumThreshold;
+	}
+
+	public void setAlarmRecordNumThreshold(Long alarmRecordNumThreshold) {
+		this.alarmRecordNumThreshold = alarmRecordNumThreshold;
+	}
+
+	public String getAlarmMail() {
+		return alarmMail;
+	}
+
+	public void setAlarmMail(String alarmMail) {
+		this.alarmMail = alarmMail;
 	}
 
 	public Date getCreateDate() {
