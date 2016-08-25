@@ -170,18 +170,20 @@ public class XMPPClient {
 	private void createXmppTcpConfiguration(String serviceName, String host, int port) {
 		PingManager.setDefaultPingInterval(pingTimeout);
 		ReconnectionManager.setEnabledPerDefault(true);
-		Builder builder = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
-				.setDebuggerEnabled(logger.isDebugEnabled());
+		Builder builder = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host)
+				.setPort(port).setDebuggerEnabled(logger.isDebugEnabled());
 		if (ConfigProvider.getInstance().getBoolean(LiderConstants.CONFIG.XMPP_USE_SSL)) {
 			builder.setSecurityMode(SecurityMode.required);
-			builder.setCustomSSLContext(createCustomSslContext());
+			if (ConfigProvider.getInstance().getBoolean(LiderConstants.CONFIG.XMPP_ALLOW_SELF_SIGNED_CERT)) {
+				builder.setCustomSSLContext(createCustomSslContext());
+			}
 		} else {
 			builder.setSecurityMode(SecurityMode.disabled);
 		}
 		config = builder.build();
 		logger.debug("XMPP configuration finished: {}", config.toString());
 	}
-	
+
 	/**
 	 * Connect to XMPP server
 	 * 
@@ -500,7 +502,7 @@ public class XMPPClient {
 	public boolean isConnected() {
 		return connection != null && connection.isConnected();
 	}
-	
+
 	/***
 	 * 
 	 * @return custom SSL context with x509 trust manager.

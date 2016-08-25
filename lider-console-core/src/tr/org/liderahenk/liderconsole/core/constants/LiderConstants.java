@@ -105,6 +105,7 @@ public class LiderConstants {
 		public static final String XMPP_REPLAY_TIMEOUT = "xmpp.packet.replay.timeout";
 		public static final String XMPP_PING_TIMEOUT = "xmpp.ping.timeout";
 		public static final String XMPP_USE_SSL = "xmpp.use.ssl";
+		public static final String XMPP_ALLOW_SELF_SIGNED_CERT = "xmpp.allow.self.signed.cert";
 		public static final String USER_LDAP_OBJ_CLS = "user.ldap.object.classes";
 		public static final String USER_LDAP_UID_ATTR = "user.ldap.uid.attribute";
 		public static final String USER_LDAP_PRIVILEGE_ATTR = "user.ldap.privilege.attribute";
