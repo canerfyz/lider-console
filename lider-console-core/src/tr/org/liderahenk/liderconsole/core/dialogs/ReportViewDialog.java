@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,12 @@ public class ReportViewDialog extends DefaultLiderDialog {
 	private Button btnAddCol;
 	private Button btnEditCol;
 	private Button btnDeleteCol;
+	private Button btnDefineAlarm;
+	private Spinner spnAlarmCheckPeriod;
+	private Spinner spnAlarmRecordNumThreshold;
+	private Text txtAlarmMail;
+	
+	private static final int MILLISECONDS_PER_MINUTE = 60000;
 
 	public ReportViewDialog(Shell parentShell, ReportViewEditor editor) {
 		super(parentShell);
@@ -163,8 +170,73 @@ public class ReportViewDialog extends DefaultLiderDialog {
 			ReportType type = types[i];
 			cmbType.add(type.getMessage());
 			cmbType.setData(i + "", type);
+			if (selectedView != null && selectedView.getType() == type) {
+				cmbType.select(i);
+			}
 		}
 		cmbType.select(0);
+
+		// Alarm
+		Label lblAlarm = new Label(parent, SWT.NONE);
+		lblAlarm.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
+		lblAlarm.setText(Messages.getString("REPORT_ALARM"));
+
+		composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		composite.setLayout(new GridLayout(2, false));
+
+		// Define alarm
+		btnDefineAlarm = new Button(composite, SWT.CHECK);
+		btnDefineAlarm.setText(Messages.getString("DEFINE_ALARM"));
+		btnDefineAlarm.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleAlarmSelection();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		btnDefineAlarm.setSelection(selectedView != null && selectedView.getAlarmCheckPeriod() != null);
+		new Label(composite, SWT.NONE);
+
+		// Check period
+		Label lblAlarmCheckPeriod = new Label(composite, SWT.NONE);
+		lblAlarmCheckPeriod.setText(Messages.getString("ALARM_CHECK_PERIOD"));
+
+		spnAlarmCheckPeriod = new Spinner(composite, SWT.BORDER);
+		spnAlarmCheckPeriod.setMinimum(1);
+		spnAlarmCheckPeriod.setMaximum(120);
+		if (selectedView != null && selectedView.getAlarmCheckPeriod() != null) {
+			spnAlarmCheckPeriod.setSelection(selectedView.getAlarmCheckPeriod().intValue() / MILLISECONDS_PER_MINUTE);
+		} else {
+			spnAlarmCheckPeriod.setSelection(5);
+		}
+
+		// Number of records threshold
+		Label lblAlarmRecordNumThreshold = new Label(composite, SWT.NONE);
+		lblAlarmRecordNumThreshold.setText(Messages.getString("RECORD_NUM_THRESHOLD"));
+
+		spnAlarmRecordNumThreshold = new Spinner(composite, SWT.BORDER);
+		spnAlarmRecordNumThreshold.setMinimum(1);
+		spnAlarmRecordNumThreshold.setMaximum(999);
+		if (selectedView != null && selectedView.getAlarmRecordNumThreshold() != null) {
+			spnAlarmRecordNumThreshold.setSelection(selectedView.getAlarmRecordNumThreshold().intValue());
+		} else {
+			spnAlarmRecordNumThreshold.setSelection(1);
+		}
+
+		// Alarm mail
+		Label lblAlarmMail = new Label(composite, SWT.NONE);
+		lblAlarmMail.setText(Messages.getString("ALARM_MAIL"));
+
+		txtAlarmMail = new Text(composite, SWT.BORDER);
+		txtAlarmMail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtAlarmMail.setMessage(Messages.getString("COMMA_SEPARATED_MAIL_ADDRESSES"));
+		if (selectedView != null && selectedView.getAlarmMail() != null) {
+			txtAlarmMail.setText(selectedView.getAlarmMail());
+		}
 
 		// View Parameters
 		Label lblViewParams = new Label(parent, SWT.NONE);
@@ -181,6 +253,8 @@ public class ReportViewDialog extends DefaultLiderDialog {
 
 		createButtonsForCols(parent);
 		createTableForCols(parent);
+
+		handleAlarmSelection();
 
 		applyDialogFont(parent);
 
@@ -581,6 +655,11 @@ public class ReportViewDialog extends DefaultLiderDialog {
 		view.setType((ReportType) getSelectedValue(cmbType));
 		view.setViewColumns((List<ReportViewColumn>) tvCol.getInput());
 		view.setViewParams((List<ReportViewParameter>) tvParam.getInput());
+		if (btnDefineAlarm.getSelection()) {
+			view.setAlarmCheckPeriod(new Long(spnAlarmCheckPeriod.getSelection() * MILLISECONDS_PER_MINUTE));
+			view.setAlarmRecordNumThreshold(new Long(spnAlarmRecordNumThreshold.getSelection()));
+			view.setAlarmMail(txtAlarmMail.getText());
+		}
 		logger.debug("View request: {}", view);
 
 		try {
@@ -611,7 +690,23 @@ public class ReportViewDialog extends DefaultLiderDialog {
 			Notifier.warning(null, Messages.getString("SELECT_REPORT_TYPE"));
 			return false;
 		}
+		if (btnDefineAlarm.getSelection() && txtAlarmMail.getText().isEmpty()) {
+			Notifier.warning(null, Messages.getString("FILL_ALARM_MAIL_FIELD"));
+			return false;			
+		}
 		return true;
+	}
+
+	private void handleAlarmSelection() {
+		if (btnDefineAlarm.getSelection()) {
+			spnAlarmCheckPeriod.setEnabled(true);
+			spnAlarmRecordNumThreshold.setEnabled(true);
+			txtAlarmMail.setEnabled(true);
+		} else {
+			spnAlarmCheckPeriod.setEnabled(false);
+			spnAlarmRecordNumThreshold.setEnabled(false);
+			txtAlarmMail.setEnabled(false);
+		}
 	}
 
 	public ReportViewParameter getSelectedParam() {
