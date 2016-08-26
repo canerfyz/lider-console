@@ -13,6 +13,9 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -88,7 +91,23 @@ public class RestClient {
 				.setConnectTimeout(ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.REST_CONNECT_TIMEOUT))
 				.setSocketTimeout(ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.REST_SOCKET_TIMEOUT))
 				.build();
-		httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+		HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(config);
+		if (ConfigProvider.getInstance().getBoolean(LiderConstants.CONFIG.REST_ALLOW_SELF_SIGNED_CERT)) {
+			try {
+				SSLContextBuilder sslb = new SSLContextBuilder();
+				sslb.loadTrustMaterial(null, new TrustStrategy() {
+					@Override
+					public boolean isTrusted(java.security.cert.X509Certificate[] arg0, String arg1)
+							throws java.security.cert.CertificateException {
+						return false;
+					}
+				});
+				SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslb.build());
+				builder.setSSLSocketFactory(sslsf);
+			} catch (Exception e) {
+			}
+		}
+		httpClient = builder.build();
 	}
 
 	/**
