@@ -40,6 +40,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.ReportTemplate;
 import tr.org.liderahenk.liderconsole.core.rest.utils.ReportRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.widgets.LiderConfirmBox;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -162,8 +163,12 @@ public class ReportTemplateEditor extends EditorPart {
 					return;
 				}
 				try {
-					ReportRestUtils.deleteTemplate(getSelectedTemplate().getId());
-					refresh();
+					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+							Messages.getString("REPORT_TEMPLATE_TITLE"),
+							Messages.getString("REPORT_TEMPLATE_DELETE_MESSAGE"))) {
+						ReportRestUtils.deleteTemplate(getSelectedTemplate().getId());
+						refresh();
+					}
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
 					Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));

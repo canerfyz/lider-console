@@ -41,6 +41,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.ReportView;
 import tr.org.liderahenk.liderconsole.core.rest.utils.ReportRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.widgets.LiderConfirmBox;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -161,8 +162,12 @@ public class ReportViewEditor extends EditorPart {
 					return;
 				}
 				try {
-					ReportRestUtils.deleteView(getSelectedView().getId());
-					refresh();
+					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+							Messages.getString("REPORT_VIEW_TITLE"),
+							Messages.getString("REPORT_VIEW_DELETE_MESSAGE"))) {
+						ReportRestUtils.deleteView(getSelectedView().getId());
+						refresh();
+					}
 				} catch (Exception e1) {
 					logger.error(e1.getMessage(), e1);
 					Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));

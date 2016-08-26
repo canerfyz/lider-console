@@ -293,18 +293,13 @@ public class ReportRestUtils {
 		IResponse response = RestClient.get(url.toString());
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK) {
-			Notifier.error(null, Messages.getString("RECORD_DELETED"));
+			Notifier.success(null, Messages.getString("RECORD_DELETED"));
 			return true;
 		}
 
 		Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
 		return false;
 	}
-
-	//////////////////////////////////////////////
-	//////////////////////////////////////////////
-	//////////////////////////////////////////////
-	//////////////////////////////////////////////
 
 	/**
 	 * Send POST request to server in order to save specified view.
