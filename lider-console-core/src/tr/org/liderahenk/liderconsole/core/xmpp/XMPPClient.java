@@ -6,9 +6,7 @@ import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.KeyManager;
@@ -17,8 +15,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.ui.PlatformUI;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.ReconnectionManager;
@@ -50,6 +46,7 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.ldap.listeners.TreePaintListener;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier.NotifierMode;
@@ -71,11 +68,6 @@ public class XMPPClient {
 	 * XMPPClient instance
 	 */
 	private static XMPPClient instance = null;
-
-	/**
-	 * System-wide event broker
-	 */
-	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
 
 	/**
 	 * Connection and settings parameters are got from tr.org.liderahenk.cfg
@@ -134,7 +126,7 @@ public class XMPPClient {
 		login();
 		setServerSettings();
 		addListeners();
-		getInitialOnlineUsers();
+		getOnlineUsers();
 		logger.info("XMPP service initialized");
 	}
 
@@ -223,7 +215,7 @@ public class XMPPClient {
 			try {
 				connection.login(username, password);
 				logger.debug("Successfully logged in to XMPP server: {}", username);
-				eventBroker.post(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, "");
+				TreePaintListener.getInstance().setXmppConnected(true);
 			} catch (XMPPException e) {
 				logger.error(e.getMessage(), e);
 			} catch (SmackException e) {
@@ -283,14 +275,13 @@ public class XMPPClient {
 	}
 
 	/**
-	 * Get online users from roster and store in onlineUsers
+	 * Get online users from roster and trigger redraw in LDAP tree.
 	 */
-	private void getInitialOnlineUsers() {
+	public void getOnlineUsers() {
 
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				List<String> onlineUsers = new ArrayList<String>();
 				Collection<RosterEntry> entries = roster.getEntries();
 				Map<String, String> uidMap = LdapUtils.getInstance().getUidMap(LdapConnectionListener.getConnection(),
 						LdapConnectionListener.getMonitor());
@@ -312,11 +303,9 @@ public class XMPPClient {
 													LdapConnectionListener.getMonitor());
 									if (dn != null && !dn.isEmpty()) {
 										if (presence.getType() == Type.available) {
-											onlineUsers.add(jid.substring(0, jid.indexOf('@')));
-											eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
+											TreePaintListener.getInstance().put(dn, true);
 										} else if (presence.getType() == Type.unavailable) {
-											onlineUsers.remove(jid.substring(0, jid.indexOf('@')));
-											eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
+											TreePaintListener.getInstance().put(dn, false);
 										}
 									}
 								} catch (Exception e) {
@@ -325,8 +314,9 @@ public class XMPPClient {
 							}
 						}
 					}
+
+					TreePaintListener.getInstance().redraw();
 				}
-				logger.debug("Online users: {}", onlineUsers.toString());
 			}
 		});
 
@@ -342,39 +332,39 @@ public class XMPPClient {
 		@Override
 		public void connectionClosed() {
 			logger.info("XMPP connection was closed.");
-			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
+			TreePaintListener.getInstance().setXmppConnected(false);
 		}
 
 		@Override
 		public void connectionClosedOnError(Exception e) {
 			logger.error("XMPP connection closed with an error", e.getMessage());
-			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
+			TreePaintListener.getInstance().setXmppConnected(false);
 		}
 
 		@Override
 		public void reconnectingIn(int seconds) {
 			logger.info("Reconnecting in {} seconds.", seconds);
-			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
+			TreePaintListener.getInstance().setXmppConnected(false);
 		}
 
 		@Override
 		public void reconnectionFailed(Exception e) {
 			logger.error("Failed to reconnect to the XMPP server.", e.getMessage());
-			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
+			TreePaintListener.getInstance().setXmppConnected(false);
 		}
 
 		@Override
 		public void reconnectionSuccessful() {
 			pingTimeoutCount = 0;
 			logger.info("Successfully reconnected to the XMPP server.");
-			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, "");
+			TreePaintListener.getInstance().setXmppConnected(true);
 		}
 
 		@Override
 		public void connected(XMPPConnection connection) {
 			logger.info("User: {} connected to XMPP Server {} via port {}",
 					new Object[] { connection.getUser(), connection.getHost(), connection.getPort() });
-			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, "");
+			TreePaintListener.getInstance().setXmppConnected(true);
 		}
 
 		@Override
@@ -383,7 +373,7 @@ public class XMPPClient {
 			if (resumed) {
 				logger.info("A previous XMPP session's stream was resumed");
 			}
-			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, "");
+			TreePaintListener.getInstance().setXmppConnected(true);
 		}
 	}
 
@@ -429,15 +419,17 @@ public class XMPPClient {
 								LdapConnectionListener.getMonitor());
 				if (dn != null && !dn.isEmpty()) {
 					if (presence.getType() == Type.available) {
-						eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
+						TreePaintListener.getInstance().put(dn, true);
 					} else if (presence.getType() == Type.unavailable) {
-						eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
+						TreePaintListener.getInstance().put(dn, false);
 					}
 				}
 
 				logger.warn("Actual roster presence for {} changed to {}", roster.getPresence(jid).getFrom(),
 						roster.getPresence(jid).toString());
 			}
+
+			TreePaintListener.getInstance().redraw();
 		}
 
 		@Override
@@ -450,9 +442,11 @@ public class XMPPClient {
 						: LdapUtils.getInstance().findDnByUid(jid, LdapConnectionListener.getConnection(),
 								LdapConnectionListener.getMonitor());
 				if (dn != null && !dn.isEmpty()) {
-					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
+					TreePaintListener.getInstance().put(dn, false);
 				}
 			}
+
+			TreePaintListener.getInstance().redraw();
 		}
 
 		@Override
@@ -467,13 +461,15 @@ public class XMPPClient {
 				if (presence.getType() == Type.available) {
 					Notifier.notify(null, null, Messages.getString("ROSTER_ONLINE", dn), null, NotifierTheme.INFO_THEME,
 							NotifierMode.ONLY_SYSLOG);
-					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, dn);
+					TreePaintListener.getInstance().put(dn, true);
 				} else if (presence.getType() == Type.unavailable) {
 					Notifier.notify(null, null, Messages.getString("ROSTER_OFFLINE", dn), null,
 							NotifierTheme.INFO_THEME, NotifierMode.ONLY_SYSLOG);
-					eventBroker.post(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, dn);
+					TreePaintListener.getInstance().put(dn, false);
 				}
 			}
+
+			TreePaintListener.getInstance().redraw();
 
 			logger.warn("Actual roster presence for {} changed to {}", roster.getPresence(jid).getFrom(),
 					roster.getPresence(jid).toString());
@@ -490,7 +486,7 @@ public class XMPPClient {
 			connection.removeConnectionListener(connectionListener);
 			PingManager.getInstanceFor(connection).setPingInterval(-1);
 			connection.disconnect();
-			eventBroker.send(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, "");
+			TreePaintListener.getInstance().setXmppConnected(false);
 			logger.info("Successfully closed XMPP connection.");
 		}
 	}

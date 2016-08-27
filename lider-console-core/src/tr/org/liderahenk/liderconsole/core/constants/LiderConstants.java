@@ -49,22 +49,6 @@ public class LiderConstants {
 	 */
 	public static final class EVENT_TOPICS {
 		/**
-		 * Thrown when XMPP connection establishes
-		 */
-		public static final String XMPP_ONLINE = "xmpp_online";
-		/**
-		 * Thrown when XMPP connection fails
-		 */
-		public static final String XMPP_OFFLINE = "xmpp_offline";
-		/**
-		 * Thrown when a roster becomes online
-		 */
-		public static final String ROSTER_ONLINE = "roster_online";
-		/**
-		 * Thrown when a roster becomes offline
-		 */
-		public static final String ROSTER_OFFLINE = "roster_offline";
-		/**
 		 * Thrown when 'task status' notification received
 		 */
 		public static final String TASK_STATUS_NOTIFICATION_RECEIVED = "task_status_notification_received";

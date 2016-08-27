@@ -1,15 +1,13 @@
 package tr.org.liderahenk.liderconsole.core.ldap.listeners;
 
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.apache.directory.api.ldap.model.schema.ObjectClass;
 import org.apache.directory.studio.ldapbrowser.core.model.IBookmark;
 import org.apache.directory.studio.ldapbrowser.core.model.IEntry;
 import org.apache.directory.studio.ldapbrowser.core.model.impl.SearchResult;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -18,13 +16,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.PlatformUI;
-import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
-import tr.org.liderahenk.liderconsole.core.current.RestSettings;
 import tr.org.liderahenk.liderconsole.core.current.UserSettings;
 import tr.org.liderahenk.liderconsole.core.ldap.utils.LdapUtils;
 
@@ -39,17 +33,25 @@ public class TreePaintListener implements Listener {
 
 	private static final Logger logger = LoggerFactory.getLogger(TreePaintListener.class);
 
-	private Boolean globalState = false;
+	private static TreePaintListener instance = null;
+
+	private Tree tree;
+	private Map<String, Boolean> presenceMap;
+	private boolean xmppConnected = false;
+
 	private final Image offlineImage;
 	private final Image onlineImage;
 	private final Image agentImage;
 	private final Image userImage;
 
-	private final IEventBroker eventBroker = (IEventBroker) PlatformUI.getWorkbench().getService(IEventBroker.class);
-	private final Map<String, Boolean> onlineInfo;
+	public static synchronized TreePaintListener getInstance() {
+		if (instance == null) {
+			instance = new TreePaintListener();
+		}
+		return instance;
+	}
 
-	public TreePaintListener(final Tree tree) {
-
+	private TreePaintListener() {
 		offlineImage = new Image(Display.getDefault(),
 				this.getClass().getClassLoader().getResourceAsStream("icons/32/offline-red-mini.png"));
 		onlineImage = new Image(Display.getDefault(),
@@ -58,72 +60,24 @@ public class TreePaintListener implements Listener {
 				this.getClass().getClassLoader().getResourceAsStream("icons/16/computer.png"));
 		userImage = new Image(Display.getDefault(),
 				this.getClass().getClassLoader().getResourceAsStream("icons/16/user.png"));
-		onlineInfo = new TreeMap<String, Boolean>();
+		presenceMap = new Hashtable<String, Boolean>();
+	}
 
-		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.ROSTER_ONLINE, new EventHandler() {
-			public void handleEvent(org.osgi.service.event.Event event) {
-				String dn = (String) event.getProperty("org.eclipse.e4.data");
-				if (dn != null && !dn.isEmpty()) {
-					onlineInfo.put(dn, true);
-					try {
-						tree.redraw();
-					} catch (Exception e) {
-						logger.error(e.getMessage(), e);
-					}
-				}
-			}
-		});
-		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.ROSTER_OFFLINE, new EventHandler() {
-			public void handleEvent(org.osgi.service.event.Event event) {
-				String dn = (String) event.getProperty("org.eclipse.e4.data");
-				if (dn != null && !dn.isEmpty()) {
-					onlineInfo.put(dn, false);
-					try {
-						tree.redraw();
-					} catch (Exception e) {
-						logger.error(e.getMessage(), e);
-					}
-				}
-			}
-		});
-		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.XMPP_OFFLINE, new EventHandler() {
-			public void handleEvent(org.osgi.service.event.Event event) {
-				globalState = false;
-				for (Entry<String, Boolean> k : onlineInfo.entrySet()) {
-					k.setValue(false);
-				}
-				try {
-					tree.redraw();
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		});
-		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.XMPP_ONLINE, new EventHandler() {
-			public void handleEvent(org.osgi.service.event.Event event) {
-				globalState = true;
-				onlineInfo.put(UserSettings.USER_DN, true);
-				try {
-					tree.redraw();
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		});
-		eventBroker.subscribe(LiderConstants.EVENT_TOPICS.CHECK_LIDER_STATUS, new EventHandler() {
-			public void handleEvent(org.osgi.service.event.Event event) {
-				// Connection closed by user
-				if (!RestSettings.isAvailable()) {
-					globalState = false;
-					for (Entry<String, Boolean> k : onlineInfo.entrySet()) {
-						k.setValue(false);
-					}
-				} else {
-					globalState = true;
-				}
-			}
-		});
+	public boolean put(String dn, Boolean presence) {
+		return this.presenceMap.put(dn, presence);
+	}
 
+	public void redraw() {
+		try {
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					tree.redraw();
+				}
+			});
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -175,12 +129,13 @@ public class TreePaintListener implements Listener {
 				IEntry entry = (IEntry) data;
 				String dn = entry.getDn().getName();
 
-				if (onlineInfo.containsKey(dn)) {
+				if (presenceMap.containsKey(dn)) {
 					Image miniIcon;
-					if (onlineInfo.get(dn) && globalState)
+					if (presenceMap.get(dn) && xmppConnected) {
 						miniIcon = onlineImage;
-					else
+					} else {
 						miniIcon = offlineImage;
+					}
 					event.gc.drawImage(miniIcon, event.x, event.y + 8);
 				}
 			}
@@ -197,6 +152,18 @@ public class TreePaintListener implements Listener {
 		}
 		}
 
+	}
+
+	public void setTree(Tree tree) {
+		this.tree = tree;
+	}
+
+	public void setXmppConnected(boolean xmppConnected) {
+		this.xmppConnected = xmppConnected;
+		if (xmppConnected) {
+			this.presenceMap.put(UserSettings.USER_DN, true);
+		}
+		this.redraw();
 	}
 
 }

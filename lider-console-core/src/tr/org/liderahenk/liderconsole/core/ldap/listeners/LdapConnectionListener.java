@@ -16,7 +16,13 @@ import org.apache.directory.studio.connection.core.jobs.StudioConnectionJob;
 import org.apache.directory.studio.ldapbrowser.ui.views.browser.BrowserView;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -61,19 +67,48 @@ public class LdapConnectionListener implements IConnectionListener {
 
 			IWorkbenchWindow window = windows[0];
 
-			// This code block is used to paint initially 'offline' icons on
+			// This code block is used to paint initial offline/online icons on
 			// LDAP user and agent entries.
 			BrowserView browserView = (BrowserView) window.getActivePage().findView(LiderConstants.VIEWS.BROWSER_VIEW);
 			if (browserView != null) {
 				final Tree tree = browserView.getMainWidget().getViewer().getTree();
-				final TreePaintListener paintListener = new TreePaintListener(tree);
+				final TreePaintListener listener = TreePaintListener.getInstance();
+				listener.setTree(tree);
 
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						tree.addListener(SWT.MeasureItem, paintListener);
-						tree.addListener(SWT.PaintItem, paintListener);
-						tree.addListener(SWT.EraseItem, paintListener);
+
+						final Menu menu = tree.getMenu();
+						menu.addMenuListener(new MenuAdapter() {
+							Boolean hookedListener = false;
+
+							public void menuShown(MenuEvent e) {
+								if (hookedListener)
+									return;
+								MenuItem[] items = menu.getItems();
+								for (int i = 0; i < items.length; i++) {
+									if (items[i].getText() != null && items[i].getText().contains("Reload")) {
+										hookedListener = true;
+										items[i].addSelectionListener(new SelectionListener() {
+											@Override
+											public void widgetSelected(SelectionEvent e) {
+												XMPPClient.getInstance().getOnlineUsers();
+											}
+
+											@Override
+											public void widgetDefaultSelected(SelectionEvent e) {
+											}
+										});
+										break;
+									}
+								}
+							}
+						});
+
+						tree.addListener(SWT.MeasureItem, listener);
+						tree.addListener(SWT.PaintItem, listener);
+						tree.addListener(SWT.EraseItem, listener);
 					}
 				});
 			}
