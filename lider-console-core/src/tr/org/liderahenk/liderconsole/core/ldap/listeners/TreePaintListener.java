@@ -63,10 +63,20 @@ public class TreePaintListener implements Listener {
 		presenceMap = new Hashtable<String, Boolean>();
 	}
 
+	/**
+	 * Update/set presence of an LDAP entry specified by its DN.
+	 * 
+	 * @param dn
+	 * @param presence
+	 * @return
+	 */
 	public boolean put(String dn, Boolean presence) {
 		return this.presenceMap.put(dn, presence);
 	}
 
+	/**
+	 * Redraw the LDAP tree asynchronously
+	 */
 	public void redraw() {
 		try {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -154,10 +164,18 @@ public class TreePaintListener implements Listener {
 
 	}
 
+	/**
+	 * 
+	 * @param tree
+	 */
 	public void setTree(Tree tree) {
 		this.tree = tree;
 	}
 
+	/**
+	 * 
+	 * @param xmppConnected
+	 */
 	public void setXmppConnected(boolean xmppConnected) {
 		this.xmppConnected = xmppConnected;
 		if (xmppConnected) {

@@ -67,8 +67,11 @@ public class LdapConnectionListener implements IConnectionListener {
 
 			IWorkbenchWindow window = windows[0];
 
-			// This code block is used to paint initial offline/online icons on
-			// LDAP user and agent entries.
+			// Hook listeners for LDAP browser
+			// First listener is responsible for painting online/offline icons
+			// on agents and users
+			// Second listener, on the other hand, is responsible for querying
+			// XMPP rosters on LDAP entry refresh.
 			BrowserView browserView = (BrowserView) window.getActivePage().findView(LiderConstants.VIEWS.BROWSER_VIEW);
 			if (browserView != null) {
 				final Tree tree = browserView.getMainWidget().getViewer().getTree();
@@ -88,6 +91,10 @@ public class LdapConnectionListener implements IConnectionListener {
 									return;
 								MenuItem[] items = menu.getItems();
 								for (int i = 0; i < items.length; i++) {
+									// Finding the correct menu item (button) by
+									// its text is not a good solution. But
+									// since they don't have item ID, its the
+									// only solution we got.
 									if (items[i].getText() != null && items[i].getText().contains("Reload")) {
 										hookedListener = true;
 										items[i].addSelectionListener(new SelectionListener() {
