@@ -262,12 +262,13 @@ public class LdapConnectionListener implements IConnectionListener {
 						}
 					}
 				} else {
-					Notifier.error(null, Messages.getString("LIDER_CONDIG_DN_ERROR", configDn));
+					Notifier.error(null, Messages.getString("LIDER_SERVICE_ADDRESS_ERROR", configDn));
 				}
+
+				openLdapSearchEditor();
+			} else {
+				Notifier.error(null, Messages.getString("LIDER_CONFIG_DN_ERROR", configDn));
 			}
-
-			openLdapSearchEditor();
-
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
