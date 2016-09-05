@@ -28,7 +28,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecutionResult;
-import tr.org.liderahenk.liderconsole.core.model.ExecutedPolicy;
+import tr.org.liderahenk.liderconsole.core.model.AppliedPolicy;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 
 /**
@@ -39,7 +39,7 @@ import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 public class AppliedPolicyDialog extends DefaultLiderDialog {
 
 	// Model
-	private ExecutedPolicy policy;
+	private AppliedPolicy policy;
 	private List<Command> commands;
 
 	// Widgets
@@ -47,7 +47,7 @@ public class AppliedPolicyDialog extends DefaultLiderDialog {
 	private TableViewer tvExecResult;
 	private Label lblResult;
 
-	public AppliedPolicyDialog(Shell parentShell, ExecutedPolicy policy, List<Command> commands) {
+	public AppliedPolicyDialog(Shell parentShell, AppliedPolicy policy, List<Command> commands) {
 		super(parentShell);
 		this.policy = policy;
 		this.commands = commands;
@@ -331,13 +331,9 @@ public class AppliedPolicyDialog extends DefaultLiderDialog {
 	 * @param t
 	 * @return
 	 */
-	private String generateStatusMessage(ExecutedPolicy p) {
+	private String generateStatusMessage(AppliedPolicy p) {
 		if (p != null) {
 			StringBuilder msg = new StringBuilder();
-			if (p.getReceivedResults() != null) {
-				msg.append(Messages.getString("RECEIVED_STATUS")).append(": ").append(p.getReceivedResults())
-						.append(" ");
-			}
 			if (p.getSuccessResults() != null) {
 				msg.append(Messages.getString("SUCCESS_STATUS")).append(": ").append(p.getSuccessResults()).append(" ");
 			}

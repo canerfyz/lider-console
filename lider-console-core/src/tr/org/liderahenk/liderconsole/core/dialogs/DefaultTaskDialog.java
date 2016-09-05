@@ -408,5 +408,10 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 	public ProgressBar getProgressBar() {
 		return progressBar;
 	}
+	
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 
 }

@@ -13,7 +13,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExecutedPolicy implements Serializable {
+public class AppliedPolicy implements Serializable {
 
 	private static final long serialVersionUID = 6837143297810499571L;
 
@@ -26,8 +26,6 @@ public class ExecutedPolicy implements Serializable {
 	private Integer successResults;
 
 	private Integer errorResults;
-
-	private Integer receivedResults;
 
 	public Long getId() {
 		return id;
@@ -67,14 +65,6 @@ public class ExecutedPolicy implements Serializable {
 
 	public void setErrorResults(Integer errorResults) {
 		this.errorResults = errorResults;
-	}
-
-	public Integer getReceivedResults() {
-		return receivedResults;
-	}
-
-	public void setReceivedResults(Integer receivedResults) {
-		this.receivedResults = receivedResults;
 	}
 
 }

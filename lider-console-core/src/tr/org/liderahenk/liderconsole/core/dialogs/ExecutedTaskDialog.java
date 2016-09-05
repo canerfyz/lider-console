@@ -12,24 +12,30 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecutionResult;
 import tr.org.liderahenk.liderconsole.core.model.ExecutedTask;
+import tr.org.liderahenk.liderconsole.core.rest.utils.TaskRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.widgets.LiderConfirmBox;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
  * 
@@ -38,9 +44,12 @@ import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
  */
 public class ExecutedTaskDialog extends DefaultLiderDialog {
 
+	private static final Logger logger = LoggerFactory.getLogger(ExecutedTaskDialog.class);
+
 	// Model
 	private ExecutedTask task;
 	private Command command;
+	private boolean isFutureTask;
 
 	// Widgets
 	private TableViewer tvCmdExec;
@@ -51,6 +60,8 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 		super(parentShell);
 		this.task = task;
 		this.command = command;
+		isFutureTask = command.getActivationDate() != null
+				&& (command.getCommandExecutions() == null || command.getCommandExecutions().isEmpty());
 	}
 
 	/**
@@ -112,13 +123,15 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 			}
 		});
 
-		// Command executions label
-		Label lblCmdExecTable = new Label(parent, SWT.NONE);
-		lblCmdExecTable.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
-		lblCmdExecTable.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblCmdExecTable.setText(Messages.getString("TASK_COMMAND_EXECUTION_RECORDS"));
+		if (!isFutureTask) {
+			// Command executions label
+			Label lblCmdExecTable = new Label(parent, SWT.NONE);
+			lblCmdExecTable.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
+			lblCmdExecTable.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+			lblCmdExecTable.setText(Messages.getString("TASK_COMMAND_EXECUTION_RECORDS"));
 
-		createTableCmdExec(parent);
+			createTableCmdExec(parent);
+		}
 
 		applyDialogFont(composite);
 		return composite;
@@ -179,7 +192,6 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 				}
 			}
 		});
-
 	}
 
 	/**
@@ -331,10 +343,6 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	private String generateStatusMessage(ExecutedTask t) {
 		if (t != null) {
 			StringBuilder msg = new StringBuilder();
-			if (t.getReceivedResults() != null) {
-				msg.append(Messages.getString("RECEIVED_STATUS")).append(": ").append(t.getReceivedResults())
-						.append(" ");
-			}
 			if (t.getSuccessResults() != null) {
 				msg.append(Messages.getString("SUCCESS_STATUS")).append(": ").append(t.getSuccessResults()).append(" ");
 			}
@@ -347,13 +355,35 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 	}
 
 	@Override
-	protected Point getInitialSize() {
-		return new Point(800, 600);
-	}
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		if (isFutureTask && !command.getTask().isDeleted()) {
+			Button btnCancelTask = createButton(parent, 6000, Messages.getString("CANCEL_TASK"), false);
+			btnCancelTask.setImage(SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
+					"icons/16/task-cancel.png"));
+			GridData gridData = new GridData();
+			gridData.widthHint = 140;
+			btnCancelTask.setLayoutData(gridData);
+			btnCancelTask.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+							Messages.getString("FUTURE_TASK_CANCEL_TITLE"),
+							Messages.getString("FUTURE_TASK_CANCEL_MESSAGE"))) {
+						try {
+							TaskRestUtils.cancelTask(task.getId());
+						} catch (Exception e1) {
+							logger.error(e1.getMessage(), e1);
+							Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+						}
+					}
+				}
 
-	@Override
-	protected boolean isResizable() {
-		return false;
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+			});
+		}
 	}
 
 }

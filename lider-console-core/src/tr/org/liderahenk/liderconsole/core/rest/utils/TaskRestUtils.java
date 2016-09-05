@@ -128,7 +128,7 @@ public class TaskRestUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<ExecutedTask> listExecutedTasks(String pluginName, String pluginVersion,
+	public static List<ExecutedTask> listExecutedTasks(String pluginName, boolean onlyFutureTasks,
 			Date createDateRangeStart, Date createDateRangeEnd, Integer status, Integer maxResults) throws Exception {
 
 		// Build URL
@@ -140,8 +140,8 @@ public class TaskRestUtils {
 		if (pluginName != null) {
 			params.add("pluginName=" + pluginName);
 		}
-		if (pluginVersion != null) {
-			params.add("pluginVersion=" + pluginVersion);
+		if (onlyFutureTasks) {
+			params.add("onlyFutureTasks=" + onlyFutureTasks);
 		}
 		if (createDateRangeStart != null) {
 			params.add("createDateRangeStart=" + createDateRangeStart.getTime());
@@ -241,6 +241,35 @@ public class TaskRestUtils {
 		}
 
 		return commands;
+	}
+	
+	/**
+	 * Send GET request to server in order to cancel desired task.
+	 * 
+	 * @param taskId
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean cancelTask(Long taskId) throws Exception {
+
+		if (taskId == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/").append(taskId).append("/cancel");
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		IResponse response = RestClient.get(url.toString());
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK) {
+			Notifier.success(null, Messages.getString("RECORD_DELETED"));
+			return true;
+		}
+
+		Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+		return false;
 	}
 
 	/**

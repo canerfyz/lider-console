@@ -14,7 +14,7 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
-import tr.org.liderahenk.liderconsole.core.model.ExecutedPolicy;
+import tr.org.liderahenk.liderconsole.core.model.AppliedPolicy;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
@@ -233,7 +233,7 @@ public class PolicyRestUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static List<ExecutedPolicy> listAppliedPolicies(String label, Date createDateRangeStart,
+	public static List<AppliedPolicy> listAppliedPolicies(String label, Date createDateRangeStart,
 			Date createDateRangeEnd, Integer status, Integer maxResults) throws Exception {
 
 		// Build URL
@@ -264,12 +264,12 @@ public class PolicyRestUtils {
 
 		// Send GET request to server
 		IResponse response = RestClient.get(url.toString());
-		List<ExecutedPolicy> policies = null;
+		List<AppliedPolicy> policies = null;
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("policies") != null) {
 			policies = new ObjectMapper().readValue(response.getResultMap().get("policies").toString(),
-					new TypeReference<List<ExecutedPolicy>>() {
+					new TypeReference<List<AppliedPolicy>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {

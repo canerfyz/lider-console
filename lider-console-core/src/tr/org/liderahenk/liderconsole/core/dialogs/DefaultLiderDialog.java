@@ -29,5 +29,10 @@ public abstract class DefaultLiderDialog extends Dialog {
 		createButton(parent, IDialogConstants.OK_ID, Messages.getString("OK"), true);
 		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("CANCEL"), false);
 	}
+	
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 
 }

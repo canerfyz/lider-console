@@ -58,9 +58,9 @@ public class ExecutedTaskEditor extends EditorPart {
 	private TableFilter tableFilter;
 	private Text txtSearch;
 	private Text txtPluginName;
-	private Text txtPluginVersion;
 	private DateTime dtCreateDateRangeStart;
 	private DateTime dtCreateDateRangeEnd;
+	private Button btnOnlyFutureTasks;
 	private Button btnSearch;
 
 	@Override
@@ -96,7 +96,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		Composite innerComposite = new Composite(composite, SWT.NONE);
 		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		innerComposite.setLayout(new GridLayout(4, false));
+		innerComposite.setLayout(new GridLayout(7, false));
 
 		// Plugin name label
 		Label lblPluginName = new Label(innerComposite, SWT.NONE);
@@ -107,19 +107,6 @@ public class ExecutedTaskEditor extends EditorPart {
 		txtPluginName = new Text(innerComposite, SWT.BORDER);
 		txtPluginName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		// Plugin version label
-		Label lblPluginVersion = new Label(innerComposite, SWT.NONE);
-		lblPluginVersion.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		lblPluginVersion.setText(Messages.getString("PLUGIN_VERSION"));
-
-		// Plugin version input
-		txtPluginVersion = new Text(innerComposite, SWT.BORDER);
-		txtPluginVersion.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		innerComposite = new Composite(composite, SWT.NONE);
-		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		innerComposite.setLayout(new GridLayout(4, false));
-
 		// Create date label
 		Label lblCreateDateRange = new Label(innerComposite, SWT.NONE);
 		lblCreateDateRange.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
@@ -127,11 +114,21 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Create date range start
 		dtCreateDateRangeStart = new DateTime(innerComposite, SWT.DROP_DOWN | SWT.BORDER);
-		dtCreateDateRangeStart.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		dtCreateDateRangeStart.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.MONTH, -1);
+		dtCreateDateRangeStart.setDay(c.get(Calendar.DAY_OF_MONTH));
+		dtCreateDateRangeStart.setMonth(c.get(Calendar.MONTH));
+		dtCreateDateRangeStart.setYear(c.get(Calendar.YEAR));
 
 		// Create date range end
 		dtCreateDateRangeEnd = new DateTime(innerComposite, SWT.DROP_DOWN | SWT.BORDER);
-		dtCreateDateRangeEnd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		dtCreateDateRangeEnd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+
+		// Show only future tasks
+		btnOnlyFutureTasks = new Button(innerComposite, SWT.CHECK);
+		btnOnlyFutureTasks.setText(Messages.getString("ONLY_FUTURE_TASKS"));
 
 		btnSearch = new Button(innerComposite, SWT.PUSH);
 		btnSearch.setText(Messages.getString("SEARCH"));
@@ -249,7 +246,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Plugin
 		TableViewerColumn pluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("PLUGIN"), 150);
+				Messages.getString("PLUGIN"), 350);
 		pluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -263,7 +260,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Task
 		TableViewerColumn taskColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("TASK"), 200);
+				Messages.getString("TASK"), 350);
 		taskColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -276,7 +273,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Create date
 		TableViewerColumn createDateColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("CREATE_DATE"), 120);
+				Messages.getString("CREATE_DATE"), 250);
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -288,23 +285,9 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
-		// Received status
-		TableViewerColumn receivedColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("RECEIVED_STATUS"), 100);
-		receivedColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getReceivedResults() != null
-							? ((ExecutedTask) element).getReceivedResults().toString() : Messages.getString("UNTITLED");
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-
 		// Success status
 		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("SUCCESS_STATUS"), 100);
+				Messages.getString("SUCCESS_STATUS"), 80);
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -325,7 +308,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Error status
 		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("ERROR_STATUS"), 100);
+				Messages.getString("ERROR_STATUS"), 80);
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -344,16 +327,30 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
+		// Cancel status
+		TableViewerColumn cancelledColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("CANCEL_STATUS"), 80);
+		cancelledColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ExecutedTask) {
+					return ((ExecutedTask) element).getCancelled() != null
+							&& ((ExecutedTask) element).getCancelled().booleanValue() ? Messages.getString("YES")
+									: Messages.getString("NO");
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
 	}
 
 	private void populateTable(boolean useParams) {
 		try {
 			List<ExecutedTask> tasks = null;
 			if (useParams) {
-				tasks = TaskRestUtils.listExecutedTasks(txtPluginName.getText(), txtPluginVersion.getText(),
+				tasks = TaskRestUtils.listExecutedTasks(txtPluginName.getText(), btnOnlyFutureTasks.getSelection(),
 						convertDate(dtCreateDateRangeStart), convertDate(dtCreateDateRangeEnd), null, null);
 			} else {
-				tasks = TaskRestUtils.listExecutedTasks(null, null, null, null, null,
+				tasks = TaskRestUtils.listExecutedTasks(null, false, null, null, null,
 						ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.EXECUTED_TASKS_MAX_SIZE));
 			}
 			tableViewer.setInput(tasks != null ? tasks : new ArrayList<ExecutedTask>());

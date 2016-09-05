@@ -31,7 +31,7 @@ public class ExecutedTask implements Serializable {
 
 	private Integer errorResults;
 
-	private Integer receivedResults;
+	private Boolean cancelled;
 
 	public Long getId() {
 		return id;
@@ -89,12 +89,12 @@ public class ExecutedTask implements Serializable {
 		this.errorResults = errorResults;
 	}
 
-	public Integer getReceivedResults() {
-		return receivedResults;
+	public Boolean getCancelled() {
+		return cancelled;
 	}
 
-	public void setReceivedResults(Integer receivedResults) {
-		this.receivedResults = receivedResults;
+	public void setCancelled(Boolean cancelled) {
+		this.cancelled = cancelled;
 	}
 
 }

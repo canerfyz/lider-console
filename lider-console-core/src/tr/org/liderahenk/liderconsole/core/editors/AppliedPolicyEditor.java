@@ -40,7 +40,7 @@ import tr.org.liderahenk.liderconsole.core.dialogs.AppliedPolicyDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
-import tr.org.liderahenk.liderconsole.core.model.ExecutedPolicy;
+import tr.org.liderahenk.liderconsole.core.model.AppliedPolicy;
 import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -114,11 +114,11 @@ public class AppliedPolicyEditor extends EditorPart {
 
 		// Create date range start
 		dtCreateDateRangeStart = new DateTime(innerComposite, SWT.DROP_DOWN | SWT.BORDER);
-		dtCreateDateRangeStart.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		dtCreateDateRangeStart.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		// Create date range end
 		dtCreateDateRangeEnd = new DateTime(innerComposite, SWT.DROP_DOWN | SWT.BORDER);
-		dtCreateDateRangeEnd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		dtCreateDateRangeEnd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		btnSearch = new Button(innerComposite, SWT.PUSH);
 		btnSearch.setText(Messages.getString("SEARCH"));
@@ -155,7 +155,7 @@ public class AppliedPolicyEditor extends EditorPart {
 			public void doubleClick(DoubleClickEvent event) {
 				// Query task details and populate dialog with it.
 				try {
-					ExecutedPolicy policy = getSelectedPolicy();
+					AppliedPolicy policy = getSelectedPolicy();
 					List<Command> commands = PolicyRestUtils.listCommands(policy.getId());
 					AppliedPolicyDialog dialog = new AppliedPolicyDialog(parent.getShell(), policy, commands);
 					dialog.open();
@@ -217,7 +217,7 @@ public class AppliedPolicyEditor extends EditorPart {
 			if (searchString == null || searchString.length() == 0) {
 				return true;
 			}
-			ExecutedPolicy policy = (ExecutedPolicy) element;
+			AppliedPolicy policy = (AppliedPolicy) element;
 			if (policy.getLabel().matches(searchString)) {
 				return true;
 			}
@@ -238,8 +238,8 @@ public class AppliedPolicyEditor extends EditorPart {
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedPolicy) {
-					return ((ExecutedPolicy) element).getLabel();
+				if (element instanceof AppliedPolicy) {
+					return ((AppliedPolicy) element).getLabel();
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -251,24 +251,9 @@ public class AppliedPolicyEditor extends EditorPart {
 		createDateColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedPolicy) {
-					return ((ExecutedPolicy) element).getCreateDate() != null
-							? ((ExecutedPolicy) element).getCreateDate().toString() : Messages.getString("UNTITLED");
-				}
-				return Messages.getString("UNTITLED");
-			}
-		});
-
-		// Received status
-		TableViewerColumn receivedColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("RECEIVED_STATUS"), 100);
-		receivedColumn.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				if (element instanceof ExecutedPolicy) {
-					return ((ExecutedPolicy) element).getReceivedResults() != null
-							? ((ExecutedPolicy) element).getReceivedResults().toString()
-							: Messages.getString("UNTITLED");
+				if (element instanceof AppliedPolicy) {
+					return ((AppliedPolicy) element).getCreateDate() != null
+							? ((AppliedPolicy) element).getCreateDate().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -280,9 +265,9 @@ public class AppliedPolicyEditor extends EditorPart {
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedPolicy) {
-					return ((ExecutedPolicy) element).getSuccessResults() != null
-							? ((ExecutedPolicy) element).getSuccessResults().toString()
+				if (element instanceof AppliedPolicy) {
+					return ((AppliedPolicy) element).getSuccessResults() != null
+							? ((AppliedPolicy) element).getSuccessResults().toString()
 							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
@@ -290,8 +275,8 @@ public class AppliedPolicyEditor extends EditorPart {
 
 			@Override
 			public Color getBackground(Object element) {
-				return element instanceof ExecutedPolicy && ((ExecutedPolicy) element).getSuccessResults() != null
-						&& ((ExecutedPolicy) element).getSuccessResults().intValue() > 0
+				return element instanceof AppliedPolicy && ((AppliedPolicy) element).getSuccessResults() != null
+						&& ((AppliedPolicy) element).getSuccessResults().intValue() > 0
 								? SWTResourceManager.getSuccessColor() : null;
 			}
 		});
@@ -302,17 +287,17 @@ public class AppliedPolicyEditor extends EditorPart {
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ExecutedPolicy) {
-					return ((ExecutedPolicy) element).getErrorResults() != null
-							? ((ExecutedPolicy) element).getErrorResults().toString() : Messages.getString("UNTITLED");
+				if (element instanceof AppliedPolicy) {
+					return ((AppliedPolicy) element).getErrorResults() != null
+							? ((AppliedPolicy) element).getErrorResults().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
 
 			@Override
 			public Color getBackground(Object element) {
-				return element instanceof ExecutedPolicy && ((ExecutedPolicy) element).getErrorResults() != null
-						&& ((ExecutedPolicy) element).getErrorResults().intValue() > 0
+				return element instanceof AppliedPolicy && ((AppliedPolicy) element).getErrorResults() != null
+						&& ((AppliedPolicy) element).getErrorResults().intValue() > 0
 								? SWTResourceManager.getErrorColor() : null;
 			}
 		});
@@ -321,7 +306,7 @@ public class AppliedPolicyEditor extends EditorPart {
 
 	private void populateTable(boolean useParams) {
 		try {
-			List<ExecutedPolicy> policies = null;
+			List<AppliedPolicy> policies = null;
 			if (useParams) {
 				policies = PolicyRestUtils.listAppliedPolicies(txtLabel.getText(), convertDate(dtCreateDateRangeStart),
 						convertDate(dtCreateDateRangeEnd), null, null);
@@ -329,7 +314,7 @@ public class AppliedPolicyEditor extends EditorPart {
 				policies = PolicyRestUtils.listAppliedPolicies(null, null, null, null,
 						ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.APPLIED_POLICIES_MAX_SIZE));
 			}
-			tableViewer.setInput(policies != null ? policies : new ArrayList<ExecutedPolicy>());
+			tableViewer.setInput(policies != null ? policies : new ArrayList<AppliedPolicy>());
 			tableViewer.refresh();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -358,11 +343,11 @@ public class AppliedPolicyEditor extends EditorPart {
 	 * 
 	 * @return selected policy record, null otherwise.
 	 */
-	protected ExecutedPolicy getSelectedPolicy() {
-		ExecutedPolicy policy = null;
+	protected AppliedPolicy getSelectedPolicy() {
+		AppliedPolicy policy = null;
 		IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-		if (selection != null && selection.getFirstElement() instanceof ExecutedPolicy) {
-			policy = (ExecutedPolicy) selection.getFirstElement();
+		if (selection != null && selection.getFirstElement() instanceof AppliedPolicy) {
+			policy = (AppliedPolicy) selection.getFirstElement();
 		}
 		return policy;
 	}
