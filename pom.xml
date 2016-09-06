@@ -15,6 +15,7 @@
 	<properties>
 		<java.version>1.7</java.version>
 		<tycho.version>0.23.0</tycho.version>
+		<maven.javadoc.plugin.version>2.10.3</maven.javadoc.plugin.version>
 		<maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
 		<findbugs.maven.plugin.version>3.0.0</findbugs.maven.plugin.version>
 		<checkstyle.maven.plugin.version>2.12</checkstyle.maven.plugin.version>
@@ -70,6 +71,17 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.javadoc.plugin.version}</version>
+				<configuration>
+					<!-- <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile> -->
+					<show>protected</show>
+					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
