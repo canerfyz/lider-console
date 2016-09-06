@@ -42,6 +42,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * the configurer may be obtained using getWorkbenchConfigurer
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
+		super.initialize(configurer);
 		// enable the save/restore windows size & position feature
 		configurer.setSaveAndRestore(true);
 
