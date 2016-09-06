@@ -126,73 +126,78 @@ public class RestClient {
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
+	public static IResponse post(final IRequest request, final String url, boolean showProgress) throws Exception {
+		if (showProgress) {
+			IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+			progressService.runInUI(progressService, new IRunnableWithProgress() {
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					monitor.beginTask(Messages.getString("SENDING_REQUEST"), 100);
+					response = doPost(request, url);
+					monitor.worked(100);
+					monitor.done();
+				}
+			}, null);
+		} else {
+			response = doPost(request, url);
+		}
+		return response;
+	}
+
 	public static IResponse post(final IRequest request, final String url) throws Exception {
+		return post(request, url, true);
+	}
 
-		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
-		progressService.runInUI(progressService, new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	private static IResponse doPost(final IRequest request, final String url) {
+		CloseableHttpResponse httpResponse = null;
+		response = null;
+		try {
+			HttpPost httpPost = new HttpPost(buildUrl(url));
+			httpPost.setHeader(CONTENT_TYPE_HEADER, CONTENT_MIME_TYPE);
+			httpPost.setHeader(ACCEPT_HEADER, ACCEPT_MIME_TYPE);
 
-				monitor.beginTask(Messages.getString("SENDING_REQUEST"), 100);
-				CloseableHttpResponse httpResponse = null;
-				response = null;
+			// Convert IRequest instance to JSON and pass as HttpEntity
+			StringEntity entity = new StringEntity(URLEncoder.encode(request.toJson(), "UTF-8"),
+					StandardCharsets.UTF_8);
+			entity.setContentEncoding("UTF-8");
+			entity.setContentType(CONTENT_MIME_TYPE);
+			httpPost.setEntity(entity);
 
-				try {
-					HttpPost httpPost = new HttpPost(buildUrl(url));
-					httpPost.setHeader(CONTENT_TYPE_HEADER, CONTENT_MIME_TYPE);
-					httpPost.setHeader(ACCEPT_HEADER, ACCEPT_MIME_TYPE);
+			httpPost.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
+			httpPost.setHeader(PASSWORD_HEADER, UserSettings.USER_PASSWORD);
 
-					// Convert IRequest instance to JSON and pass as HttpEntity
-					StringEntity entity = new StringEntity(URLEncoder.encode(request.toJson(), "UTF-8"),
-							StandardCharsets.UTF_8);
-					entity.setContentEncoding("UTF-8");
-					entity.setContentType(CONTENT_MIME_TYPE);
-					httpPost.setEntity(entity);
+			httpResponse = (CloseableHttpResponse) httpClient.execute(httpPost);
+			if (httpResponse.getStatusLine().getStatusCode() != 200) {
+				logger.warn("REST failure. Status code: {} Reason: {} ", new Object[] {
+						httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase() });
+			} else { // Status OK
 
-					httpPost.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
-					httpPost.setHeader(PASSWORD_HEADER, UserSettings.USER_PASSWORD);
-
-					monitor.worked(20);
-
-					httpResponse = (CloseableHttpResponse) httpClient.execute(httpPost);
-					if (httpResponse.getStatusLine().getStatusCode() != 200) {
-						logger.warn("REST failure. Status code: {} Reason: {} ",
-								new Object[] { httpResponse.getStatusLine().getStatusCode(),
-										httpResponse.getStatusLine().getReasonPhrase() });
-					} else { // Status OK
-
-						BufferedReader bufferredReader = new BufferedReader(
-								new InputStreamReader(httpResponse.getEntity().getContent()));
-						StringBuilder buffer = new StringBuilder();
-						String line;
-						while ((line = bufferredReader.readLine()) != null) {
-							buffer.append(line);
-						}
-
-						response = new ObjectMapper().readValue(buffer.toString(), RestResponse.class);
-					}
-
-					if (response != null) {
-						logger.debug("Response received: {}", response);
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-					Notifier.error(null, Messages.getString("ERROR_ON_REQUEST"));
-				} finally {
-					if (httpResponse != null) {
-						try {
-							httpResponse.close();
-						} catch (IOException e) {
-							logger.error(e.getMessage(), e);
-						}
-					}
+				BufferedReader bufferredReader = new BufferedReader(
+						new InputStreamReader(httpResponse.getEntity().getContent()));
+				StringBuilder buffer = new StringBuilder();
+				String line;
+				while ((line = bufferredReader.readLine()) != null) {
+					buffer.append(line);
 				}
 
-				monitor.worked(100);
-				monitor.done();
+				response = new ObjectMapper().readValue(buffer.toString(), RestResponse.class);
 			}
-		}, null);
 
+			if (response != null) {
+				logger.debug("Response received: {}", response);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_REQUEST"));
+		} finally {
+			if (httpResponse != null) {
+				try {
+					httpResponse.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
 		return response;
 	}
 
@@ -203,64 +208,71 @@ public class RestClient {
 	 * @return
 	 * @throws Exception
 	 */
+	public static IResponse get(final String url, boolean showProgress) throws Exception {
+		if (showProgress) {
+			IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+			progressService.runInUI(progressService, new IRunnableWithProgress() {
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					monitor.beginTask(Messages.getString("SENDING_REQUEST"), 100);
+					response = doGet(url);
+					monitor.worked(100);
+					monitor.done();
+				}
+			}, null);
+		} else {
+			response = doGet(url);
+		}
+		return response;
+	}
+
 	public static IResponse get(final String url) throws Exception {
+		return get(url, true);
+	}
 
-		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
-		progressService.runInUI(progressService, new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	private static IResponse doGet(final String url) {
+		CloseableHttpResponse httpResponse = null;
+		response = null;
+		try {
+			HttpGet httpGet = new HttpGet(buildUrl(url));
+			httpGet.setHeader(CONTENT_TYPE_HEADER, CONTENT_MIME_TYPE);
+			httpGet.setHeader(ACCEPT_HEADER, ACCEPT_MIME_TYPE);
 
-				monitor.beginTask(Messages.getString("SENDING_REQUEST"), 100);
-				CloseableHttpResponse httpResponse = null;
-				response = null;
+			httpGet.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
+			httpGet.setHeader(PASSWORD_HEADER, UserSettings.USER_PASSWORD);
 
-				try {
-					HttpGet httpGet = new HttpGet(buildUrl(url));
-					httpGet.setHeader(CONTENT_TYPE_HEADER, CONTENT_MIME_TYPE);
-					httpGet.setHeader(ACCEPT_HEADER, ACCEPT_MIME_TYPE);
+			httpResponse = (CloseableHttpResponse) httpClient.execute(httpGet);
+			if (httpResponse.getStatusLine().getStatusCode() != 200) {
+				logger.warn("REST failure. Status code: {} Reason: {} ", new Object[] {
+						httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase() });
+			} else {
 
-					httpGet.setHeader(USERNAME_HEADER, UserSettings.USER_ID);
-					httpGet.setHeader(PASSWORD_HEADER, UserSettings.USER_PASSWORD);
-
-					httpResponse = (CloseableHttpResponse) httpClient.execute(httpGet);
-					if (httpResponse.getStatusLine().getStatusCode() != 200) {
-						logger.warn("REST failure. Status code: {} Reason: {} ",
-								new Object[] { httpResponse.getStatusLine().getStatusCode(),
-										httpResponse.getStatusLine().getReasonPhrase() });
-					} else {
-
-						BufferedReader bufferredReader = new BufferedReader(
-								new InputStreamReader(httpResponse.getEntity().getContent()));
-						StringBuilder buffer = new StringBuilder();
-						String line;
-						while ((line = bufferredReader.readLine()) != null) {
-							buffer.append(line);
-						}
-
-						response = new ObjectMapper().readValue(buffer.toString(), RestResponse.class);
-					}
-
-					if (response != null) {
-						logger.debug("Response received: {}", response);
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-					Notifier.error(null, Messages.getString("ERROR_ON_REQUEST"));
-				} finally {
-					if (httpResponse != null) {
-						try {
-							httpResponse.close();
-						} catch (IOException e) {
-							logger.error(e.getMessage(), e);
-						}
-					}
+				BufferedReader bufferredReader = new BufferedReader(
+						new InputStreamReader(httpResponse.getEntity().getContent()));
+				StringBuilder buffer = new StringBuilder();
+				String line;
+				while ((line = bufferredReader.readLine()) != null) {
+					buffer.append(line);
 				}
 
-				monitor.worked(100);
-				monitor.done();
+				response = new ObjectMapper().readValue(buffer.toString(), RestResponse.class);
 			}
-		}, null);
 
+			if (response != null) {
+				logger.debug("Response received: {}", response);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			Notifier.error(null, Messages.getString("ERROR_ON_REQUEST"));
+		} finally {
+			if (httpResponse != null) {
+				try {
+					httpResponse.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
 		return response;
 	}
 

@@ -228,7 +228,7 @@ public class TaskRestUtils {
 
 		logger.debug("Sending request to URL: {}", url.toString());
 
-		IResponse response = RestClient.get(url.toString());
+		IResponse response = RestClient.get(url.toString(), false);
 		List<Command> commands = null;
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK

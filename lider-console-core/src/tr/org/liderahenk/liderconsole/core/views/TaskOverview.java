@@ -254,7 +254,8 @@ public class TaskOverview extends ViewPart {
 					return Status.OK_STATUS;
 				}
 			};
-			job.setUser(true);
+			job.setPriority(Job.LONG);
+			job.setSystem(true);
 			job.schedule();
 		}
 	};
