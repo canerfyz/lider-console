@@ -146,7 +146,7 @@ public class SearchGroupRestUtils {
 		IResponse response = RestClient.get(url.toString());
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK) {
-			Notifier.error(null, Messages.getString("RECORD_DELETED"));
+			Notifier.success(null, Messages.getString("RECORD_DELETED"));
 			return true;
 		}
 

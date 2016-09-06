@@ -9,6 +9,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,10 +35,13 @@ import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.contentproviders.SearchGroupViewContentProvider;
 import tr.org.liderahenk.liderconsole.core.current.RestSettings;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.labelproviders.SearchGroupViewLabelProvider;
 import tr.org.liderahenk.liderconsole.core.model.SearchGroup;
 import tr.org.liderahenk.liderconsole.core.rest.utils.SearchGroupRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.widgets.LiderConfirmBox;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
  * View part for search groups.
@@ -48,8 +54,10 @@ public class SearchGroupView extends ViewPart {
 
 	private static final Logger logger = LoggerFactory.getLogger(TaskOverview.class);
 
+	private Button btnDelete;
 	private Button btnRefresh;
 	private TreeViewer treeViewer;
+	private SearchGroup selectedSearchGroup;
 
 	/**
 	 * System-wide event broker
@@ -69,8 +77,43 @@ public class SearchGroupView extends ViewPart {
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parent.setLayout(new GridLayout(1, false));
 
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.END, SWT.FILL, true, false));
+		composite.setLayout(new GridLayout(2, false));
+
 		// Refresh button
-		btnRefresh = new Button(parent, SWT.NONE);
+		btnDelete = new Button(composite, SWT.NONE);
+		btnDelete.setImage(
+				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/delete.png"));
+		btnDelete.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+		btnDelete.setEnabled(false);
+		btnDelete.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (null == getSelectedSearchGroup()) {
+					Notifier.warning(null, Messages.getString("PLEASE_SELECT_SEARCH_GROUP"));
+					return;
+				}
+				if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+						Messages.getString("DELETE_SEARCH_GROUP_TITLE"),
+						Messages.getString("DELETE_SEARCH_GROUP_MESSAGE"))) {
+					try {
+						SearchGroupRestUtils.delete(getSelectedSearchGroup().getId());
+						refresh();
+					} catch (Exception e1) {
+						logger.error(e1.getMessage(), e1);
+						Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+					}
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		// Refresh button
+		btnRefresh = new Button(composite, SWT.NONE);
 		btnRefresh.setImage(
 				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
 		btnRefresh.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
@@ -90,6 +133,19 @@ public class SearchGroupView extends ViewPart {
 		treeViewer.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		treeViewer.setContentProvider(new SearchGroupViewContentProvider());
 		treeViewer.setLabelProvider(new SearchGroupViewLabelProvider());
+
+		// Hook up listener
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				ITreeSelection selection = treeViewer.getStructuredSelection();
+				Object firstElement = selection.getFirstElement();
+				if (firstElement instanceof SearchGroup) {
+					setSelectedSearchGroup((SearchGroup) firstElement);
+					btnDelete.setEnabled(true);
+				}
+			}
+		});
 
 		// Context menu
 		// Create a menu manager and create context menu
@@ -196,6 +252,14 @@ public class SearchGroupView extends ViewPart {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
+	}
+
+	public SearchGroup getSelectedSearchGroup() {
+		return selectedSearchGroup;
+	}
+
+	public void setSelectedSearchGroup(SearchGroup selectedSearchGroup) {
+		this.selectedSearchGroup = selectedSearchGroup;
 	}
 
 }

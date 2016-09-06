@@ -3,7 +3,6 @@ package tr.org.liderahenk.liderconsole.core.rest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -122,9 +121,13 @@ public class RestClient {
 	 * Main method that can be used to send POST requests to Lider Server.
 	 * 
 	 * @param request
+	 * @param url
+	 * @param showProgress
+	 *            This uses UI thread to show progress, if you have a long
+	 *            running task, you should hide progress and run it background
+	 *            by using Job!
 	 * @return an instance of RestResponse if successful, null otherwise.
 	 * @throws Exception
-	 * @throws UnsupportedEncodingException
 	 */
 	public static IResponse post(final IRequest request, final String url, boolean showProgress) throws Exception {
 		if (showProgress) {
@@ -144,6 +147,14 @@ public class RestClient {
 		return response;
 	}
 
+	/**
+	 * Convenience method for POST requests.
+	 * 
+	 * @param request
+	 * @param url
+	 * @return
+	 * @throws Exception
+	 */
 	public static IResponse post(final IRequest request, final String url) throws Exception {
 		return post(request, url, true);
 	}
@@ -205,6 +216,10 @@ public class RestClient {
 	 * Main method that can be used to send GET requests to Lider server.
 	 * 
 	 * @param url
+	 * @param showProgress
+	 *            This uses UI thread to show progress, if you have a long
+	 *            running task, you should hide progress and run it background
+	 *            by using Job!
 	 * @return
 	 * @throws Exception
 	 */
@@ -226,6 +241,13 @@ public class RestClient {
 		return response;
 	}
 
+	/**
+	 * Convenience method for GET requests.
+	 * 
+	 * @param url
+	 * @return
+	 * @throws Exception
+	 */
 	public static IResponse get(final String url) throws Exception {
 		return get(url, true);
 	}
