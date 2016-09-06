@@ -34,6 +34,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Profile;
 import tr.org.liderahenk.liderconsole.core.rest.utils.ProfileRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.widgets.LiderConfirmBox;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -158,12 +159,16 @@ public class DefaultProfileEditor extends EditorPart {
 					Notifier.warning(null, Messages.getString("PLEASE_SELECT_PROFILE"));
 					return;
 				}
-				try {
-					ProfileRestUtils.delete(getSelectedProfile().getId());
-					refresh();
-				} catch (Exception e1) {
-					logger.error(e1.getMessage(), e1);
-					Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+				if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+						Messages.getString("DELETE_PROFILE_TITLE"),
+						Messages.getString("DELETE_PROFILE_MESSAGE"))) {
+					try {
+						ProfileRestUtils.delete(getSelectedProfile().getId());
+						refresh();
+					} catch (Exception e1) {
+						logger.error(e1.getMessage(), e1);
+						Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+					}
 				}
 			}
 
@@ -208,9 +213,9 @@ public class DefaultProfileEditor extends EditorPart {
 				Object firstElement = selection.getFirstElement();
 				if (firstElement instanceof Profile) {
 					setSelectedProfile((Profile) firstElement);
+					btnEditProfile.setEnabled(true);
+					btnDeleteProfile.setEnabled(true);
 				}
-				btnEditProfile.setEnabled(true);
-				btnDeleteProfile.setEnabled(true);
 			}
 		});
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {

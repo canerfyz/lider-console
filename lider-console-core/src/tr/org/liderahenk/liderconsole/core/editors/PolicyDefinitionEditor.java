@@ -40,6 +40,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
+import tr.org.liderahenk.liderconsole.core.widgets.LiderConfirmBox;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
@@ -161,12 +162,16 @@ public class PolicyDefinitionEditor extends EditorPart {
 					Notifier.warning(null, Messages.getString("PLEASE_SELECT_POLICY"));
 					return;
 				}
-				try {
-					PolicyRestUtils.delete(getSelectedPolicy().getId());
-					refresh();
-				} catch (Exception e1) {
-					logger.error(e1.getMessage(), e1);
-					Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+				if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+						Messages.getString("DELETE_POLICY_TITLE"),
+						Messages.getString("DELETE_POLICY_MESSAGE"))) {
+					try {
+						PolicyRestUtils.delete(getSelectedPolicy().getId());
+						refresh();
+					} catch (Exception e1) {
+						logger.error(e1.getMessage(), e1);
+						Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+					}
 				}
 			}
 
@@ -213,9 +218,9 @@ public class PolicyDefinitionEditor extends EditorPart {
 				Object firstElement = selection.getFirstElement();
 				if (firstElement instanceof Policy) {
 					setSelectedPolicy((Policy) firstElement);
+					btnEditPolicy.setEnabled(true);
+					btnDeletePolicy.setEnabled(true);
 				}
-				btnEditPolicy.setEnabled(true);
-				btnDeletePolicy.setEnabled(true);
 			}
 		});
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
