@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.ldap.enums.DNType;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecution;
@@ -68,7 +69,7 @@ public class TaskOverviewLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if (element instanceof Command) {
 			Command command = (Command) element;
-			return command.getTask().getCommandClsId() + " - " + command.getTask().getCreateDate();
+			return Messages.getString(command.getTask().getCommandClsId()) + " - " + command.getTask().getCreateDate();
 		} else if (element instanceof CommandExecution) {
 			CommandExecution execution = (CommandExecution) element;
 			return execution.getDn().substring(0, 30);

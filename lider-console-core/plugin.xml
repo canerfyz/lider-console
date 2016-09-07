@@ -9,7 +9,7 @@
    </extension>
 
 	<!-- CUSTOM EXTENSION POINTS -->
-	<extension-point id="tr.org.liderahenk.liderconsole.core.logger" name="%extension.point.logger" schema="schema/tr.org.liderahenk.liderconsole.core.logger.exsd"/>
+	<extension-point id="tr.org.liderahenk.liderconsole.core.i18n" name="%extension.point.i18n" schema="schema/tr.org.liderahenk.liderconsole.core.i18n.exsd"/>
 	<extension-point id="tr.org.liderahenk.liderconsole.core.profilemenu" name="%extension.point.profile.menu" schema="schema/tr.org.liderahenk.liderconsole.core.profilemenu.exsd"/>
 	<!-- Plugin may contribute to this extension point: -->
 	<extension-point id="tr.org.liderahenk.liderconsole.core.policymenu" name="%extension.point.policy.menu" schema="schema/tr.org.liderahenk.liderconsole.core.policymenu.exsd"/>
@@ -515,17 +515,6 @@
       </view>
    </extension>
    
-   <!-- LOGGERS -->
-   <extension
-         point="tr.org.liderahenk.liderconsole.core.logger">
-      <Logger
-            class="tr.org.liderahenk.liderconsole.core.XmppLogger"
-            description="%logger.xmpp.description"
-            id="tr.org.liderahenk.liderconsole.core.XmppLogger"
-            name="%logger.xmpp.name">
-      </Logger>
-   </extension>
-   
    <!-- SERVICES -->
    <extension
          point="org.eclipse.ui.services">
@@ -605,6 +594,7 @@
 	</extension>
 	
 	<!-- PERSPECTIVE EXTENSIONS -->
+	<!-- Ignore warnings below. Relative views come from Apache DS API -->
  	<extension
        point="org.eclipse.ui.perspectiveExtensions">
 	    <perspectiveExtension

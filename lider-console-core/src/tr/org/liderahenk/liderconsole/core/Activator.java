@@ -1,19 +1,7 @@
 package tr.org.liderahenk.liderconsole.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
-import tr.org.liderahenk.liderconsole.core.logger.ILogger;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -23,37 +11,8 @@ import tr.org.liderahenk.liderconsole.core.logger.ILogger;
  */
 public class Activator extends AbstractUIPlugin {
 
-	private static final Logger logger = LoggerFactory.getLogger(Activator.class);
-
 	// The shared instance
 	private static Activator plugin;
-
-	/** The JNDI loggers. */
-	private List<ILogger> loggers;
-
-	public List<ILogger> getLoggers() {
-		if (loggers == null) {
-			loggers = new ArrayList<ILogger>();
-
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extensionPoint = registry.getExtensionPoint(LiderConstants.EXTENSION_POINTS.LOGGER);
-			IConfigurationElement[] members = extensionPoint.getConfigurationElements();
-			for (IConfigurationElement member : members) {
-				try {
-					ILogger logger = (ILogger) member.createExecutableExtension("class"); //$NON-NLS-1$
-					logger.setId(member.getAttribute("id")); //$NON-NLS-1$
-					logger.setName(member.getAttribute("name")); //$NON-NLS-1$
-					logger.setDescription(member.getAttribute("description"));
-					// $NON-NLS-1$
-					loggers.add(logger);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
-
-		return loggers;
-	}
 
 	/**
 	 * The constructor

@@ -38,9 +38,8 @@ public class LiderConstants {
 	}
 
 	public static final class EXTENSION_POINTS {
-		public static final String LOGGER = "tr.org.liderahenk.liderconsole.core.logger";
+		public static final String I18N = "tr.org.liderahenk.liderconsole.core.i18n";
 		public static final String PROFILE_MENU = "tr.org.liderahenk.liderconsole.core.profilemenu";
-		public static final String ACTION_MENU = "tr.org.liderahenk.liderconsole.core.actionmenu";
 		public static final String POLICY_MENU = "tr.org.liderahenk.liderconsole.core.policymenu";
 	}
 
