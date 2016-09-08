@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -760,6 +761,18 @@ public class SWTResourceManager {
 	 * @return
 	 */
 	public static TableViewer createTableViewer(final Composite parent) {
+		return createTableViewer(parent, false);
+	}
+
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	public static TableViewer createTableViewer(final Composite parent, final boolean exportable) {
+		if (exportable) {
+			// TODO
+		}
 		TableViewer tableViewer = new TableViewer(parent,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		configureTableLayout(tableViewer);
@@ -869,6 +882,18 @@ public class SWTResourceManager {
 	// General
 	//
 	////////////////////////////////////////////////////////////////////////////
+	public static String getAbsolutePath(String bundleId, String relativePath) {
+		String absPath = null;
+		Bundle bundle = Platform.getBundle(bundleId);
+		URL url = bundle.getEntry(relativePath);
+		try {
+			absPath = FileLocator.resolve(url).getPath();
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
+		return absPath;
+	}
+
 	/**
 	 * Dispose of cached objects and their underlying OS resources. This should
 	 * only be called when the cached objects are no longer needed (e.g. on

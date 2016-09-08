@@ -246,12 +246,12 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Plugin
 		TableViewerColumn pluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("PLUGIN"), 350);
+				Messages.getString("PLUGIN"), 250);
 		pluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getPluginName() + " - "
+					return Messages.getString(((ExecutedTask) element).getPluginName()) + " - "
 							+ ((ExecutedTask) element).getPluginVersion();
 				}
 				return Messages.getString("UNTITLED");
@@ -265,7 +265,7 @@ public class ExecutedTaskEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ExecutedTask) {
-					return ((ExecutedTask) element).getCommandClsId();
+					return Messages.getString(((ExecutedTask) element).getCommandClsId());
 				}
 				return Messages.getString("UNTITLED");
 			}

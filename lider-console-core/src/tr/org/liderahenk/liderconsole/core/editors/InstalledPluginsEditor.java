@@ -160,7 +160,7 @@ public class InstalledPluginsEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Plugin) {
-					return ((Plugin) element).getName();
+					return Messages.getString(((Plugin) element).getName());
 				}
 				return Messages.getString("UNTITLED");
 			}
