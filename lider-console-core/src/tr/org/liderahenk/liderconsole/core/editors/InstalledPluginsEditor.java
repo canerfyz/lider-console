@@ -156,6 +156,7 @@ public class InstalledPluginsEditor extends EditorPart {
 		// Plugin name
 		TableViewerColumn pluginNameColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("PLUGIN_NAME"), 200);
+		pluginNameColumn.getColumn().setAlignment(SWT.LEFT);
 		pluginNameColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -169,6 +170,7 @@ public class InstalledPluginsEditor extends EditorPart {
 		// Plugin version
 		TableViewerColumn pluginVersionColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("PLUGIN_VERSION"), 150);
+		pluginVersionColumn.getColumn().setAlignment(SWT.LEFT);
 		pluginVersionColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -182,6 +184,7 @@ public class InstalledPluginsEditor extends EditorPart {
 		// Description
 		TableViewerColumn descriptionColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("DESCRIPTION"), 100);
+		descriptionColumn.getColumn().setAlignment(SWT.LEFT);
 		descriptionColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -199,7 +202,7 @@ public class InstalledPluginsEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Plugin) {
-					return ((Plugin) element).getCreateDate() != null ? ((Plugin) element).getCreateDate().toString()
+					return ((Plugin) element).getCreateDate() != null ? SWTResourceManager.formatDate(((Plugin) element).getCreateDate())
 							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
@@ -209,6 +212,7 @@ public class InstalledPluginsEditor extends EditorPart {
 		// Machine-oriented
 		TableViewerColumn machineOrientedColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("MACHINE_ORIENTED_PLUGIN"), 100);
+		machineOrientedColumn.getColumn().setAlignment(SWT.LEFT);
 		machineOrientedColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -223,6 +227,7 @@ public class InstalledPluginsEditor extends EditorPart {
 		// User-oriented
 		TableViewerColumn userOrientedColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("USER_ORIENTED_PLUGIN"), 100);
+		userOrientedColumn.getColumn().setAlignment(SWT.LEFT);
 		userOrientedColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -236,6 +241,7 @@ public class InstalledPluginsEditor extends EditorPart {
 		// Policy plugin
 		TableViewerColumn policyPluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("POLICY_PLUGIN"), 100);
+		policyPluginColumn.getColumn().setAlignment(SWT.LEFT);
 		policyPluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -249,6 +255,7 @@ public class InstalledPluginsEditor extends EditorPart {
 		// Task plugin
 		TableViewerColumn taskPluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("TASK_PLUGIN"), 100);
+		taskPluginColumn.getColumn().setAlignment(SWT.LEFT);
 		taskPluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {

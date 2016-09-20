@@ -235,6 +235,7 @@ public class AppliedPolicyEditor extends EditorPart {
 		// Label
 		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("LABEL"), 200);
+		labelColumn.getColumn().setAlignment(SWT.LEFT);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -253,7 +254,7 @@ public class AppliedPolicyEditor extends EditorPart {
 			public String getText(Object element) {
 				if (element instanceof AppliedPolicy) {
 					return ((AppliedPolicy) element).getCreateDate() != null
-							? ((AppliedPolicy) element).getCreateDate().toString() : Messages.getString("UNTITLED");
+							? SWTResourceManager.formatDate(((AppliedPolicy) element).getCreateDate()) : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -262,6 +263,7 @@ public class AppliedPolicyEditor extends EditorPart {
 		// Success status
 		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("SUCCESS_STATUS"), 100);
+		successColumn.getColumn().setAlignment(SWT.RIGHT);
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -284,6 +286,7 @@ public class AppliedPolicyEditor extends EditorPart {
 		// Error status
 		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("ERROR_STATUS"), 100);
+		errorColumn.getColumn().setAlignment(SWT.RIGHT);
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {

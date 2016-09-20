@@ -476,6 +476,7 @@ public class LdapSearchEditor extends EditorPart {
 
 		TableViewerColumn dnColumn = SWTResourceManager.createTableViewerColumn(viewer,
 				Messages.getString("LDAP_ENTRY"), 250);
+		dnColumn.getColumn().setAlignment(SWT.LEFT);
 		dnColumn.setLabelProvider(new LdapSearchEditorLabelProvider());
 
 		if (returningAttributes != null) {
@@ -485,6 +486,7 @@ public class LdapSearchEditor extends EditorPart {
 								// parameters.
 				}
 				TableViewerColumn attrColumn = SWTResourceManager.createTableViewerColumn(viewer, attr, 150);
+				attrColumn.getColumn().setAlignment(SWT.LEFT);
 				attrColumn.setLabelProvider(new ColumnLabelProvider() {
 					@Override
 					public String getText(Object element) {

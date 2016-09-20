@@ -244,6 +244,7 @@ public class AgentInfoEditor extends EditorPart {
 		// DN
 		TableViewerColumn dnColumn = SWTResourceManager.createTableViewerColumn(tableViewer, Messages.getString("DN"),
 				200);
+		dnColumn.getColumn().setAlignment(SWT.LEFT);
 		dnColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -257,6 +258,7 @@ public class AgentInfoEditor extends EditorPart {
 		// JID
 		TableViewerColumn jidColumn = SWTResourceManager.createTableViewerColumn(tableViewer, Messages.getString("JID"),
 				200);
+		jidColumn.getColumn().setAlignment(SWT.LEFT);
 		jidColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -270,6 +272,7 @@ public class AgentInfoEditor extends EditorPart {
 		// Hostname
 		TableViewerColumn hostnameColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("HOSTNAME"), 100);
+		hostnameColumn.getColumn().setAlignment(SWT.LEFT);
 		hostnameColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -283,6 +286,7 @@ public class AgentInfoEditor extends EditorPart {
 		// IP addresses
 		TableViewerColumn ipColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("IP_ADDRESS"), 150);
+		ipColumn.getColumn().setAlignment(SWT.LEFT);
 		ipColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -296,6 +300,7 @@ public class AgentInfoEditor extends EditorPart {
 		// MAC addresses
 		TableViewerColumn macColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("MAC_ADDRESS"), 150);
+		macColumn.getColumn().setAlignment(SWT.LEFT);
 		macColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -313,7 +318,7 @@ public class AgentInfoEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Agent) {
-					return ((Agent) element).getCreateDate() != null ? ((Agent) element).getCreateDate().toString()
+					return ((Agent) element).getCreateDate() != null ? SWTResourceManager.formatDate(((Agent) element).getCreateDate())
 							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
@@ -327,7 +332,7 @@ public class AgentInfoEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Agent) {
-					return ((Agent) element).getModifyDate() != null ? ((Agent) element).getModifyDate().toString()
+					return ((Agent) element).getModifyDate() != null ? SWTResourceManager.formatDate(((Agent) element).getModifyDate())
 							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");

@@ -247,6 +247,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		// Plugin
 		TableViewerColumn pluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("PLUGIN"), 250);
+		pluginColumn.getColumn().setAlignment(SWT.LEFT);
 		pluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -261,6 +262,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		// Task
 		TableViewerColumn taskColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("TASK"), 350);
+		taskColumn.getColumn().setAlignment(SWT.LEFT);
 		taskColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -279,7 +281,7 @@ public class ExecutedTaskEditor extends EditorPart {
 			public String getText(Object element) {
 				if (element instanceof ExecutedTask) {
 					return ((ExecutedTask) element).getCreateDate() != null
-							? ((ExecutedTask) element).getCreateDate().toString() : Messages.getString("UNTITLED");
+							? SWTResourceManager.formatDate(((ExecutedTask) element).getCreateDate()) : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -288,6 +290,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		// Success status
 		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("SUCCESS_STATUS"), 80);
+		successColumn.getColumn().setAlignment(SWT.RIGHT);
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -309,6 +312,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		// Error status
 		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("ERROR_STATUS"), 80);
+		errorColumn.getColumn().setAlignment(SWT.RIGHT);
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -330,6 +334,7 @@ public class ExecutedTaskEditor extends EditorPart {
 		// Cancel status
 		TableViewerColumn cancelledColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("CANCEL_STATUS"), 80);
+		cancelledColumn.getColumn().setAlignment(SWT.LEFT);
 		cancelledColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {

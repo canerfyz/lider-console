@@ -299,6 +299,7 @@ public class ReportTemplateEditor extends EditorPart {
 		// Report name
 		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("REPORT_NAME"), 250);
+		labelColumn.getColumn().setAlignment(SWT.LEFT);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -312,6 +313,7 @@ public class ReportTemplateEditor extends EditorPart {
 		// Description
 		TableViewerColumn descColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("DESCRIPTION"), 400);
+		descColumn.getColumn().setAlignment(SWT.LEFT);
 		descColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -330,7 +332,7 @@ public class ReportTemplateEditor extends EditorPart {
 			public String getText(Object element) {
 				if (element instanceof ReportTemplate) {
 					return ((ReportTemplate) element).getCreateDate() != null
-							? ((ReportTemplate) element).getCreateDate().toString() : Messages.getString("UNTITLED");
+							? SWTResourceManager.formatDate(((ReportTemplate) element).getCreateDate()) : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -344,7 +346,7 @@ public class ReportTemplateEditor extends EditorPart {
 			public String getText(Object element) {
 				if (element instanceof ReportTemplate) {
 					return ((ReportTemplate) element).getModifyDate() != null
-							? ((ReportTemplate) element).getModifyDate().toString() : Messages.getString("UNTITLED");
+							? SWTResourceManager.formatDate(((ReportTemplate) element).getModifyDate()) : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}

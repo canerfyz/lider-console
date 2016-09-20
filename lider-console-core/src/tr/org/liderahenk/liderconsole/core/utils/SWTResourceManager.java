@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
@@ -892,6 +894,11 @@ public class SWTResourceManager {
 			logger.error(e.getMessage(), e);
 		}
 		return absPath;
+	}
+
+	public static String formatDate(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	    return sdf.format(date);
 	}
 
 	/**

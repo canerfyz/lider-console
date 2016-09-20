@@ -238,6 +238,7 @@ public class DefaultProfileEditor extends EditorPart {
 		// Label
 		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("LABEL"), 100);
+		labelColumn.getColumn().setAlignment(SWT.LEFT);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -251,6 +252,7 @@ public class DefaultProfileEditor extends EditorPart {
 		// Description
 		TableViewerColumn descColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("DESCRIPTION"), 400);
+		descColumn.getColumn().setAlignment(SWT.LEFT);
 		descColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -268,7 +270,7 @@ public class DefaultProfileEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Profile) {
-					return ((Profile) element).getCreateDate() != null ? ((Profile) element).getCreateDate().toString()
+					return ((Profile) element).getCreateDate() != null ? SWTResourceManager.formatDate(((Profile) element).getCreateDate())
 							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
@@ -282,7 +284,7 @@ public class DefaultProfileEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Profile) {
-					return ((Profile) element).getModifyDate() != null ? ((Profile) element).getModifyDate().toString()
+					return ((Profile) element).getModifyDate() != null ? SWTResourceManager.formatDate(((Profile) element).getModifyDate())
 							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
@@ -292,6 +294,7 @@ public class DefaultProfileEditor extends EditorPart {
 		// Active
 		TableViewerColumn activeColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("ACTIVE"), 10);
+		activeColumn.getColumn().setAlignment(SWT.LEFT);
 		activeColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
