@@ -70,8 +70,8 @@ public class TreePaintListener implements Listener {
 	 * @param presence
 	 * @return
 	 */
-	public boolean put(String dn, Boolean presence) {
-		return this.presenceMap.put(dn, presence);
+	public void put(String dn, Boolean presence) {
+		presenceMap.put(dn, presence);
 	}
 
 	/**
