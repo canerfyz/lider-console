@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,13 +259,12 @@ public class SWTResourceManager {
 	 * @throws URISyntaxException
 	 */
 	public static Image getImage(String bundleId, String path) {
-		URL entry = Platform.getBundle(bundleId).getEntry(path);
-		try {
-			return getImage(FileLocator.resolve(entry).getPath());
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
+		Image image = m_imageMap.get(path);
+		if (image == null) {
+			image = AbstractUIPlugin.imageDescriptorFromPlugin(bundleId, path).createImage(true);
+			m_imageMap.put(path, image);
 		}
-		return null;
+		return image;
 	}
 
 	/**
