@@ -39,6 +39,7 @@ import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Agent;
 import tr.org.liderahenk.liderconsole.core.rest.utils.AgentRestUtils;
+import tr.org.liderahenk.liderconsole.core.utils.IExportableTableViewer;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -54,6 +55,7 @@ public class AgentInfoEditor extends EditorPart {
 	private TableViewer tableViewer;
 	private TableFilter tableFilter;
 	private Text txtSearch;
+	private Composite buttonComposite;
 	private Button btnViewDetail;
 	private Button btnRefreshAgent;
 
@@ -99,11 +101,11 @@ public class AgentInfoEditor extends EditorPart {
 	 */
 	private void createButtonsArea(final Composite parent) {
 
-		final Composite composite = new Composite(parent, GridData.FILL);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		composite.setLayout(new GridLayout(4, false));
+		buttonComposite = new Composite(parent, GridData.FILL);
+		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		buttonComposite.setLayout(new GridLayout(3, false));
 
-		btnViewDetail = new Button(composite, SWT.NONE);
+		btnViewDetail = new Button(buttonComposite, SWT.NONE);
 		btnViewDetail.setText(Messages.getString("VIEW_DETAIL"));
 		btnViewDetail.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 		btnViewDetail.setImage(
@@ -126,7 +128,7 @@ public class AgentInfoEditor extends EditorPart {
 			}
 		});
 
-		btnRefreshAgent = new Button(composite, SWT.NONE);
+		btnRefreshAgent = new Button(buttonComposite, SWT.NONE);
 		btnRefreshAgent.setText(Messages.getString("REFRESH"));
 		btnRefreshAgent.setImage(
 				SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/refresh.png"));
@@ -152,7 +154,22 @@ public class AgentInfoEditor extends EditorPart {
 
 		createTableFilterArea(parent);
 
-		tableViewer = SWTResourceManager.createTableViewer(parent);
+		tableViewer = SWTResourceManager.createTableViewer(parent, new IExportableTableViewer() {
+			@Override
+			public Composite getButtonComposite() {
+				return buttonComposite;
+			}
+
+			@Override
+			public String getSheetName() {
+				return Messages.getString("AGENT_INFO");
+			}
+
+			@Override
+			public String getReportName() {
+				return Messages.getString("AGENT_INFO");
+			}
+		});
 		createTableColumns();
 		populateTable();
 
@@ -291,7 +308,8 @@ public class AgentInfoEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Agent) {
-					return ((Agent) element).getIpAddresses();
+					String ipAddresses = ((Agent) element).getIpAddresses();
+					return ipAddresses != null ? ipAddresses.replace("'", "").trim() : "-";
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -305,7 +323,8 @@ public class AgentInfoEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Agent) {
-					return ((Agent) element).getMacAddresses();
+					String macAddresses = ((Agent) element).getMacAddresses();
+					return macAddresses != null ? macAddresses.replace("'", "").trim() : "-";
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -318,7 +337,8 @@ public class AgentInfoEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Agent) {
-					return ((Agent) element).getCreateDate() != null ? SWTResourceManager.formatDate(((Agent) element).getCreateDate())
+					return ((Agent) element).getCreateDate() != null
+							? SWTResourceManager.formatDate(((Agent) element).getCreateDate())
 							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
@@ -332,7 +352,8 @@ public class AgentInfoEditor extends EditorPart {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Agent) {
-					return ((Agent) element).getModifyDate() != null ? SWTResourceManager.formatDate(((Agent) element).getModifyDate())
+					return ((Agent) element).getModifyDate() != null
+							? SWTResourceManager.formatDate(((Agent) element).getModifyDate())
 							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");

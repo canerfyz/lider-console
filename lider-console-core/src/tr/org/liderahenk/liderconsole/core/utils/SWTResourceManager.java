@@ -12,6 +12,7 @@ package tr.org.liderahenk.liderconsole.core.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -22,6 +23,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -30,6 +39,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -45,16 +56,23 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
+import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
 /**
  * Utility class for managing OS resources associated with SWT controls such as
@@ -762,7 +780,7 @@ public class SWTResourceManager {
 	 * @return
 	 */
 	public static TableViewer createTableViewer(final Composite parent) {
-		return createTableViewer(parent, false);
+		return createTableViewer(parent, null);
 	}
 
 	/**
@@ -770,14 +788,115 @@ public class SWTResourceManager {
 	 * @param parent
 	 * @return
 	 */
-	public static TableViewer createTableViewer(final Composite parent, final boolean exportable) {
-		if (exportable) {
-			// TODO
-		}
-		TableViewer tableViewer = new TableViewer(parent,
+	public static TableViewer createTableViewer(final Composite parent, final IExportableTableViewer exportable) {
+		final TableViewer tableViewer = new TableViewer(parent,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		configureTableLayout(tableViewer);
+		if (exportable != null) {
+			Button btnExport = new Button(exportable.getButtonComposite(), SWT.PUSH);
+			btnExport.setText(Messages.getString("EXPORT_REPORT"));
+			btnExport.setImage(
+					SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/save.png"));
+			btnExport.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			btnExport.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					try {
+						// Ask target directory
+						final DirectoryDialog dialog = new DirectoryDialog(Display.getDefault().getActiveShell(),
+								SWT.OPEN);
+						dialog.setMessage(Messages.getString("SELECT_DOWNLOAD_DIR"));
+						String path = dialog.open();
+						if (path == null || path.isEmpty()) {
+							return;
+						}
+						if (!path.endsWith("/")) {
+							path += "/";
+						}
+						// Generate report
+						XSSFWorkbook workbook = createWorkbookFromTable(tableViewer, exportable.getSheetName());
+						// Save report to target directory
+						FileOutputStream fos = new FileOutputStream(path + exportable.getReportName() + ".xlsx");
+						workbook.write(fos);
+						fos.close();
+						Notifier.success(null, Messages.getString("REPORT_SAVED"));
+					} catch (Exception e1) {
+						logger.error(e1.getMessage(), e1);
+						Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
+					}
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+			});
+		}
 		return tableViewer;
+	}
+
+	private static XSSFWorkbook createWorkbookFromTable(TableViewer tableViewer, String sheetName) {
+
+		// Create workbook & sheet
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName == null ? "Sheet1" : sheetName);
+
+		// Shade the background of the header row
+		XSSFCellStyle headerStyle = wb.createCellStyle();
+		headerStyle.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+		headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		headerStyle.setBorderTop(CellStyle.BORDER_THIN);
+		headerStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		headerStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		headerStyle.setBorderRight(CellStyle.BORDER_THIN);
+		headerStyle.setAlignment(HorizontalAlignment.CENTER);
+
+		// Add header row
+		Table table = tableViewer.getTable();
+		TableColumn[] columns = table.getColumns();
+		int rowIndex = 0;
+		int cellIndex = 0;
+		XSSFRow header = sheet.createRow((short) rowIndex++);
+		for (TableColumn column : columns) {
+			XSSFCell cell = header.createCell(cellIndex++);
+			cell.setCellValue(column.getText());
+			cell.setCellStyle(headerStyle);
+		}
+
+		// Add data rows
+		TableItem[] items = tableViewer.getTable().getItems();
+		for (TableItem item : items) {
+			// create a new row
+			XSSFRow row = sheet.createRow((short) rowIndex++);
+			cellIndex = 0;
+
+			for (int i = 0; i < columns.length; i++) {
+				// Create a new cell
+				XSSFCell cell = row.createCell(cellIndex++);
+				String text = item.getText(i);
+
+				// Set the horizontal alignment (default to RIGHT)
+				XSSFCellStyle cellStyle = wb.createCellStyle();
+				if (LiderCoreUtils.isInteger(text)) {
+					cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+				} else if (LiderCoreUtils.isValidDate(text,
+						ConfigProvider.getInstance().get(LiderConstants.CONFIG.DATE_FORMAT))) {
+					cellStyle.setAlignment(HorizontalAlignment.CENTER);
+				} else {
+					cellStyle.setAlignment(HorizontalAlignment.LEFT);
+				}
+				cell.setCellStyle(cellStyle);
+
+				// Set the cell's value
+				cell.setCellValue(text);
+			}
+		}
+
+		// Auto-fit the columns
+		for (int i = 0; i < columns.length; i++) {
+			sheet.autoSizeColumn((short) i);
+		}
+
+		return wb;
 	}
 
 	/**
@@ -896,7 +1015,8 @@ public class SWTResourceManager {
 	}
 
 	public static String formatDate(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(
+				ConfigProvider.getInstance().get(LiderConstants.CONFIG.DATE_FORMAT));
 		return sdf.format(date);
 	}
 

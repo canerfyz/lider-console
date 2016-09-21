@@ -42,6 +42,7 @@ import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.ExecutedTask;
 import tr.org.liderahenk.liderconsole.core.rest.utils.TaskRestUtils;
+import tr.org.liderahenk.liderconsole.core.utils.IExportableTableViewer;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
 
@@ -60,6 +61,7 @@ public class ExecutedTaskEditor extends EditorPart {
 	private Text txtPluginName;
 	private DateTime dtCreateDateRangeStart;
 	private DateTime dtCreateDateRangeEnd;
+	private Composite buttonComposite;
 	private Button btnOnlyFutureTasks;
 	private Button btnSearch;
 
@@ -94,26 +96,26 @@ public class ExecutedTaskEditor extends EditorPart {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(1, false));
 
-		Composite innerComposite = new Composite(composite, SWT.NONE);
-		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		innerComposite.setLayout(new GridLayout(7, false));
+		buttonComposite = new Composite(composite, SWT.NONE);
+		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		buttonComposite.setLayout(new GridLayout(8, false));
 
 		// Plugin name label
-		Label lblPluginName = new Label(innerComposite, SWT.NONE);
+		Label lblPluginName = new Label(buttonComposite, SWT.NONE);
 		lblPluginName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblPluginName.setText(Messages.getString("PLUGIN_NAME"));
 
 		// Plugin name input
-		txtPluginName = new Text(innerComposite, SWT.BORDER);
+		txtPluginName = new Text(buttonComposite, SWT.BORDER);
 		txtPluginName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		// Create date label
-		Label lblCreateDateRange = new Label(innerComposite, SWT.NONE);
+		Label lblCreateDateRange = new Label(buttonComposite, SWT.NONE);
 		lblCreateDateRange.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblCreateDateRange.setText(Messages.getString("CREATE_DATE_RANGE"));
 
 		// Create date range start
-		dtCreateDateRangeStart = new DateTime(innerComposite, SWT.DROP_DOWN | SWT.BORDER);
+		dtCreateDateRangeStart = new DateTime(buttonComposite, SWT.DROP_DOWN | SWT.BORDER);
 		dtCreateDateRangeStart.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -123,14 +125,14 @@ public class ExecutedTaskEditor extends EditorPart {
 		dtCreateDateRangeStart.setYear(c.get(Calendar.YEAR));
 
 		// Create date range end
-		dtCreateDateRangeEnd = new DateTime(innerComposite, SWT.DROP_DOWN | SWT.BORDER);
+		dtCreateDateRangeEnd = new DateTime(buttonComposite, SWT.DROP_DOWN | SWT.BORDER);
 		dtCreateDateRangeEnd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		// Show only future tasks
-		btnOnlyFutureTasks = new Button(innerComposite, SWT.CHECK);
+		btnOnlyFutureTasks = new Button(buttonComposite, SWT.CHECK);
 		btnOnlyFutureTasks.setText(Messages.getString("ONLY_FUTURE_TASKS"));
 
-		btnSearch = new Button(innerComposite, SWT.PUSH);
+		btnSearch = new Button(buttonComposite, SWT.PUSH);
 		btnSearch.setText(Messages.getString("SEARCH"));
 		btnSearch.addSelectionListener(new SelectionListener() {
 			@Override
@@ -155,7 +157,22 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		createTableFilterArea(parent);
 
-		tableViewer = SWTResourceManager.createTableViewer(parent);
+		tableViewer = SWTResourceManager.createTableViewer(parent, new IExportableTableViewer() {
+			@Override
+			public String getSheetName() {
+				return Messages.getString("EXECUTED_TASK");
+			}
+
+			@Override
+			public String getReportName() {
+				return Messages.getString("EXECUTED_TASK");
+			}
+
+			@Override
+			public Composite getButtonComposite() {
+				return buttonComposite;
+			}
+		});
 		createTableColumns();
 		populateTable(false);
 
@@ -281,7 +298,8 @@ public class ExecutedTaskEditor extends EditorPart {
 			public String getText(Object element) {
 				if (element instanceof ExecutedTask) {
 					return ((ExecutedTask) element).getCreateDate() != null
-							? SWTResourceManager.formatDate(((ExecutedTask) element).getCreateDate()) : Messages.getString("UNTITLED");
+							? SWTResourceManager.formatDate(((ExecutedTask) element).getCreateDate())
+							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
