@@ -23,7 +23,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.codehaus.jackson.core,
  org.codehaus.jackson.mapper,
  ch.qos.logback.classic,
- ch.qos.logback.core
+ ch.qos.logback.core,
+ org.apache.poi,
+ org.apache.poi.ooxml,
+ org.apache.poi.ooxml.schemas
 Bundle-ClassPath: conf/,
  .
 Export-Package: tr.org.liderahenk.liderconsole.core.config,
