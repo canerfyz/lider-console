@@ -37,7 +37,7 @@ Apache Software Foundation http://apache.org/
       startupProgressRect="0,292,500,15"
       startupMessageRect="5,269,450,20"
       startupForegroundColor="FFFFFF" />
-   <launcher>
+   <launcher name="lider-console">
       <linux icon="../lider-console-rcp/icons/liderahenk-48.xpm"/>
       <solaris/>
       <win useIco="false">
@@ -730,9 +730,6 @@ Public License instead of this License.  But first, please read
 
    <plugins>
       <plugin id="bcprov"/>
-      <plugin id="ch.qos.logback.classic"/>
-      <plugin id="ch.qos.logback.core"/>
-      <plugin id="ch.qos.logback.slf4j" fragment="true"/>
       <plugin id="com.google.guava"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.annotation"/>
@@ -777,16 +774,22 @@ Public License instead of this License.  But first, please read
       <plugin id="org.apache.directory.studio.valueeditors"/>
       <plugin id="org.apache.httpcomponents.httpclient"/>
       <plugin id="org.apache.httpcomponents.httpcore"/>
+      <plugin id="org.apache.log4j"/>
       <plugin id="org.apache.mina.core"/>
+      <plugin id="org.apache.poi"/>
+      <plugin id="org.apache.poi.ooxml"/>
+      <plugin id="org.apache.poi.ooxml.schemas"/>
       <plugin id="org.apache.servicemix.bundles.antlr"/>
       <plugin id="org.apache.servicemix.bundles.dom4j"/>
       <plugin id="org.apache.servicemix.bundles.xpp3"/>
       <plugin id="org.apache.xerces"/>
       <plugin id="org.apache.xml.resolver"/>
       <plugin id="org.apache.xml.serializer"/>
+      <plugin id="org.apache.xmlbeans"/>
       <plugin id="org.bouncycastle.bcprov"/>
       <plugin id="org.codehaus.jackson.core"/>
       <plugin id="org.codehaus.jackson.mapper"/>
+      <plugin id="org.dom4j"/>
       <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
@@ -1017,6 +1020,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="org.slf4j.api"/>
+      <plugin id="org.slf4j.impl.log4j12" fragment="true"/>
       <plugin id="org.tukaani.xz"/>
       <plugin id="org.w3c.css.sac"/>
       <plugin id="org.w3c.dom.events"/>
@@ -1034,7 +1038,7 @@ Public License instead of this License.  But first, please read
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="0" />
-      <property name="eclipse.log.level" value="ERROR" />
+      <property name="eclipse.log.level" value="INFO" />
    </configurations>
 
    <preferencesInfo>
