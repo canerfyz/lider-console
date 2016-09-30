@@ -2,6 +2,7 @@ package tr.org.liderahenk.liderconsole.core.ldap.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -35,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener;
+import tr.org.liderahenk.liderconsole.core.model.LiderPrivilege;
 
 /**
  * LdapUtils provides utility methods for querying and updating LDAP entries.
@@ -45,6 +49,18 @@ import tr.org.liderahenk.liderconsole.core.ldap.listeners.LdapConnectionListener
 public class LdapUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(LdapUtils.class);
+
+	/**
+	 * Pattern for task privileges (e.g. [TASK:dc=mys,dc=pardus,dc=org:ALL],
+	 * [TASK:dc=mys,dc=pardus,dc=org:EXECUTE_SCRIPT] )
+	 */
+	private static Pattern taskPriviligePattern = Pattern.compile("\\[TASK:(.+):(.+)\\]");
+
+	/**
+	 * Pattern for report privileges (e.g. [REPORT:ONLINE-USERS-REPORT] ,
+	 * [REPORT:ALL] )
+	 */
+	private static Pattern reportPriviligePattern = Pattern.compile("\\[REPORT:([a-zA-Z0-9-,]+)\\]");
 
 	/**
 	 * 
@@ -732,6 +748,26 @@ public class LdapUtils {
 			++counter;
 		}
 		conn.getConnectionWrapper().modifyEntry(dn, mods, null, monitor, null);
+	}
+
+	public LiderPrivilege parsePrivilige(String privilege) {
+		LiderPrivilege liderPrivilege = null;
+		// Each privigile block may contain Task or Report privileges
+		String[] privBlocks = privilege != null ? privilege.split("\\|") : null;
+		if (privBlocks != null) {
+			liderPrivilege = new LiderPrivilege();
+			for (String privBlock : privBlocks) {
+				Matcher tMatcher = taskPriviligePattern.matcher(privBlock);
+				Matcher rMatcher = reportPriviligePattern.matcher(privBlock);
+				if (tMatcher.matches()) { // Task privilege
+					liderPrivilege.setTaskTargetEntry(tMatcher.group(1));
+					liderPrivilege.setTaskCodes(Arrays.asList(tMatcher.group(2).split(",")));
+				} else if (rMatcher.matches()) { // Report privilege
+					liderPrivilege.setReportCodes(Arrays.asList(rMatcher.group(1).split(",")));
+				}
+			}
+		}
+		return liderPrivilege;
 	}
 
 	public void destroy() {

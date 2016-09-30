@@ -555,7 +555,7 @@
 	<extension
          point="org.apache.directory.studio.valueeditors">
 	     <valueEditor
-	          class="tr.org.liderahenk.liderconsole.core.valueeditors.liderprivilege.LiderPrivilegeEditor"
+	          class="tr.org.liderahenk.liderconsole.core.handlers.LiderPrivilegeHandler"
 	          icon="resources/icons/imageeditor.gif"
 	          name="Lider Privilege Editor">
 	       <attribute attributeType="liderPrivilege"/>
