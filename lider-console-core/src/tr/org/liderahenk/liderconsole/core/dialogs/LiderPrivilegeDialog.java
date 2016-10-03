@@ -13,8 +13,10 @@ import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.studio.ldapbrowser.common.widgets.search.EntryWidget;
 import org.apache.directory.studio.ldapbrowser.core.BrowserCorePlugin;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -42,6 +44,7 @@ public class LiderPrivilegeDialog extends DefaultLiderDialog {
 	private EntryWidget entry;
 	private Composite cmpReportPriv;
 	private Composite cmpTaskPriv;
+	private static final int WIDTH_HINT = 400;
 	// Model
 	private String selectedPrivilege;
 
@@ -54,9 +57,17 @@ public class LiderPrivilegeDialog extends DefaultLiderDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
-		Composite composite = (Composite) super.createDialogArea(parent);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		ScrolledComposite sc = new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL);
+		sc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		sc.setLayout(new GridLayout(1, false));
+
+		Composite composite = new Composite(sc, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		composite.setLayout(new GridLayout(1, false));
+
+		sc.setContent(composite);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
 
 		LiderPrivilege liderPrivilege = LdapUtils.getInstance().parsePrivilige(selectedPrivilege);
 
@@ -172,6 +183,9 @@ public class LiderPrivilegeDialog extends DefaultLiderDialog {
 			}
 		}
 
+		sc.layout(true, true);
+		sc.setMinSize(sc.getContent().computeSize(WIDTH_HINT, SWT.DEFAULT));
+
 		applyDialogFont(parent);
 		return parent;
 	}
@@ -259,6 +273,11 @@ public class LiderPrivilegeDialog extends DefaultLiderDialog {
 
 	public String getSelectedPrivilege() {
 		return this.selectedPrivilege;
+	}
+
+	@Override
+	protected Point getInitialSize() {
+		return new Point(WIDTH_HINT, 600);
 	}
 
 }
