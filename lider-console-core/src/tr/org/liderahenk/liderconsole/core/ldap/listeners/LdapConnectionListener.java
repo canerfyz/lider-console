@@ -100,6 +100,10 @@ public class LdapConnectionListener implements IConnectionListener {
 										items[i].addSelectionListener(new SelectionListener() {
 											@Override
 											public void widgetSelected(SelectionEvent e) {
+												// Force re-build UID map
+												LdapUtils.getInstance().destroy();
+												// Find online users & re-paint
+												// LDAP tree
 												XMPPClient.getInstance().getOnlineUsers();
 											}
 

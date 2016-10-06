@@ -191,7 +191,7 @@ public class LdapUtils {
 	private static Map<String, String> uidMap = null;
 
 	public synchronized Map<String, String> getUidMap(Connection conn, StudioProgressMonitor monitor) {
-		if (uidMap == null) {
+		if (uidMap == null || uidMap.isEmpty()) {
 			uidMap = buildUidMap(conn, monitor);
 		}
 		return uidMap;
