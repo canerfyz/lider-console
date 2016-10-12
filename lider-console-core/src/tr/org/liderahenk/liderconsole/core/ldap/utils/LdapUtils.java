@@ -79,6 +79,7 @@ public class LdapUtils {
 
 	public static final String OBJECT_CLASS_FILTER = "(objectClass=*)";
 	private static final String OBJECT_CLASS = "objectClass";
+	private static final String MEMBER_ATTR = "member";
 
 	/**
 	 * Main search method for LDAP connections.
@@ -665,6 +666,45 @@ public class LdapUtils {
 
 	public List<String> findGroups(String dn) {
 		return findGroups(dn, LdapConnectionListener.getConnection(), LdapConnectionListener.getMonitor());
+	}
+
+	/**
+	 * Check if provided DN belongs to an LDAP admin.
+	 * 
+	 * @param dn
+	 * @param conn
+	 * @param monitor
+	 * @return true if provided DN belongs to an LDAP admin, false otherwise.
+	 */
+	public boolean isAdmin(String dn, Connection conn, StudioProgressMonitor monitor) {
+		// Create filter expression for group object classes
+		StringBuilder filter = new StringBuilder();
+		String[] groupObjClsArr = ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.GROUP_LDAP_OBJ_CLS);
+		filter.append("(&");
+		for (String groupObjCls : groupObjClsArr) {
+			filter.append("(objectClass=").append(groupObjCls).append(")");
+		}
+		filter.append("(cn=Administrators)");
+		filter.append(")");
+
+		StudioNamingEnumeration enumeration = search(null, filter.toString(), new String[] { MEMBER_ATTR },
+				SearchControls.SUBTREE_SCOPE, 0, conn, monitor);
+		try {
+			while (enumeration.hasMore()) {
+				SearchResult item = enumeration.next();
+				Attribute attr = item.getAttributes().get(MEMBER_ATTR);
+				if (attr != null) {
+					Object val = attr.get();
+					if (((String) val).toLowerCase(Locale.ENGLISH).equalsIgnoreCase(dn)) {
+						return true;
+					}
+				}
+			}
+		} catch (NamingException e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return false;
 	}
 
 	/**
