@@ -257,6 +257,8 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 											: null,
 									new Date());
 							TaskRestUtils.execute(task);
+							// Progress bar will be automatically hidden on
+							// TASK_STATUS message received
 						} catch (Exception e1) {
 							progressBar.setVisible(false);
 							logger.error(e1.getMessage(), e1);
@@ -300,6 +302,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 											: null,
 									new Date());
 							TaskRestUtils.execute(task);
+							progressBar.setVisible(false);
 						} catch (Exception e1) {
 							progressBar.setVisible(false);
 							logger.error(e1.getMessage(), e1);
@@ -408,7 +411,7 @@ public abstract class DefaultTaskDialog extends TitleAreaDialog {
 	public ProgressBar getProgressBar() {
 		return progressBar;
 	}
-	
+
 	@Override
 	protected boolean isResizable() {
 		return true;
