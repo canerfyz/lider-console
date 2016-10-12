@@ -54,6 +54,11 @@
       </command>
       <command
             categoryId="tr.org.liderahenk.liderconsole.commands.category"
+            id="tr.org.liderahenk.liderconsole.core.commands.OperationLogs"
+            name="%command.operation.logs">
+      </command>
+      <command
+            categoryId="tr.org.liderahenk.liderconsole.commands.category"
             id="tr.org.liderahenk.liderconsole.core.commands.AgentDetailInfo"
             name="%command.agent.detail.info">
       </command>
@@ -107,6 +112,10 @@
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.AgentInfoHandler"
             commandId="tr.org.liderahenk.liderconsole.core.commands.AgentInfo">
+      </handler>
+	  <handler
+            class="tr.org.liderahenk.liderconsole.core.handlers.OperationLogsHandler"
+            commandId="tr.org.liderahenk.liderconsole.core.commands.OperationLogs">
       </handler>
 	  <handler
             class="tr.org.liderahenk.liderconsole.core.handlers.AgentDetailInfoHandler"
@@ -238,6 +247,12 @@
 	          id="tr.org.liderahenk.liderconsole.core.commands.AgentInfo"
 	          icon="icons/16/chart-flow.png"
 	          tooltip="%command.agent.info">
+        </command>
+		<command
+	          commandId="tr.org.liderahenk.liderconsole.core.commands.OperationLogs"
+	          id="tr.org.liderahenk.liderconsole.core.commands.OperationLogs"
+	          icon="icons/16/chart-flow.png"
+	          tooltip="%command.operation.logs">
         </command>
 		<command
 	          commandId="tr.org.liderahenk.liderconsole.core.commands.ExecutedTask"
@@ -442,6 +457,12 @@
 		    icon="icons/16/chart-flow.png"
 		    id="tr.org.liderahenk.liderconsole.core.editors.AgentInfoEditor"
 		    name="%editor.agent.info">
+	    </editor> 
+	    <editor
+		    class="tr.org.liderahenk.liderconsole.core.editors.OperationLogsEditor"
+		    icon="icons/16/chart-flow.png"
+		    id="tr.org.liderahenk.liderconsole.core.editors.OperationLogsEditor"
+		    name="%editor.operation.logs">
 	    </editor> 
 	    <editor
 		    class="tr.org.liderahenk.liderconsole.core.editors.ReportTemplateEditor"

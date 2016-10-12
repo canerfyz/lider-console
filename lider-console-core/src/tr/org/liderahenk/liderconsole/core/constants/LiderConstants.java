@@ -33,6 +33,7 @@ public class LiderConstants {
 		public static final String INSTALLED_PLUGINS_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.InstalledPluginsEditor";
 		public static final String POLICY_DEFINITION_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.PolicyDefinitionEditor";
 		public static final String AGENT_INFO_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.AgentInfoEditor";
+		public static final String OPERATION_LOGS_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.OperationLogsEditor";
 		public static final String REPORT_TEMPLATE_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ReportTemplateEditor";
 		public static final String REPORT_VIEW_EDITOR = "tr.org.liderahenk.liderconsole.core.editors.ReportViewEditor";
 	}
@@ -78,6 +79,7 @@ public class LiderConstants {
 		public static final String REST_PROFILE_BASE_URL = "rest.profile.base.url";
 		public static final String REST_PLUGIN_BASE_URL = "rest.plugin.base.url";
 		public static final String REST_AGENT_BASE_URL = "rest.agent.base.url";
+		public static final String REST_OPERATION_LOG_BASE_URL = "rest.operation.log.base.url";
 		public static final String REST_POLICY_BASE_URL = "rest.policy.base.url";
 		public static final String REST_REPORT_BASE_URL = "rest.report.base.url";
 		public static final String REST_TASK_BASE_URL = "rest.task.base.url";
