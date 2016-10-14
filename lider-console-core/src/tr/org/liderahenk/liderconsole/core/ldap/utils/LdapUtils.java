@@ -676,7 +676,7 @@ public class LdapUtils {
 	 * @param monitor
 	 * @return true if provided DN belongs to an LDAP admin, false otherwise.
 	 */
-	public boolean isAdmin(String dn, Connection conn, StudioProgressMonitor monitor) {
+	public boolean isAdmin(String dn) {
 		// Create filter expression for group object classes
 		StringBuilder filter = new StringBuilder();
 		String[] groupObjClsArr = ConfigProvider.getInstance().getStringArr(LiderConstants.CONFIG.GROUP_LDAP_OBJ_CLS);
@@ -688,7 +688,8 @@ public class LdapUtils {
 		filter.append(")");
 
 		StudioNamingEnumeration enumeration = search(null, filter.toString(), new String[] { MEMBER_ATTR },
-				SearchControls.SUBTREE_SCOPE, 0, conn, monitor);
+				SearchControls.SUBTREE_SCOPE, 0, LdapConnectionListener.getConnection(),
+				LdapConnectionListener.getMonitor());
 		try {
 			while (enumeration.hasMore()) {
 				SearchResult item = enumeration.next();
