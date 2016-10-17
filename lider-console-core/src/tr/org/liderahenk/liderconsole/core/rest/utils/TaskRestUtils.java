@@ -1,5 +1,6 @@
 package tr.org.liderahenk.liderconsole.core.rest.utils;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -129,7 +130,8 @@ public class TaskRestUtils {
 	 * @throws Exception
 	 */
 	public static List<ExecutedTask> listExecutedTasks(String pluginName, boolean onlyFutureTasks,
-			Date createDateRangeStart, Date createDateRangeEnd, Integer status, Integer maxResults) throws Exception {
+			boolean onlyScheduledTasks, Date createDateRangeStart, Date createDateRangeEnd, Integer status,
+			Integer maxResults) throws Exception {
 
 		// Build URL
 		StringBuilder url = getBaseUrl();
@@ -142,6 +144,9 @@ public class TaskRestUtils {
 		}
 		if (onlyFutureTasks) {
 			params.add("onlyFutureTasks=" + onlyFutureTasks);
+		}
+		if (onlyScheduledTasks) {
+			params.add("onlyScheduledTasks=" + onlyScheduledTasks);
 		}
 		if (createDateRangeStart != null) {
 			params.add("createDateRangeStart=" + createDateRangeStart.getTime());
@@ -242,7 +247,7 @@ public class TaskRestUtils {
 
 		return commands;
 	}
-	
+
 	/**
 	 * Send GET request to server in order to cancel desired task.
 	 * 
@@ -269,6 +274,40 @@ public class TaskRestUtils {
 		}
 
 		Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+		return false;
+	}
+
+	/**
+	 * Send GET request to server in order to reschedule desired task.
+	 * 
+	 * @param taskId
+	 * @param cronExpression
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean rescheduleTask(Long taskId, String cronExpression) throws Exception {
+
+		if (taskId == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+		if (cronExpression == null) {
+			throw new IllegalArgumentException("Cron expression was null.");
+		}
+
+		// Build URL
+		StringBuilder url = getBaseUrl();
+		url.append("/").append(taskId).append("/reschedule?cronExpression=")
+				.append(URLEncoder.encode(cronExpression, "UTF-8"));
+		logger.debug("Sending request to URL: {}", url.toString());
+
+		IResponse response = RestClient.get(url.toString());
+
+		if (response != null && response.getStatus() == RestResponseStatus.OK) {
+			Notifier.success(null, Messages.getString("RECORD_SAVED"));
+			return true;
+		}
+
+		Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
 		return false;
 	}
 
