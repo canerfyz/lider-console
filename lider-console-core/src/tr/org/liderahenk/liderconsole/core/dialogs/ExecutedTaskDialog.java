@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -375,6 +376,63 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 						} catch (Exception e1) {
 							logger.error(e1.getMessage(), e1);
 							Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+						}
+					}
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+			});
+		} else if (task.getScheduled() != null && task.getScheduled().booleanValue()
+				&& !command.getTask().isDeleted()) {
+			Button btnCancelScheduledTask = createButton(parent, 6000, Messages.getString("CANCEL_TASK"), false);
+			btnCancelScheduledTask.setImage(SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
+					"icons/16/task-cancel.png"));
+			GridData gridData = new GridData();
+			gridData.widthHint = 140;
+			btnCancelScheduledTask.setLayoutData(gridData);
+			btnCancelScheduledTask.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+							Messages.getString("SCHEDULED_TASK_CANCEL_TITLE"),
+							Messages.getString("SCHEDULED_TASK_CANCEL_MESSAGE"))) {
+						try {
+							TaskRestUtils.cancelTask(task.getId());
+						} catch (Exception e1) {
+							logger.error(e1.getMessage(), e1);
+							Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
+						}
+					}
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+			});
+			Button btnRescheduleTask = createButton(parent, 6001, Messages.getString("RESCHEDULE_TASK"), false);
+			btnRescheduleTask.setImage(SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
+					"icons/16/task-wait.png"));
+			gridData = new GridData();
+			gridData.widthHint = 140;
+			btnRescheduleTask.setLayoutData(gridData);
+			btnRescheduleTask.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					SchedulerDialog dialog = new SchedulerDialog(Display.getDefault().getActiveShell());
+					dialog.create();
+					if (dialog.open() != Window.OK) {
+						return;
+					}
+					if (LiderConfirmBox.open(Display.getDefault().getActiveShell(),
+							Messages.getString("SCHEDULED_TASK_RESCHEDULE_TITLE"),
+							Messages.getString("SCHEDULED_TASK_RESCHEDULE_MESSAGE"))) {
+						try {
+							TaskRestUtils.rescheduleTask(task.getId(), dialog.getCronExpression());
+						} catch (Exception e1) {
+							logger.error(e1.getMessage(), e1);
+							Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
 						}
 					}
 				}
