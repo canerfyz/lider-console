@@ -61,8 +61,10 @@ public class ExecutedTaskEditor extends EditorPart {
 	private Text txtPluginName;
 	private DateTime dtCreateDateRangeStart;
 	private DateTime dtCreateDateRangeEnd;
-	private Composite buttonComposite;
+	private Composite cmpSearchParams1;
+	private Composite cmpSearchParams2;
 	private Button btnOnlyFutureTasks;
+	private Button btnOnlyScheduledTasks;
 	private Button btnSearch;
 
 	@Override
@@ -96,26 +98,40 @@ public class ExecutedTaskEditor extends EditorPart {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(1, false));
 
-		buttonComposite = new Composite(composite, SWT.NONE);
-		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		buttonComposite.setLayout(new GridLayout(8, false));
+		Composite innerComposite = new Composite(composite, SWT.BORDER);
+		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		innerComposite.setLayout(new GridLayout(1, false));
+
+		cmpSearchParams1 = new Composite(innerComposite, SWT.NONE);
+		cmpSearchParams1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		GridLayout layout = new GridLayout(5, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		cmpSearchParams1.setLayout(layout);
+
+		cmpSearchParams2 = new Composite(innerComposite, SWT.NONE);
+		cmpSearchParams2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		layout = new GridLayout(5, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		cmpSearchParams2.setLayout(layout);
 
 		// Plugin name label
-		Label lblPluginName = new Label(buttonComposite, SWT.NONE);
+		Label lblPluginName = new Label(cmpSearchParams1, SWT.NONE);
 		lblPluginName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblPluginName.setText(Messages.getString("PLUGIN_NAME"));
 
 		// Plugin name input
-		txtPluginName = new Text(buttonComposite, SWT.BORDER);
+		txtPluginName = new Text(cmpSearchParams1, SWT.BORDER);
 		txtPluginName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		// Create date label
-		Label lblCreateDateRange = new Label(buttonComposite, SWT.NONE);
+		Label lblCreateDateRange = new Label(cmpSearchParams1, SWT.NONE);
 		lblCreateDateRange.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		lblCreateDateRange.setText(Messages.getString("CREATE_DATE_RANGE"));
 
 		// Create date range start
-		dtCreateDateRangeStart = new DateTime(buttonComposite, SWT.DROP_DOWN | SWT.BORDER);
+		dtCreateDateRangeStart = new DateTime(cmpSearchParams1, SWT.DROP_DOWN | SWT.BORDER);
 		dtCreateDateRangeStart.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -125,14 +141,43 @@ public class ExecutedTaskEditor extends EditorPart {
 		dtCreateDateRangeStart.setYear(c.get(Calendar.YEAR));
 
 		// Create date range end
-		dtCreateDateRangeEnd = new DateTime(buttonComposite, SWT.DROP_DOWN | SWT.BORDER);
+		dtCreateDateRangeEnd = new DateTime(cmpSearchParams1, SWT.DROP_DOWN | SWT.BORDER);
 		dtCreateDateRangeEnd.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		// Show only future tasks
-		btnOnlyFutureTasks = new Button(buttonComposite, SWT.CHECK);
+		btnOnlyFutureTasks = new Button(cmpSearchParams2, SWT.CHECK);
 		btnOnlyFutureTasks.setText(Messages.getString("ONLY_FUTURE_TASKS"));
+		btnOnlyFutureTasks.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnOnlyFutureTasks.getSelection()) {
+					btnOnlyScheduledTasks.setSelection(false);
+				}
+			}
 
-		btnSearch = new Button(buttonComposite, SWT.PUSH);
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		// Show only scheduled tasks
+		btnOnlyScheduledTasks = new Button(cmpSearchParams2, SWT.CHECK);
+		btnOnlyScheduledTasks.setText(Messages.getString("ONLY_SCHEDULED_TASKS"));
+		btnOnlyScheduledTasks.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnOnlyScheduledTasks.getSelection()) {
+					btnOnlyFutureTasks.setSelection(false);
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		btnSearch = new Button(cmpSearchParams2, SWT.PUSH);
 		btnSearch.setText(Messages.getString("SEARCH"));
 		btnSearch.addSelectionListener(new SelectionListener() {
 			@Override
@@ -170,7 +215,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 			@Override
 			public Composite getButtonComposite() {
-				return buttonComposite;
+				return cmpSearchParams2;
 			}
 		});
 		createTableColumns();
@@ -263,7 +308,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Plugin
 		TableViewerColumn pluginColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("PLUGIN"), 250);
+				Messages.getString("PLUGIN"), 200);
 		pluginColumn.getColumn().setAlignment(SWT.LEFT);
 		pluginColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -278,7 +323,7 @@ public class ExecutedTaskEditor extends EditorPart {
 
 		// Task
 		TableViewerColumn taskColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("TASK"), 350);
+				Messages.getString("TASK"), 300);
 		taskColumn.getColumn().setAlignment(SWT.LEFT);
 		taskColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -349,6 +394,22 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
+		// Scheduled status
+		TableViewerColumn scheduledColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("SCHEDULED_STATUS"), 80);
+		scheduledColumn.getColumn().setAlignment(SWT.LEFT);
+		scheduledColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ExecutedTask) {
+					return ((ExecutedTask) element).getScheduled() != null
+							&& ((ExecutedTask) element).getScheduled().booleanValue() ? Messages.getString("YES")
+									: Messages.getString("NO");
+				}
+				return Messages.getString("UNTITLED");
+			}
+		});
+
 		// Cancel status
 		TableViewerColumn cancelledColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("CANCEL_STATUS"), 80);
@@ -371,9 +432,10 @@ public class ExecutedTaskEditor extends EditorPart {
 			List<ExecutedTask> tasks = null;
 			if (useParams) {
 				tasks = TaskRestUtils.listExecutedTasks(txtPluginName.getText(), btnOnlyFutureTasks.getSelection(),
-						convertDate(dtCreateDateRangeStart), convertDate(dtCreateDateRangeEnd), null, null);
+						btnOnlyScheduledTasks.getSelection(), convertDate(dtCreateDateRangeStart),
+						convertDate(dtCreateDateRangeEnd), null, null);
 			} else {
-				tasks = TaskRestUtils.listExecutedTasks(null, false, null, null, null,
+				tasks = TaskRestUtils.listExecutedTasks(null, false, false, null, null, null,
 						ConfigProvider.getInstance().getInt(LiderConstants.CONFIG.EXECUTED_TASKS_MAX_SIZE));
 			}
 			tableViewer.setInput(tasks != null ? tasks : new ArrayList<ExecutedTask>());

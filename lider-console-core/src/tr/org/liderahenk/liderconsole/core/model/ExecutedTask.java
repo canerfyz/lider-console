@@ -33,6 +33,8 @@ public class ExecutedTask implements Serializable {
 
 	private Boolean cancelled;
 
+	private Boolean scheduled;
+
 	public Long getId() {
 		return id;
 	}
@@ -95,6 +97,14 @@ public class ExecutedTask implements Serializable {
 
 	public void setCancelled(Boolean cancelled) {
 		this.cancelled = cancelled;
+	}
+
+	public Boolean getScheduled() {
+		return scheduled;
+	}
+
+	public void setScheduled(Boolean scheduled) {
+		this.scheduled = scheduled;
 	}
 
 }
