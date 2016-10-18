@@ -39,8 +39,8 @@ import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.dialogs.AppliedPolicyDialog;
 import tr.org.liderahenk.liderconsole.core.editorinput.DefaultEditorInput;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
-import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.AppliedPolicy;
+import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.rest.utils.PolicyRestUtils;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
 import tr.org.liderahenk.liderconsole.core.widgets.Notifier;
@@ -234,7 +234,7 @@ public class AppliedPolicyEditor extends EditorPart {
 
 		// Label
 		TableViewerColumn labelColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("LABEL"), 200);
+				Messages.getString("LABEL"), 500);
 		labelColumn.getColumn().setAlignment(SWT.LEFT);
 		labelColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -254,7 +254,8 @@ public class AppliedPolicyEditor extends EditorPart {
 			public String getText(Object element) {
 				if (element instanceof AppliedPolicy) {
 					return ((AppliedPolicy) element).getCreateDate() != null
-							? SWTResourceManager.formatDate(((AppliedPolicy) element).getCreateDate()) : Messages.getString("UNTITLED");
+							? SWTResourceManager.formatDate(((AppliedPolicy) element).getCreateDate())
+							: Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -262,15 +263,14 @@ public class AppliedPolicyEditor extends EditorPart {
 
 		// Success status
 		TableViewerColumn successColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("SUCCESS_STATUS"), 100);
+				Messages.getString("SUCCESS_STATUS"), 80);
 		successColumn.getColumn().setAlignment(SWT.RIGHT);
 		successColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof AppliedPolicy) {
 					return ((AppliedPolicy) element).getSuccessResults() != null
-							? ((AppliedPolicy) element).getSuccessResults().toString()
-							: Messages.getString("UNTITLED");
+							? ((AppliedPolicy) element).getSuccessResults().toString() : Messages.getString("UNTITLED");
 				}
 				return Messages.getString("UNTITLED");
 			}
@@ -283,9 +283,31 @@ public class AppliedPolicyEditor extends EditorPart {
 			}
 		});
 
+		// Warning status
+		TableViewerColumn warningColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("WARNING_STATUS"), 80);
+		warningColumn.getColumn().setAlignment(SWT.RIGHT);
+		warningColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof AppliedPolicy) {
+					return ((AppliedPolicy) element).getWarningResults() != null
+							? ((AppliedPolicy) element).getWarningResults().toString() : Messages.getString("UNTITLED");
+				}
+				return Messages.getString("UNTITLED");
+			}
+
+			@Override
+			public Color getBackground(Object element) {
+				return element instanceof AppliedPolicy && ((AppliedPolicy) element).getWarningResults() != null
+						&& ((AppliedPolicy) element).getWarningResults().intValue() > 0
+								? SWTResourceManager.getWarningColor() : null;
+			}
+		});
+
 		// Error status
 		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
-				Messages.getString("ERROR_STATUS"), 100);
+				Messages.getString("ERROR_STATUS"), 80);
 		errorColumn.getColumn().setAlignment(SWT.RIGHT);
 		errorColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
