@@ -30,6 +30,7 @@ Bundle-ClassPath: conf/,
  .
 Export-Package: tr.org.liderahenk.liderconsole.core.config,
  tr.org.liderahenk.liderconsole.core.constants,
+ tr.org.liderahenk.liderconsole.core.current,
  tr.org.liderahenk.liderconsole.core.dialogs,
  tr.org.liderahenk.liderconsole.core.editorinput,
  tr.org.liderahenk.liderconsole.core.exceptions,
