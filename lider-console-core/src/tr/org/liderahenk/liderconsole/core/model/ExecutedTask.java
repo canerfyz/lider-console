@@ -29,6 +29,8 @@ public class ExecutedTask implements Serializable {
 
 	private Integer successResults;
 
+	private Integer warningResults;
+
 	private Integer errorResults;
 
 	private Boolean cancelled;
@@ -97,6 +99,14 @@ public class ExecutedTask implements Serializable {
 
 	public void setCancelled(Boolean cancelled) {
 		this.cancelled = cancelled;
+	}
+
+	public Integer getWarningResults() {
+		return warningResults;
+	}
+
+	public void setWarningResults(Integer warningResults) {
+		this.warningResults = warningResults;
 	}
 
 	public Boolean getScheduled() {

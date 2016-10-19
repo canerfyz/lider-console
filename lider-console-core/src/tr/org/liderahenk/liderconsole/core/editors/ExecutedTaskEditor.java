@@ -372,6 +372,28 @@ public class ExecutedTaskEditor extends EditorPart {
 			}
 		});
 
+		// Warning status
+		TableViewerColumn warningColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
+				Messages.getString("WARNING_STATUS"), 80);
+		warningColumn.getColumn().setAlignment(SWT.RIGHT);
+		warningColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ExecutedTask) {
+					return ((ExecutedTask) element).getWarningResults() != null
+							? ((ExecutedTask) element).getWarningResults().toString() : Messages.getString("UNTITLED");
+				}
+				return Messages.getString("UNTITLED");
+			}
+
+			@Override
+			public Color getBackground(Object element) {
+				return element instanceof ExecutedTask && ((ExecutedTask) element).getWarningResults() != null
+						&& ((ExecutedTask) element).getWarningResults().intValue() > 0
+								? SWTResourceManager.getWarningColor() : null;
+			}
+		});
+
 		// Error status
 		TableViewerColumn errorColumn = SWTResourceManager.createTableViewerColumn(tableViewer,
 				Messages.getString("ERROR_STATUS"), 80);

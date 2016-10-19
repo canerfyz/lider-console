@@ -25,6 +25,8 @@ public class AppliedPolicy implements Serializable {
 
 	private Integer successResults;
 
+	private Integer warningResults;
+
 	private Integer errorResults;
 
 	public Long getId() {
@@ -57,6 +59,14 @@ public class AppliedPolicy implements Serializable {
 
 	public void setSuccessResults(Integer successResults) {
 		this.successResults = successResults;
+	}
+
+	public Integer getWarningResults() {
+		return warningResults;
+	}
+
+	public void setWarningResults(Integer warningResults) {
+		this.warningResults = warningResults;
 	}
 
 	public Integer getErrorResults() {
