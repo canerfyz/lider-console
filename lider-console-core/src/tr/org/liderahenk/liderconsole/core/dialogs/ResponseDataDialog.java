@@ -2,6 +2,7 @@ package tr.org.liderahenk.liderconsole.core.dialogs;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -12,17 +13,24 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
 import tr.org.liderahenk.liderconsole.core.model.CommandExecutionResult;
 import tr.org.liderahenk.liderconsole.core.utils.SWTResourceManager;
@@ -59,8 +67,8 @@ public class ResponseDataDialog extends DefaultLiderTitleAreaDialog {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(2, false));
 
-		byte[] responseData = result.getResponseData();
-		ContentType contentType = result.getContentType();
+		final byte[] responseData = result.getResponseData();
+		final ContentType contentType = result.getContentType();
 
 		if (responseData == null || responseData.length == 0) {
 			Label lblResult = new Label(composite, SWT.NONE);
@@ -115,9 +123,43 @@ public class ResponseDataDialog extends DefaultLiderTitleAreaDialog {
 			Label lblResult = new Label(composite, SWT.NONE);
 			lblResult.setFont(SWTResourceManager.getFont("Sans", 9, SWT.BOLD));
 			lblResult.setText(Messages.getString("RESPONSE_DATA"));
-			Label lblImage = new Label(composite, SWT.BORDER);
-			lblImage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			Composite cmpImage = new Composite(composite, SWT.NONE);
+			cmpImage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			cmpImage.setLayout(new GridLayout(2, false));
+
+			// Draw image
+			Label lblImage = new Label(cmpImage, SWT.BORDER);
+			lblImage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 			lblImage.setImage(createImage(responseData));
+
+			// File button to download image
+			final DirectoryDialog dialog = new DirectoryDialog(cmpImage.getShell(), SWT.OPEN);
+			dialog.setMessage(Messages.getString("SELECT_DOWNLOAD_DIR"));
+			Button btnDirSelect = new Button(cmpImage, SWT.PUSH);
+			btnDirSelect.setText(Messages.getString("DOWNLOAD_FILE"));
+			btnDirSelect.setImage(
+					SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE, "icons/16/download.png"));
+			btnDirSelect.addSelectionListener(new SelectionListener() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					String path = dialog.open();
+					if (path == null || path.isEmpty()) {
+						return;
+					}
+					if (!path.endsWith("/")) {
+						path += "/";
+					}
+					// Save image
+					ImageLoader loader = new ImageLoader();
+					loader.data = new ImageData[] { new ImageData(new ByteArrayInputStream(responseData)) };
+					loader.save(path + "sc" + new Date().getTime() + "." + ContentType.getFileExtension(contentType),
+							ContentType.getSWTConstant(contentType));
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+			});
 		}
 		return composite;
 	}
