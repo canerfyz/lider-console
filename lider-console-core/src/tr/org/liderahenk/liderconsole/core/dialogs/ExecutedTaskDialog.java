@@ -372,7 +372,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 							Messages.getString("FUTURE_TASK_CANCEL_TITLE"),
 							Messages.getString("FUTURE_TASK_CANCEL_MESSAGE"))) {
 						try {
-							TaskRestUtils.cancelTask(task.getId());
+							TaskRestUtils.cancelTask(command.getTask().getId());
 						} catch (Exception e1) {
 							logger.error(e1.getMessage(), e1);
 							Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
@@ -384,7 +384,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
-		} else if (task.getScheduled() != null && task.getScheduled().booleanValue()
+		} else if (command.getTask().getCronExpression() != null && !command.getTask().getCronExpression().isEmpty()
 				&& !command.getTask().isDeleted()) {
 			Button btnCancelScheduledTask = createButton(parent, 6000, Messages.getString("CANCEL_TASK"), false);
 			btnCancelScheduledTask.setImage(SWTResourceManager.getImage(LiderConstants.PLUGIN_IDS.LIDER_CONSOLE_CORE,
@@ -399,7 +399,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 							Messages.getString("SCHEDULED_TASK_CANCEL_TITLE"),
 							Messages.getString("SCHEDULED_TASK_CANCEL_MESSAGE"))) {
 						try {
-							TaskRestUtils.cancelTask(task.getId());
+							TaskRestUtils.cancelTask(command.getTask().getId());
 						} catch (Exception e1) {
 							logger.error(e1.getMessage(), e1);
 							Notifier.error(null, Messages.getString("ERROR_ON_DELETE"));
@@ -429,7 +429,7 @@ public class ExecutedTaskDialog extends DefaultLiderDialog {
 							Messages.getString("SCHEDULED_TASK_RESCHEDULE_TITLE"),
 							Messages.getString("SCHEDULED_TASK_RESCHEDULE_MESSAGE"))) {
 						try {
-							TaskRestUtils.rescheduleTask(task.getId(), dialog.getCronExpression());
+							TaskRestUtils.rescheduleTask(command.getTask().getId(), dialog.getCronExpression());
 						} catch (Exception e1) {
 							logger.error(e1.getMessage(), e1);
 							Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
