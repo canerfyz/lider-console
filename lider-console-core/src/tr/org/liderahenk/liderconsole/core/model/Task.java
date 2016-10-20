@@ -21,6 +21,8 @@ public class Task implements Serializable {
 
 	private boolean deleted = false;
 
+	private String cronExpression;
+
 	private Date createDate;
 
 	private Date modifyDate;
@@ -63,6 +65,14 @@ public class Task implements Serializable {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public String getCronExpression() {
+		return cronExpression;
+	}
+
+	public void setCronExpression(String cronExpression) {
+		this.cronExpression = cronExpression;
 	}
 
 	public Date getCreateDate() {
