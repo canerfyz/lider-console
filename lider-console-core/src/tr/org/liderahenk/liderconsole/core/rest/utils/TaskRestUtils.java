@@ -171,7 +171,8 @@ public class TaskRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("tasks") != null) {
-			tasks = new ObjectMapper().readValue(response.getResultMap().get("tasks").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			tasks = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("tasks")),
 					new TypeReference<List<ExecutedTask>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
@@ -205,7 +206,9 @@ public class TaskRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("command") != null) {
-			command = new ObjectMapper().readValue(response.getResultMap().get("command").toString(), Command.class);
+			ObjectMapper mapper = new ObjectMapper();
+			command = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("command")),
+					Command.class);
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
 		}
@@ -238,7 +241,8 @@ public class TaskRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("commands") != null) {
-			commands = new ObjectMapper().readValue(response.getResultMap().get("commands").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			commands = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("commands")),
 					new TypeReference<List<Command>>() {
 					});
 		} else {
@@ -334,7 +338,8 @@ public class TaskRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("responseData") != null) {
-			responseData = new ObjectMapper().readValue(response.getResultMap().get("responseData").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			responseData = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("responseData")),
 					byte[].class);
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

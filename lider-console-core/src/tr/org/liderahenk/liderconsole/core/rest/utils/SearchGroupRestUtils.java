@@ -46,7 +46,8 @@ public class SearchGroupRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("searchGroup") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("searchGroup").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("searchGroup")),
 					SearchGroup.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
@@ -84,7 +85,8 @@ public class SearchGroupRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("searchGroups") != null) {
-			searchGroups = new ObjectMapper().readValue(response.getResultMap().get("searchGroups").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			searchGroups = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("searchGroups")),
 					new TypeReference<List<SearchGroup>>() {
 					});
 		} else {
@@ -116,7 +118,8 @@ public class SearchGroupRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("searchGroup") != null) {
-			searchGroup = new ObjectMapper().readValue(response.getResultMap().get("searchGroup").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			searchGroup = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("searchGroup")),
 					SearchGroup.class);
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {

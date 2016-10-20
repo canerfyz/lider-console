@@ -164,7 +164,8 @@ public class ReportRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("template") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("template").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("template")),
 					ReportTemplate.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
@@ -193,7 +194,8 @@ public class ReportRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("template") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("template").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("template")),
 					ReportTemplate.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
@@ -228,7 +230,8 @@ public class ReportRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("templates") != null) {
-			templates = new ObjectMapper().readValue(response.getResultMap().get("templates").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			templates = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("templates")),
 					new TypeReference<List<ReportTemplate>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
@@ -262,7 +265,8 @@ public class ReportRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("template") != null) {
-			template = new ObjectMapper().readValue(response.getResultMap().get("template").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			template = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("template")),
 					ReportTemplate.class);
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
@@ -321,7 +325,8 @@ public class ReportRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("view") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("view").toString(), ReportView.class);
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("view")), ReportView.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
@@ -349,7 +354,8 @@ public class ReportRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("view") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("view").toString(), ReportView.class);
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("view")), ReportView.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
@@ -383,7 +389,8 @@ public class ReportRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("views") != null) {
-			views = new ObjectMapper().readValue(response.getResultMap().get("views").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			views = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("views")),
 					new TypeReference<List<ReportView>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
@@ -417,7 +424,8 @@ public class ReportRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("view") != null) {
-			view = new ObjectMapper().readValue(response.getResultMap().get("view").toString(), ReportView.class);
+			ObjectMapper mapper = new ObjectMapper();
+			view = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("view")), ReportView.class);
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

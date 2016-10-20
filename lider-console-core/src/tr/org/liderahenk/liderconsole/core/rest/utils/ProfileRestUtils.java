@@ -47,7 +47,8 @@ public class ProfileRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("profile") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("profile").toString(), Profile.class);
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("profile")), Profile.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
@@ -76,7 +77,8 @@ public class ProfileRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("profile") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("profile").toString(), Profile.class);
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("profile")), Profile.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
@@ -123,7 +125,8 @@ public class ProfileRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("profiles") != null) {
-			profiles = new ObjectMapper().readValue(response.getResultMap().get("profiles").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			profiles = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("profiles")),
 					new TypeReference<List<Profile>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
@@ -156,7 +159,9 @@ public class ProfileRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("profile") != null) {
-			profile = new ObjectMapper().readValue(response.getResultMap().get("profile").toString(), Profile.class);
+			ObjectMapper mapper = new ObjectMapper();
+			profile = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("profile")),
+					Profile.class);
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

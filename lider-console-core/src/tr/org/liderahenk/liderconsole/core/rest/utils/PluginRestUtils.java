@@ -62,7 +62,8 @@ public class PluginRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("plugins") != null) {
-			plugins = new ObjectMapper().readValue(response.getResultMap().get("plugins").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			plugins = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("plugins")),
 					new TypeReference<List<Plugin>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
@@ -95,7 +96,8 @@ public class PluginRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("plugin") != null) {
-			plugin = new ObjectMapper().readValue(response.getResultMap().get("plugin").toString(), Plugin.class);
+			ObjectMapper mapper = new ObjectMapper();
+			plugin = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("plugin")), Plugin.class);
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));

@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.liderconsole.core.config.ConfigProvider;
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
-import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.AppliedPolicy;
+import tr.org.liderahenk.liderconsole.core.model.Command;
 import tr.org.liderahenk.liderconsole.core.model.Policy;
 import tr.org.liderahenk.liderconsole.core.rest.RestClient;
 import tr.org.liderahenk.liderconsole.core.rest.enums.RestResponseStatus;
@@ -81,7 +81,8 @@ public class PolicyRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("policy") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("policy").toString(), Policy.class);
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("policy")), Policy.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
@@ -109,7 +110,8 @@ public class PolicyRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("policy") != null) {
-			result = new ObjectMapper().readValue(response.getResultMap().get("policy").toString(), Policy.class);
+			ObjectMapper mapper = new ObjectMapper();
+			result = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("policy")), Policy.class);
 			Notifier.success(null, Messages.getString("RECORD_SAVED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_SAVE"));
@@ -151,7 +153,8 @@ public class PolicyRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("policies") != null) {
-			policies = new ObjectMapper().readValue(response.getResultMap().get("policies").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			policies = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("policies")),
 					new TypeReference<List<Policy>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
@@ -185,7 +188,8 @@ public class PolicyRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("policy") != null) {
-			policy = new ObjectMapper().readValue(response.getResultMap().get("policy").toString(), Policy.class);
+			ObjectMapper mapper = new ObjectMapper();
+			policy = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("policy")), Policy.class);
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
 		} else {
 			Notifier.error(null, Messages.getString("ERROR_ON_LIST"));
@@ -215,7 +219,7 @@ public class PolicyRestUtils {
 		IResponse response = RestClient.get(url.toString());
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK) {
-			Notifier.error(null, Messages.getString("RECORD_DELETED"));
+			Notifier.success(null, Messages.getString("RECORD_DELETED"));
 			return true;
 		}
 
@@ -268,7 +272,8 @@ public class PolicyRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("policies") != null) {
-			policies = new ObjectMapper().readValue(response.getResultMap().get("policies").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			policies = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("policies")),
 					new TypeReference<List<AppliedPolicy>>() {
 					});
 			Notifier.success(null, Messages.getString("RECORD_LISTED"));
@@ -302,7 +307,8 @@ public class PolicyRestUtils {
 
 		if (response != null && response.getStatus() == RestResponseStatus.OK
 				&& response.getResultMap().get("commands") != null) {
-			commands = new ObjectMapper().readValue(response.getResultMap().get("commands").toString(),
+			ObjectMapper mapper = new ObjectMapper();
+			commands = mapper.readValue(mapper.writeValueAsString(response.getResultMap().get("commands")),
 					new TypeReference<List<Command>>() {
 					});
 		} else {
