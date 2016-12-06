@@ -3,6 +3,7 @@ package tr.org.liderahenk.liderconsole.core.dialogs;
 import java.io.FileOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +12,13 @@ import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -26,12 +31,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.liderconsole.core.constants.LiderConstants;
+import tr.org.liderahenk.liderconsole.core.contentproviders.IColumnContentProvider;
+import tr.org.liderahenk.liderconsole.core.contentproviders.ReportGenerationContentProvider;
 import tr.org.liderahenk.liderconsole.core.i18n.Messages;
+import tr.org.liderahenk.liderconsole.core.model.PdfReportParamType;
 import tr.org.liderahenk.liderconsole.core.model.ReportExportType;
 import tr.org.liderahenk.liderconsole.core.model.ReportView;
 import tr.org.liderahenk.liderconsole.core.model.ReportViewColumn;
@@ -51,8 +61,22 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 	private Combo cmbExportType;
 	private Composite paramContainer;
 	private Composite tableContainer;
+	private Composite pdfContainer;
 	private Button btnGenerateReport;
 	private Label lblResult;
+	// Widgets - PDF parameters
+	private Button btnPdfTopLeft;
+	private Button btnPdfTopRight;
+	private Button btnPdfBottomLeft;
+	private Button btnPdfBottomRight;
+	private Combo cmbPdfTopLeftParamType;
+	private Combo cmbPdfTopRightParamType;
+	private Combo cmbPdfBottomLeftParamType;
+	private Combo cmbPdfBottomRightParamType;
+	private Text txtPdfTopLeftValue;
+	private Text txtPdfTopRightValue;
+	private Text txtPdfBottomLeftValue;
+	private Text txtPdfBottomRightValue;
 
 	private static final int DEFAULT_COLUMN_WIDTH = 100;
 
@@ -65,7 +89,7 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 	 * Create template input widgets
 	 */
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parent.setLayout(new GridLayout(1, false));
@@ -74,11 +98,25 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		innerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		innerComposite.setLayout(new GridLayout(2, false));
 
+		// Export type
 		Label lblExportType = new Label(innerComposite, SWT.NONE);
 		lblExportType.setText(Messages.getString("EXPORT_TYPE"));
 
 		cmbExportType = new Combo(innerComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
 		cmbExportType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		cmbExportType.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ReportExportType type = (ReportExportType) getSelectedValue(cmbExportType);
+				((GridData) pdfContainer.getLayoutData()).exclude = !(type == ReportExportType.PDF_FILE);
+				pdfContainer.setVisible(type == ReportExportType.PDF_FILE);
+				parent.layout(false);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 		ReportExportType[] types = ReportExportType.values();
 		for (int i = 0; i < types.length; i++) {
 			ReportExportType type = types[i];
@@ -87,6 +125,182 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 		}
 		cmbExportType.select(0);
 
+		// PDF parameters (header, footer, date etc.)
+		pdfContainer = new Composite(parent, SWT.BORDER);
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gridData.exclude = true;
+		pdfContainer.setLayoutData(gridData);
+		pdfContainer.setLayout(new GridLayout(3, false));
+		pdfContainer.setVisible(cmbExportType.getSelectionIndex() == 1);
+
+		// Top left:
+		btnPdfTopLeft = new Button(pdfContainer, SWT.CHECK);
+		btnPdfTopLeft.setText(Messages.getString("TOP_LEFT"));
+		btnPdfTopLeft.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PdfReportParamType type = (PdfReportParamType) getSelectedValue(cmbPdfTopLeftParamType);
+				cmbPdfTopLeftParamType.setEnabled(btnPdfTopLeft.getSelection());
+				txtPdfTopLeftValue.setEnabled(btnPdfTopLeft.getSelection() && type == PdfReportParamType.TEXT);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		cmbPdfTopLeftParamType = new Combo(pdfContainer, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		cmbPdfTopLeftParamType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		PdfReportParamType[] paramTypes = PdfReportParamType.values();
+		for (int i = 0; i < paramTypes.length; i++) {
+			PdfReportParamType type = paramTypes[i];
+			cmbPdfTopLeftParamType.add(type.getMessage());
+			cmbPdfTopLeftParamType.setData(i + "", type);
+		}
+		cmbPdfTopLeftParamType.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PdfReportParamType type = (PdfReportParamType) getSelectedValue(cmbPdfTopLeftParamType);
+				txtPdfTopLeftValue.setEnabled(type == PdfReportParamType.TEXT);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		cmbPdfTopLeftParamType.select(0);
+		cmbPdfTopLeftParamType.setEnabled(false);
+
+		txtPdfTopLeftValue = new Text(pdfContainer, SWT.NONE);
+		txtPdfTopLeftValue.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtPdfTopLeftValue.setEnabled(false);
+
+		// Top right:
+		btnPdfTopRight = new Button(pdfContainer, SWT.CHECK);
+		btnPdfTopRight.setText(Messages.getString("TOP_RIGHT"));
+		btnPdfTopRight.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PdfReportParamType type = (PdfReportParamType) getSelectedValue(cmbPdfTopRightParamType);
+				cmbPdfTopRightParamType.setEnabled(btnPdfTopRight.getSelection());
+				txtPdfTopRightValue.setEnabled(btnPdfTopRight.getSelection() && type == PdfReportParamType.TEXT);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		btnPdfTopRight.setSelection(true);
+
+		cmbPdfTopRightParamType = new Combo(pdfContainer, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		cmbPdfTopRightParamType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		for (int i = 0; i < paramTypes.length; i++) {
+			PdfReportParamType type = paramTypes[i];
+			cmbPdfTopRightParamType.add(type.getMessage());
+			cmbPdfTopRightParamType.setData(i + "", type);
+		}
+		cmbPdfTopRightParamType.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PdfReportParamType type = (PdfReportParamType) getSelectedValue(cmbPdfTopRightParamType);
+				txtPdfTopRightValue.setEnabled(type == PdfReportParamType.TEXT);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		cmbPdfTopRightParamType.select(1);
+		cmbPdfTopRightParamType.setEnabled(true);
+
+		txtPdfTopRightValue = new Text(pdfContainer, SWT.NONE);
+		txtPdfTopRightValue.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtPdfTopRightValue.setEnabled(false);
+
+		// Bottom left:
+		btnPdfBottomLeft = new Button(pdfContainer, SWT.CHECK);
+		btnPdfBottomLeft.setText(Messages.getString("BOTTOM_LEFT"));
+		btnPdfBottomLeft.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PdfReportParamType type = (PdfReportParamType) getSelectedValue(cmbPdfBottomLeftParamType);
+				cmbPdfBottomLeftParamType.setEnabled(btnPdfBottomLeft.getSelection());
+				txtPdfBottomLeftValue.setEnabled(btnPdfBottomLeft.getSelection() && type == PdfReportParamType.TEXT);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		cmbPdfBottomLeftParamType = new Combo(pdfContainer, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		cmbPdfBottomLeftParamType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		for (int i = 0; i < paramTypes.length; i++) {
+			PdfReportParamType type = paramTypes[i];
+			cmbPdfBottomLeftParamType.add(type.getMessage());
+			cmbPdfBottomLeftParamType.setData(i + "", type);
+		}
+		cmbPdfBottomLeftParamType.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PdfReportParamType type = (PdfReportParamType) getSelectedValue(cmbPdfBottomLeftParamType);
+				txtPdfBottomLeftValue.setEnabled(type == PdfReportParamType.TEXT);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		cmbPdfBottomLeftParamType.select(0);
+		cmbPdfBottomLeftParamType.setEnabled(false);
+
+		txtPdfBottomLeftValue = new Text(pdfContainer, SWT.NONE);
+		txtPdfBottomLeftValue.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtPdfBottomLeftValue.setEnabled(false);
+
+		// Bottom right
+		btnPdfBottomRight = new Button(pdfContainer, SWT.CHECK);
+		btnPdfBottomRight.setText(Messages.getString("BOTTOM_RIGHT"));
+		btnPdfBottomRight.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PdfReportParamType type = (PdfReportParamType) getSelectedValue(cmbPdfBottomRightParamType);
+				cmbPdfBottomRightParamType.setEnabled(btnPdfBottomRight.getSelection());
+				txtPdfBottomRightValue.setEnabled(btnPdfBottomRight.getSelection() && type == PdfReportParamType.TEXT);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		btnPdfBottomRight.setSelection(true);
+
+		cmbPdfBottomRightParamType = new Combo(pdfContainer, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+		cmbPdfBottomRightParamType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		for (int i = 0; i < paramTypes.length; i++) {
+			PdfReportParamType type = paramTypes[i];
+			cmbPdfBottomRightParamType.add(type.getMessage());
+			cmbPdfBottomRightParamType.setData(i + "", type);
+		}
+		cmbPdfBottomRightParamType.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PdfReportParamType type = (PdfReportParamType) getSelectedValue(cmbPdfBottomRightParamType);
+				txtPdfBottomRightValue.setEnabled(type == PdfReportParamType.TEXT);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		cmbPdfBottomRightParamType.select(0);
+		cmbPdfBottomRightParamType.setEnabled(true);
+
+		txtPdfBottomRightValue = new Text(pdfContainer, SWT.NONE);
+		txtPdfBottomRightValue.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		txtPdfBottomRightValue.setEnabled(false);
+
+		// Report parameters
 		Set<ReportViewParameter> params = selectedView.getViewParams();
 		if (params != null && !params.isEmpty()) {
 
@@ -139,6 +353,8 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 			createTableColumns(tableViewer, list);
 			// Populate table
 			tableViewer.setInput(list);
+			tableViewer.setContentProvider(new ReportGenerationContentProvider(selectedView.getViewColumns()));
+			addColumnListeners(tableViewer);
 			tableViewer.refresh();
 			// Redraw table
 			tableContainer.layout(true, true);
@@ -147,6 +363,39 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 			disposePrev(tableContainer);
 			Notifier.warning(null, Messages.getString("EMPTY_REPORT"));
 		}
+	}
+
+	private void addColumnListeners(final TableViewer tableViewer) {
+		TableColumn[] columns = tableViewer.getTable().getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			columns[i].addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					TableColumn column = ((TableColumn) e.widget);
+					Table table = column.getParent();
+					if (column.equals(table.getSortColumn())) {
+						table.setSortDirection(table.getSortDirection() == SWT.UP ? SWT.DOWN : SWT.UP);
+					} else {
+						table.setSortColumn(column);
+						table.setSortDirection(SWT.UP);
+					}
+					tableViewer.refresh();
+				}
+			});
+		}
+		tableViewer.setComparator(new ViewerComparator() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				IColumnContentProvider columnValueProvider = (IColumnContentProvider) tableViewer.getContentProvider();
+				Table table = tableViewer.getTable();
+				int index = Arrays.asList(table.getColumns()).indexOf(table.getSortColumn());
+				int result = 0;
+				if (index != -1) {
+					Comparable c1 = columnValueProvider.getValue(e1, index);
+					Comparable c2 = columnValueProvider.getValue(e2, index);
+					result = c1.compareTo(c2);
+				}
+				return table.getSortDirection() == SWT.UP ? result : -result;
+			}
+		});
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -263,6 +512,27 @@ public class ReportGenerationDialog extends DefaultLiderDialog {
 				// Send parameter values and template ID to generate report!
 				ReportGenerationRequest report = new ReportGenerationRequest();
 				report.setViewId(selectedView.getId());
+				PdfReportParamType t = null;
+				if (btnPdfTopLeft.getSelection()) {
+					t = (PdfReportParamType) getSelectedValue(cmbPdfTopLeftParamType);
+					report.setTopLeft(t);
+					report.setTopLeftText(t == PdfReportParamType.TEXT ? txtPdfTopLeftValue.getText() : null);
+				}
+				if (btnPdfTopRight.getSelection()) {
+					t = (PdfReportParamType) getSelectedValue(cmbPdfTopRightParamType);
+					report.setTopRight(t);
+					report.setTopRightText(t == PdfReportParamType.TEXT ? txtPdfTopRightValue.getText() : null);
+				}
+				if (btnPdfBottomLeft.getSelection()) {
+					t = (PdfReportParamType) getSelectedValue(cmbPdfBottomLeftParamType);
+					report.setBottomLeft(t);
+					report.setBottomLeftText(t == PdfReportParamType.TEXT ? txtPdfBottomLeftValue.getText() : null);
+				}
+				if (btnPdfBottomRight.getSelection()) {
+					t = (PdfReportParamType) getSelectedValue(cmbPdfBottomRightParamType);
+					report.setBottomRight(t);
+					report.setBottomRightText(t == PdfReportParamType.TEXT ? txtPdfBottomRightValue.getText() : null);
+				}
 				report.setParamValues(paramValues);
 
 				try {
